@@ -1,0 +1,16 @@
+// _vendors.scss
+
+/*-------------------------------------------------------------------
+|  Bootstrap                                                        |
+-------------------------------------------------------------------*/
+
+// 関数（カラー、SVG、計算などが操作できるように）
+@import "~bootstrap/scss/functions";
+
+// 変数
+@import "~bootstrap/scss/variables";
+
+// ツール (map, mixin, grid機能など)
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/grid";

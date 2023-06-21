@@ -1,0 +1,22 @@
+<!-- layout.html -->
+
+{% extends 'base.html' %}
+
+{% block title %}
+{% if title != None %}{{ title }} ー {% endif %}
+{{super()}}
+{% endblock %}
+
+{% block layout %}
+
+{% if request.path == "/entry/" or "entry" not in request.path %}
+{% include 'project/user/shared/header.html' %}
+{% endif %}
+
+<div class="l-main">
+    {% block main %}{% endblock %}
+</div>
+
+{% include 'project/user/shared/footer.html' %}
+
+{% endblock %}

@@ -1,0 +1,43 @@
+/*--------
+|  Base  | - default/reset
+--------*/
+
+@use 'tools/global' as *;
+
+* {
+  box-sizing: border-box;
+  color: inherit;
+}
+
+body {
+  margin: auto;
+  color: map-get($font-colors, primary);
+  background-color: $black;
+  font-size: map-get($font-size, primary);
+  font-family: "Helvetica Neue", "Helvetica", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; 
+  -webkit-text-size-adjust: none;
+}
+
+a {
+  outline: none;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+p { overflow-wrap: break-word; }
+
+button, input {
+  border: none;
+  outline: none;
+}
+
+button {
+  background-color: inherit;
+  cursor: pointer;
+}
+
+label {
+  cursor: pointer;
+}

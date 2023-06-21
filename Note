@@ -1,0 +1,103 @@
+# Note
+
+/// Quick Start ///
+
+
+▼ Create virtual env
+
+source venv/bin/activate
+
+
+▼ Set an environment variables
+
+export FLASK_APP=manage.py
+
+- Development
+export FLASK_DEBUG=1
+export FLASK_ENV=development
+export APP_SETTINGS="project.config.DevelopmentConfig"
+
+- Testing
+export FLASK_ENV=development
+export APP_SETTINGS="project.config.TestingConfig"
+
+- Production
+export FLASK_ENV=production
+export APP_SETTINGS="project.config.ProductionConfig"
+
+
+
+▼ Mail settings
+
+export APP_MAIL_USERNAME="logbase@ymail.ne.jp"
+export APP_MAIL_PASSWORD="Kokesi814"
+
+
+
+▼ Database Settings
+
+- Delete database
+flask manager drop_db
+
+- Create database
+flask manager create_db
+
+- Set migration
+flask db init
+flask db migrate
+
+- Create a master user
+export MASTER_EMAIL=""
+export MASTER_PASSWORD=""
+flask manager create_master
+
+
+
+▼ Run the server
+flask run
+
+
+
+▼ Coding Notes
+
+#  HTML & CSS  ----------------------------------------------
+
+#* On/OffでのUIデザインの切り替え --------------------------------------------------------
+#*  切り替える役割を持つタグは class属性 'toggler' 及び data属性 'data-id' を所持
+#*  'data-id' の値 = 切り替え対象タグのid属性
+#*  表示の切り替え対象となるタグは 任意のid属性 及び data属性 'data-status' を所持
+#*  'data-status' の値 = 'on' / 'off' (例：on = 表示 off = 非表示
+#*  上記設定は切り替えの機能を担うJS関数にて活用 (関数の詳細は js/ui/toggle.js にて)
+#* -----------------------------------------------------------------------------------
+
+#*  --------------------------------------------------------
+#*
+#*
+#*
+#* -----------------------------------------------------------------------------------
+
+
+#  CSS  -----------------------------------------------------
+
+#* z-indexの設定 ----------------------------------------------------------------------
+#*  headerの値が 5 であり、他の要素の設定はこれを基準に上下する
+#*  (例 : headerの裏を通って降りてくるプルダウンがある場合 => header 5, pulldown 4)
+#*  (例 : headerの上層にモーダル、その中間に上敷きがある場合 => modal 7, overlay 6)
+#* -----------------------------------------------------------------------------------
+
+#* -----------------------------------------------------------------------------------
+#*  
+#*  
+#* -----------------------------------------------------------------------------------
+
+#* -----------------------------------------------------------------------------------
+#*  
+#*  
+#* -----------------------------------------------------------------------------------
+
+#  JS  ------------------------------------------------------
+
+#* -----------------------------------------------------------------------------------
+#*  
+#*  
+#* -----------------------------------------------------------------------------------

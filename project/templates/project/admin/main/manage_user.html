@@ -1,0 +1,67 @@
+<!-- add_user.html -->
+
+{% extends 'project/admin/layout.html' %}
+
+{% block main %}
+
+<div class="l-main__section">
+
+    <div class="content">
+        <h1 class="l-main__section-header">
+            {{title}} 
+            {% if title == "Edit User" %}
+            ( ID {{user_id}} )
+            {% endif %}
+        </h1>
+
+        <form method="POST" id="user_form" class="p-form__wrap" novalidate>
+            {{ form.hidden_tag() }}
+
+
+            {% if g.admin.master %}
+                <div class="p-form__checkbox-wrap">
+                    {{ form.admin(class="p-form__checkbox p-form__disabled-trigger") }}
+                    {{ form.admin.label(class="p-form__checkbox-label") }}
+                </div>
+            {% endif %}
+
+
+            {{ form.name.label(class="p-form__input-label") }}
+            <p class="p-form__error-msg" id="error_name" data-error="{{form.is_valid('name')}}">
+                {{form.name.errors[0]}}</p>
+            {{ form.name(class="p-form__input") }}
+
+
+            {{ form.email.label(class="p-form__input-label") }}
+            <p class="p-form__error-msg" id="error_email" data-error="{{form.is_valid('email')}}">
+                {{form.email.errors[0]}}</p>
+            {{ form.email(class="p-form__input") }}
+
+
+            <div class="p-form__checkbox-wrap">
+                {{ form.psw_disabled(class="p-form__checkbox p-form__disabled-trigger") }}
+                {{ form.psw_disabled.label(class="p-form__checkbox-label") }}
+            </div>
+
+
+            {{ form.psw.label(class="p-form__input-label") }}
+            <button id="p-form__password-visualizer" type="button">
+                <i class="fa-solid fa-eye-slash"></i>
+                <i class="fa-solid fa-eye"></i>
+            </button>
+            <p class="p-form__error-msg" id="error_psw" data-error="{{form.is_valid('psw')}}">
+                {{form.psw.errors[0]}}</p>
+            {{ form.psw(class="p-form__input") }}
+
+
+            {{ form.conf.label(class="p-form__input-label") }}
+            {{ form.conf(class="p-form__input") }}
+
+
+            {{ form.submit(class="p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary") }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
