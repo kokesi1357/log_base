@@ -3,7 +3,6 @@
 import os
 from tabnanny import check
 from flask import Blueprint, g, request, session, flash, redirect, render_template, url_for
-from sqlalchemy import or_
 from functools import wraps
 from project import db
 from project.models.user import User
@@ -11,7 +10,6 @@ from project.form import user_form
 from time import time
 from project.email import send_email
 from project.tokens import signup_token, psw_reset_token, decode_token
-from werkzeug.routing import Rule
 
 
 

@@ -2,10 +2,17 @@
 
 /// Quick Start ///
 
-
 ▼ Create virtual env
 
+- get in the v env
+python3 -m venv venv
 source venv/bin/activate
+* (venv) 内では文字通り仮想環境下のPython3を使用
+* => (venv) 外のPython3とは別(pipもしかり)
+
+- get out of the v env
+deactivate
+
 
 
 ▼ Set an environment variables
@@ -29,8 +36,8 @@ export APP_SETTINGS="project.config.ProductionConfig"
 
 ▼ Mail settings
 
-export APP_MAIL_USERNAME="logbase@ymail.ne.jp"
-export APP_MAIL_PASSWORD="Kokesi814"
+export APP_MAIL_USERNAME=""
+export APP_MAIL_PASSWORD=""
 
 
 
@@ -47,7 +54,7 @@ flask db init
 flask db migrate
 
 - Create a master user
-export MASTER_EMAIL=""
+export MASTER_EMAIL="katuken814@icloud.com"
 export MASTER_PASSWORD=""
 flask manager create_master
 

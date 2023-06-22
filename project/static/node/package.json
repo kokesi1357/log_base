@@ -8,7 +8,7 @@
     "build-prod": "webpack --mode production"
   },
   "keywords": [],
-  "author": "",
+  "author": "Ken Kakizono (https://github.com/kokesi1357)",
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.20.12",
