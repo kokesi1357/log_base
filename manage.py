@@ -39,3 +39,6 @@ def create_master():
 
 
 app.cli.add_command(manager_cli)
+
+if __name__ == "__main__":
+    app.run()

@@ -172,6 +172,7 @@ def before_request():
 @entry_bp.route('/')
 @is_logged_in
 def entry():
+    flash(f"")  #* サーバーサイド   確認用 
     return render_temp('project/user/main/entry.html')
 
 

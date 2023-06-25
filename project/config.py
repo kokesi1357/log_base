@@ -23,8 +23,8 @@ class BaseConfig(object):
     MAIL_USE_SSL = True
 
     # mail authentication
-    MAIL_USERNAME = os.environ['APP_MAIL_USERNAME']
-    MAIL_PASSWORD = os.environ['APP_MAIL_PASSWORD']
+    EMAIL_USERNAME = os.environ['APP_MAIL_USERNAME']
+    EMAIL_PASSWORD = os.environ['APP_MAIL_PASSWORD']
 
     # mail accounts
     MAIL_DEFAULT_SENDER = 'from@example.com'
@@ -44,14 +44,15 @@ class TestingConfig(BaseConfig):
     TESTING = True
     DEBUG = True
     WTF_CSRF_ENABLED = False
-    SQLALCHEMY_DATABASE_URI = 'sqlite://'
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///logbase.db'
 
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
     SECRET_KEY = 'secret_key'
     DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///logbase.db' #* 仮
     DEBUG_TB_ENABLED = False
     STRIPE_SECRET_KEY = 'stripe_secret_key'
     STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'

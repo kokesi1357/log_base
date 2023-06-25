@@ -6,7 +6,8 @@
 
 - get in the v env
 python3 -m venv venv
-source venv/bin/activate
+
+
 * (venv) 内では文字通り仮想環境下のPython3を使用
 * => (venv) 外のPython3とは別(pipもしかり)
 
@@ -36,8 +37,9 @@ export APP_SETTINGS="project.config.ProductionConfig"
 
 ▼ Mail settings
 
-export APP_MAIL_USERNAME=""
-export APP_MAIL_PASSWORD=""
+export APP_MAIL_USERNAME="logbase@ymail.ne.jp"
+export APP_MAIL_PASSWORD="Kokesi814"
+; ikedakaren@hotmail.co.jp
 
 
 
@@ -55,13 +57,34 @@ flask db migrate
 
 - Create a master user
 export MASTER_EMAIL="katuken814@icloud.com"
-export MASTER_PASSWORD=""
+export MASTER_PASSWORD="Kokesi814"
 flask manager create_master
 
 
 
-▼ Run the server
+▼ Run the local server
 flask run
+
+▼ Run uWSGI
+sudo uwsgi --ini uwsgi.ini
+
+vim ~/uwsgi.ini
+
+▼ Run Nginx
+# unstable
+brew services start nginx
+# Stop
+nginx -s stop
+# Stop a current run and Start
+brew services restart nginx
+# See status 
+lsof -c nginx -P | grep LISTEN
+
+▼ uWSGI + Nginx
+sudo uwsgi --ini uwsgi.ini &
+( killall -9 uwsgi )
+↓
+brew services restart nginx
 
 
 
