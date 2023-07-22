@@ -161,4 +161,4 @@ cython_debug/
 
 Note
 /project/static/node/*
-# !node/dist
+!/project/static/node/dist
