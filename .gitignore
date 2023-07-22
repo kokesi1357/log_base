@@ -161,4 +161,4 @@ cython_debug/
 
 Note.txt
 node/*
-!node/dist
+# !node/dist
