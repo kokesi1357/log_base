@@ -163,3 +163,4 @@ Note
 /project/static/node/*
 !/project/static/node/dist
 .DS_Store
+.vscode
