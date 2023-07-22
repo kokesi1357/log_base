@@ -1,7 +1,7 @@
 from flask import abort
 from flask_mail import Message
-from project import mail
-from project import app
+from project.app import mail
+from project.app import app
 
 
 def send_email(email, subject, html):

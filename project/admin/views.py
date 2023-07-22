@@ -1,10 +1,9 @@
 # project > admin > views.py
 
 
-from ctypes.wintypes import HKEY
 from flask import Blueprint, g, session, request, flash, redirect, render_template, url_for
 import functools
-from project import db
+from project.app import db
 from project.models.user import User
 from project.form import user_form
 from time import time

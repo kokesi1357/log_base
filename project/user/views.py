@@ -4,7 +4,7 @@ import os
 from tabnanny import check
 from flask import Blueprint, g, request, session, flash, redirect, render_template, url_for
 from functools import wraps
-from project import db
+from project.app import db
 from project.models.user import User
 from project.form import user_form
 from time import time
@@ -172,7 +172,6 @@ def before_request():
 @entry_bp.route('/')
 @is_logged_in
 def entry():
-    flash(f"")  #* サーバーサイド   確認用 
     return render_temp('project/user/main/entry.html')
 
 

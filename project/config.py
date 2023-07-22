@@ -14,7 +14,6 @@ class BaseConfig(object):
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # mail settings
     MAIL_SERVER = 'smtp.mail.yahoo.co.jp'
@@ -52,7 +51,6 @@ class ProductionConfig(BaseConfig):
     SECRET_KEY = 'secret_key'
     DEBUG = False
     # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///logbase.db' #* 仮
     DEBUG_TB_ENABLED = False
     STRIPE_SECRET_KEY = 'stripe_secret_key'
     STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'

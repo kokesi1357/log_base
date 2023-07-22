@@ -1,5 +1,5 @@
 from flask import abort
-from project import app
+from project.app import app
 from time import time
 import jwt
 

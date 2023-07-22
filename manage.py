@@ -2,11 +2,12 @@
 
 
 import os
+import psycopg2
 # import unittest
 # import coverage
 from flask.cli import AppGroup
 
-from project import app, db
+from project.app import app, db
 from project.models.user import User
 
 

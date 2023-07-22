@@ -4,7 +4,7 @@
 from sqlalchemy import *
 from sqlalchemy.orm import relationship
 from datetime import datetime, timedelta
-from project import db
+from project.app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
 # User class holds info of an actual user and relationships with multiple posts.

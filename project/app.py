@@ -1,4 +1,4 @@
-# __init__.py
+# app.py
 
 
 # Config --------------------------------------------------
@@ -40,7 +40,7 @@ app.register_blueprint(user_bp)
 
 
 # Error handlers ------------------------------------------
-from flask import flash
+# from flask import flash
 
 # No permission to access the server
 @app.errorhandler(403)
@@ -50,7 +50,6 @@ def forbidden_page(e):
 # Invalid URL
 @app.errorhandler(404)
 def page_not_found(e):
-    flash(f"")
     return render_template('management/errors/404.html', path=request.path), 404
 
 # Internal server error
