@@ -7,7 +7,7 @@ import os
 from flask import Flask, request, render_template
 
 app = Flask(__name__)
-app.config.from_object(os.environ['APP_SETTINGS'])
+app.config.from_object(os.environ.get('APP_SETTINGS'))
 
 
 

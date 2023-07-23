@@ -2,7 +2,6 @@
 
 
 import os
-import psycopg2
 # import unittest
 # import coverage
 from flask.cli import AppGroup

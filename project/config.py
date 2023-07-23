@@ -22,8 +22,8 @@ class BaseConfig(object):
     MAIL_USE_SSL = True
 
     # mail authentication
-    EMAIL_USERNAME = os.environ['APP_MAIL_USERNAME']
-    EMAIL_PASSWORD = os.environ['APP_MAIL_PASSWORD']
+    EMAIL_USERNAME = os.environ.get('APP_MAIL_USERNAME')
+    EMAIL_PASSWORD = os.environ.get('APP_MAIL_PASSWORD')
 
     # mail accounts
     MAIL_DEFAULT_SENDER = 'from@example.com'
@@ -31,7 +31,6 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     """Development configuration."""
-    
     DEBUG = True
     WTF_CSRF_ENABLED = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///logbase.db'
@@ -48,9 +47,8 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
-    SECRET_KEY = 'secret_key'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECRET_KEY2')
     DEBUG = False
-    # SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
     DEBUG_TB_ENABLED = False
-    STRIPE_SECRET_KEY = 'stripe_secret_key'
-    STRIPE_PUBLISHABLE_KEY = 'stripe_publishable_key'
