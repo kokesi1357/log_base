@@ -1,19 +1,19 @@
 # config.py
 
-
 import os
 
 
 class BaseConfig(object):
     # Builds path named 'my_blog' that is through the same path with this module.
-    SECRET_KEY = 'secret_key'
-    SECURITY_PASSWORD_SALT = 'secret_key_two'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECRET_KEY2')
     DEBUG = False
     WTF_CSRF_ENABLED = True
     DEBUG_TB_ENABLED = False
     DEBUG_TB_INTERCEPT_REDIRECTS = False
     SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
 
     # mail settings
     MAIL_SERVER = 'smtp.mail.yahoo.co.jp'
@@ -47,8 +47,3 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
-    SECRET_KEY = os.environ.get('SECRET_KEY')
-    SECURITY_PASSWORD_SALT = os.environ.get('SECRET_KEY2')
-    DEBUG = False
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
-    DEBUG_TB_ENABLED = False

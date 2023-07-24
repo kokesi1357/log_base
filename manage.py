@@ -1,11 +1,7 @@
 # manage.py
 
-
 import os
-# import unittest
-# import coverage
 from flask.cli import AppGroup
-
 from project.app import app, db
 from project.models.user import User
 
@@ -41,4 +37,4 @@ def create_master():
 app.cli.add_command(manager_cli)
 
 if __name__ == "__main__":
-    app.run()
+    app.run(host="0.0.0.0", debug=True)
