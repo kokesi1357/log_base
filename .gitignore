@@ -165,3 +165,4 @@ Note
 .DS_Store
 .vscode
 migrations
+*.ini
