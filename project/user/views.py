@@ -1,6 +1,5 @@
 # project > user > views.py
 
-import os
 from tabnanny import check
 from flask import Blueprint, g, request, session, flash, redirect, render_template, url_for
 from functools import wraps
@@ -184,11 +183,11 @@ def signup():
     if form.validate_on_submit():
         subject = "【Log Base】Please confirm your email !"
         token = signup_token(form)
-        url = url_for('user.confirm_signup', token=token, _external=True)
+        url = url_for('user.entry.confirm_signup', token=token, _external=True)
         html = render_temp('project/user/email/confirm_user_account.html', url=url)
         send_email(form.email.data, subject, html)
         flash(f"We sent a user authentication email to [ {form.email.data} ]. Activate your account via the email.")
-        return redirect(url_for('user.entry'))
+        return redirect(url_for('user.entry.entry'))
 
     return render_temp('project/user/main/auth.html', 'Sign Up', form)
 
@@ -247,7 +246,7 @@ def forgot_password():
         html = render_temp('project/user/email/confirm_password_reset.html', url=url)
         send_email(email, subject, html)
         flash(f"We sent a confirmation email to [ {email} ]. Confirm the email to reset the password for your account.")
-        return redirect(url_for('user.entry'))
+        return redirect(url_for('user.entry.entry'))
 
     return render_temp(
         'project/user/main/auth.html',
@@ -279,7 +278,7 @@ def reset_password(email):
         else:
             flash(f'User with {email} doesn\'t exist.')
         
-        return redirect(url_for('user.entry'))
+        return redirect(url_for('user.entry.entry'))
 
     return render_temp(
         'project/user/main/auth.html',
