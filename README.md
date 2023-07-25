@@ -1,4 +1,4 @@
-# cs290_project1
+# Log Base
 Simple chat service serviece with HTML and CSS.<br>
 A user can create or join a CHANNEL where to communicate with other people.
 
