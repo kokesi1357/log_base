@@ -5,4 +5,176 @@
 {% block main %}
 
 
+<!-- コメント / チャンネル作成 -->
+<!-- <div class="l-main__app-section">
+    <div class="p-index__sidebar u-dn-sp">
+        <div class="p-index__sidebar__channel-list-wrap">
+            <div class="p-index__sidebar__channel-header">
+                <p>CHANNELS</p>
+                <button class="p-index__sidebar__channel-new-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </button>
+            </div>
+            <ul class="p-index__sidebar__channel-list">
+                <li class="p-index__sidebar__channel-wrap u-active-item row">
+                    <div class="p-index__sidebar__hash-mark col-tab-3"><i class="fa-solid fa-hashtag"></i></div>
+                    <p class="p-index__sidebar__channel-name col-tab-17">general</p>
+                    <button class="p-index__sidebar__invite-btn col-tab-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                    <button class="p-index__sidebar__setting-btn col-tab-2">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </li>
+                <li class="p-index__sidebar__channel-wrap row">
+                    <div class="p-index__sidebar__hash-mark col-tab-3"><i class="fa-solid fa-hashtag"></i></div>
+                    <p class="p-index__sidebar__channel-name col-tab-17">hello</p>
+                    <button class="p-index__sidebar__invite-btn col-tab-2">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </button>
+                    <button class="p-index__sidebar__setting-btn col-tab-2">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <main class="p-index-main" style="position:relative;">
+        <div class="p-index-main__output">
+        </div>
+        <div class="p-index-main__input">
+            <div class="p-index-main__input-bar">
+            </div>
+        </div>
+    </main>
+</div> -->
+
+<!-- モーダル : チャンネル作成 -->
+<!-- <div id="p-index__modal--new-server" class="p-modal u-preload">
+    <div id="p-index__modal-closer--new-server" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Create Server</div>
+            <form method="POST" id="server_form" class="p-form__wrap" novalidate enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                {{ form.name.label(class="p-form__input-label") }}
+                <p class="p-form__error-msg">{{form.name.errors[0]}}</p>
+                {{ form.name(class="p-form__input") }}
+
+                <label for="image" class="p-form__image-label">
+                    <div class="u-dp-flx">
+                        <span>Image</span>
+                        <p id="p-form__image-error-msg" class="p-form__error-msg"></p>
+                    </div>
+                    <div class="p-form__image-block">
+                        <div class="p-form__image-wrap">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <span class="p-form__filename">No file chosen</span>
+                    </div>
+                </label>
+                {{ form.image(class="u-dn") }}
+
+                {{ form.submit(class='p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary') }}
+            </form>
+        </div>
+    </div>
+</div> -->
+
+
+
+
+
+<!-- Serverページ -->
+<div class="l-main__app-section">
+    <div class="app-content row">
+        <button id="p-index__modal-opener--new-server" class="p-index__server-board toggler col-sp-12 col-tab-6" data-toggle="off">
+            <div class="p-index__server-thumnail-wrap">
+                <div class="p-index__server-thumnail">
+                    <i class="fa-solid fa-plus"></i>
+                </div>
+            </div>
+            <p class="p-index__server-title">New Server</p>
+        </button>
+        {% if own_servers_info %}
+            {% for osi in own_servers_info %}
+            <div class="p-index__server-board col-sp-12 col-tab-6">
+                <div class="p-index__server-thumnail-wrap">
+                    <button class="p-index__server-thumnail">
+                        {% if osi.base64 %}
+                        <img src="{{osi.base64}}" alt="詳細">
+                        {% else %}
+                        <p>No Image</p>
+                        {% endif %}
+                    </button>
+                    <button class="p-index__server-edit-btn toggler">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+                <p class="p-index__server-title">{{osi.name}}</p>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if servers_info %}
+            {% for si in servers_info %}
+            <button class="p-index__server-board col-sp-12 col-tab-6">
+                <div class="p-index__server-thumnail-wrap">
+                    <div class="p-index__server-thumnail">
+                        {% if si.base64 %}
+                        <img src="{{si.base64}}" alt="詳細">
+                        {% else %}
+                        <p>No Image</p>
+                        {% endif %}
+                    </div>
+                    <button class="p-index__server-edit-btn toggler">
+                        <i class="fa-solid fa-person-through-window"></i>
+                    </button>
+                </div>
+                <p class="p-index__server-title">{{si.name}}</p>
+            </button>
+            {% endfor %}
+        {% endif %}
+    </div>
+</div>
+
+<!-- モーダル : サーバー作成 -->
+<div id="p-index__modal--new-server" class="p-modal u-preload">
+    <div id="p-index__modal-closer--new-server" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Create Server</div>
+            <form method="POST" id="server_form" class="p-form__wrap" novalidate enctype="multipart/form-data">
+                {{ form.hidden_tag() }}
+
+                {{ form.name.label(class="p-form__input-label") }}
+                <p class="p-form__error-msg">{{form.name.errors[0]}}</p>
+                {{ form.name(class="p-form__input") }}
+
+                <label for="image" class="p-form__image-label">
+                    <div class="u-dp-flx">
+                        <span>Image</span>
+                        <p id="p-form__image-error-msg" class="p-form__error-msg"></p>
+                    </div>
+                    <div class="p-form__image-block">
+                        <div class="p-form__image-wrap">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <span class="p-form__filename">No file chosen</span>
+                    </div>
+                </label>
+                {{ form.image(class="u-dn") }}
+
+                {{ form.submit(class='p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary') }}
+            </form>
+        </div>
+    </div>
+</div>
+
+
 {% endblock %}

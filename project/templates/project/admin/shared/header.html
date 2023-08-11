@@ -2,15 +2,17 @@
 
 <header id="l-header" class="c-flex-wrapper--row">
     <div class="l-header__wrap">
-    <a href="{{url_for('admin.index')}}" id="l-header__home-entry"><h3>Admin</h3></a>
-    <div id="l-header__mainmenu-toggler" class="toggler u-dn-pc">
-        <div id="l-header__mainmenu-opener" class="c-btn--quad c-btn--hover-bg-primary">
-            <i class="fa-solid fa-bars"></i>
+        <div class="l-header__leftmenu">
+            <a href="{{url_for('admin.index')}}" id="l-header__home-entry"><h3>Admin</h3></a>
         </div>
-        <div id="l-header__mainmenu-closer" class="c-btn--quad c-btn--hover-bg-primary">
-            <i class="fa-solid fa-xmark"></i>
+        <div id="l-header__mainmenu-toggler" class="toggler u-dn-pc">
+            <div id="l-header__mainmenu-opener" class="c-btn--quad c-btn--hover-bg-primary">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <div id="l-header__mainmenu-closer" class="c-btn--quad c-btn--hover-bg-primary">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
         </div>
-    </div>
     </div>
     <ul id="l-header__mainmenu" class="u-non-anim-pc">
         <li class="l-header__mainmenu-item">

@@ -9,19 +9,19 @@
         <h1 class="l-main__section-header">User List</h1>
         <div class="p-user-list__table">
             <div class="p-user-list__head-wrap row u-dn-sp">
-                <div class="p-user-list__head col-tab-1">Id</div>
-                <div class="p-user-list__head col-tab-3">Name</div>
-                <div class="p-user-list__head col-tab-4">Email</div>
-                <div class="p-user-list__head col-tab-3">Created Date</div>
+                <div class="p-user-list__head col-tab-2">Id</div>
+                <div class="p-user-list__head col-tab-6">Name</div>
+                <div class="p-user-list__head col-tab-8">Email</div>
+                <div class="p-user-list__head col-tab-6">Created Date</div>
             </div>
             {% for user in users %}
                 {% if user.master == false and (user.admin == false or g.admin.master == true) %}
                     <div class="p-user-list__user-info-list row">
-                        <div class="p-user-list__user-info-wrap col-tab-1">
+                        <div class="p-user-list__user-info-wrap col-tab-2">
                             <p class="u-dn-tab-min">Id : </p>
                             <p class="p-user-list__user-info">{{user.id}}</p>
                         </div>
-                        <div class="p-user-list__user-info-wrap col-tab-3 col-sp-4">
+                        <div class="p-user-list__user-info-wrap col-tab-6 col-sp-8">
                             <p class="u-dn-tab-min">Name : </p>
                             <a href="edit_user/{{user.id}}" class="p-user-list__user-info--name">
                                 {% if user.admin == true %}
@@ -31,15 +31,15 @@
                                 {% endif %}
                             </a>
                         </div>
-                        <div class="p-user-list__user-info-wrap col-tab-4">
+                        <div class="p-user-list__user-info-wrap col-tab-8">
                             <p class="u-dn-tab-min">Email : </p>
                             <p class="p-user-list__user-info">{{user.email}}</p>
                         </div>
-                        <div class="p-user-list__user-info-wrap col-tab-3">
+                        <div class="p-user-list__user-info-wrap col-tab-6">
                             <p class="u-dn-tab-min">Born : </p>
                             <p class="p-user-list__user-info">{{user.date_added.strftime('%Y/%m/%d %H:%M')}}</p>
                         </div>
-                        <div class="p-user-list__user-info-wrap col-tab-1">
+                        <div class="p-user-list__user-info-wrap col-tab-2">
                             <button
                                 data-confirm_txt="ユーザー {{user.name}} を削除しますか?"
                                 data-url="delete_user/{{user.id}}"

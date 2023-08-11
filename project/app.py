@@ -6,7 +6,7 @@
 import os
 from flask import Flask, request, render_template
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder="./static/")
 app.config.from_object(os.environ.get('APP_SETTINGS'))
 
 
@@ -19,12 +19,11 @@ from flask_debugtoolbar import DebugToolbarExtension
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 
+
 mail = Mail(app)
 toolbar = DebugToolbarExtension(app)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
-
-
 
 
 # Blueprints ----------------------------------------------

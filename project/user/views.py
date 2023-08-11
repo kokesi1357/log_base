@@ -4,7 +4,8 @@ from tabnanny import check
 from flask import Blueprint, g, request, session, flash, redirect, render_template, url_for
 from functools import wraps
 from project.app import db
-from project.models.user import User
+from project.boto3 import s3, s3_client
+from project.models.models import User
 from project.form import user_form
 from time import time
 from project.email import send_email
@@ -25,22 +26,23 @@ user_bp.register_blueprint(entry_bp)
 # Functions for Handling Resources within This Module -------------------
 
 # Seach user from name or email #! 未使用
-def search_user(class_member, value):
+def search_user_by_filter(class_member, value):
     user = User.query.filter(class_member==value).first()
     return user
+
+
+# Set session for logged-in user
+def set_user_session(user=None, limit=3600):
+    session['user_id'] = user.id if user is not None else session['user_id']
+    session['user_lifetime'] = time() + limit
+    g.user = User.query.filter_by(id=session['user_id']).first()
 
 
 # Clear user-related session status
 def clear_user_session():
     session.pop('user_id', None)
     session.pop('auth', None)
-
-
-# Set session for logged-in user
-def set_user_session(user, limit=3600):
-    clear_user_session()  # -> to reset session['auth'] generated before login
-    session['user_id'] = user.id
-    session['user_lifetime'] = time() + limit
+    g.user = None
 
 
 # Set session for authenticated user
@@ -81,11 +83,9 @@ def is_auth_expired():
 def check_user_lifetime():
     if is_user_in_session():
         if not is_user_expired():
-            session['user_lifetime'] = time() + 3600
-            g.user = User.query.filter_by(id=session['user_id']).first()
+            set_user_session()
         else:
             clear_user_session()
-            g.user = None
 
 
 # Check auth lifetime and manage session status only of auth
@@ -166,12 +166,26 @@ def before_request():
 #! ->> やっぱいるか...パスワ変更時にメール認証あるし
 #! ->>> メール認証いらん、既存pswで...ログイン状態ならpswわかるし、忘れならログ前でリセット行為するはず
 
+from project.boto3 import s3_create_presigned_url, s3_upload_file, s3_get_body
+from project.base64 import translate_into_base64
+from project.form import server_form
 
 # Initial page for unauthorized users
-@entry_bp.route('/')
+@entry_bp.route('/', methods=['GET', 'POST'])
 @is_logged_in
 def entry():
-    return render_temp('project/user/main/entry.html')
+    pdf_key = 'linnbenton.pdf'
+    url = s3_create_presigned_url(pdf_key)
+    filename = 'icescream.png'
+    body = s3_get_body(filename)
+    img = translate_into_base64(body, filename)
+
+    if request.method == 'POST':
+        file = request.files['file']
+        result = s3_upload_file(file)
+        flash(result)
+
+    return render_temp('project/user/main/entry.html', img=img, url=url)
 
 
 #【Sign up】Sign up
@@ -291,14 +305,62 @@ def reset_password(email):
 
 
 
-
 # Views for authorized users -------------------------------------------
 
+from project.models.models import User, Server, Channel, Message, File
 #* Top
-@user_bp.route('/')
+@user_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_temp('project/user/main/index.html', 'LOG BASE')
+    form = server_form()
+
+    # Create server
+    if request.method == 'POST': 
+        if form.validate_on_submit():
+            file = form.image.data
+            result = s3_upload_file(file)
+            if result:
+                g.user.own_servers.append(
+                    Server(
+                        name=form.name.data,
+                        image_file_name = file.filename,
+                        owner_id=g.user.id,
+                        channels=[
+                            Channel(name="General")
+                        ]
+                    )
+                )
+                db.session.commit()
+                form.name.data = ''
+                flash("Completed!")
+
+    own_servers_info = []
+    servers_info = []
+    c_list = []
+    if g.user.own_servers:
+        for os in g.user.own_servers:
+            body = s3_get_body(os.image_file_name)
+            img = translate_into_base64(body, os.image_file_name)
+            own_servers_info.append(
+                { "name":os.name, "base64":img }
+            )
+            c_list.append(os.channels[0].name)
+    if g.user.servers:
+        for s in g.user.servers:
+            body = s3_get_body(s.image_file_name)
+            img = translate_into_base64(body, s.image_file_name)
+            servers_info.append(
+                { "name":s.name, "base64":img }
+            )
+            c_list.append(s.channels[0].name)
+
+    flash(c_list)
+
+    form.image.data = ''
+
+    return render_temp(
+        'project/user/main/index.html', 'LOG BASE', form=form, 
+        own_servers_info=own_servers_info, servers_info=servers_info)
 
 
 #* Add channel

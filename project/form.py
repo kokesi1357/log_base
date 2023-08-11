@@ -1,7 +1,9 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, StopValidation, DataRequired, Length, Email, EqualTo
-from project.models.user import User
+from wtforms import StringField, EmailField, PasswordField, \
+    BooleanField, SubmitField, FileField, TextAreaField
+from wtforms.validators import ValidationError, StopValidation, \
+    DataRequired, Length, Email, EqualTo
+from project.models.models import User, Server, Channel, Message, File
 
 
 
@@ -39,15 +41,20 @@ class ValidateEqual(EqualTo):
 
 # Data uniqueness
 class ValidateUnique(object):
-    def __init__(self, type, class_member, user_id=None):
+    def __init__(self, type, class_name, class_member, data_id=None):
         self.message = f"*The {type} has alerady been registered."
+        self.class_name = class_name
         self.class_member = class_member
-        self.user_id = user_id
+        self.data_id = data_id
 
     def __call__(self, form, field):
-        existing_user = User.query.filter(self.class_member==field.data).first()
+        existing_data = None
+        if self.class_name == "user":
+            existing_data = User.query.filter(self.class_member==field.data).first()
+        if self.class_name == "server":
+            existing_data = Server.query.filter(self.class_member==field.data).first()
 
-        if existing_user and (self.user_id == None or existing_user.id != self.user_id):
+        if existing_data and (self.data_id == None or existing_data.id != self.data_id):
             raise ValidationError(self.message)
 
 
@@ -62,6 +69,13 @@ class ValidateNonExisting(object):
         user = User.query.filter(self.class_member==field.data).first()
         if user == None or (self.lgin_type == "user" and user.admin):
             raise ValidationError(self.message)
+
+
+class ValidateFileFormat(object):
+    def __init__(self, type, class_member, lgin_type=None):
+        self.message = f"* User with this {type} doesn\'t exist."
+        self.class_member = class_member
+        self.lgin_type = lgin_type
 
 
 # Non validation class
@@ -113,13 +127,16 @@ class Form(FlaskForm):
         return result
 
 
+# User
 def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
-    class StaticForm(Form):
-        pass
+    class UserForm(Form):
+        def __repr__(self):
+            return 'UserForm'
+        # pass
     
     if 'name' in prop:
-        validate_unique = ValidateUnique('nickname', User.name, user_id) if rgstr else Pass()
-        StaticForm.name = MyStringField('Nickname', [
+        validate_unique = ValidateUnique('nickname', "user", User.name, user_id) if rgstr else Pass()
+        UserForm.name = MyStringField('Nickname', [
             ValidateRequired('Nickname'),
             ValidateLength(3, 100),
             validate_unique])
@@ -127,7 +144,7 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
     if 'email' in prop:
         validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
-        StaticForm.email = EmailField('Email', [
+        UserForm.email = EmailField('Email', [
             ValidateRequired('Email'),
             ValidateLength(3, 120),
             ValidateEmail(),
@@ -135,23 +152,129 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
             validate_non_existing])
 
     if 'psw' in prop:
-        StaticForm.psw = PasswordField('Password', [
+        UserForm.psw = PasswordField('Password', [
             ValidateRequired('Password'),
             ValidateLength(8, 100)])
 
     if 'psw_conf' in prop:
-        StaticForm.psw = MyPasswordField('Password', [
+        UserForm.psw = MyPasswordField('Password', [
             ValidateRequired('Password'),
             ValidateLength(8, 100),
             ValidateEqual('conf')])
 
-        StaticForm.conf  = PasswordField('Confirm Password')
+        UserForm.conf  = PasswordField('Confirm Password')
 
     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
     if 'psw_disabled' in prop:
-        StaticForm.psw_disabled = BooleanField('No change of password')
+        UserForm.psw_disabled = BooleanField('No change of password')
 
     if 'admin' in prop:
-        StaticForm.admin = BooleanField('Admin')
+        UserForm.admin = BooleanField('Admin')
 
-    return StaticForm()
+    return UserForm()
+
+
+# Server
+def server_form(server_id=None):
+    class ServerForm(Form):
+        def __repr__(self):
+            return 'ServerForm'
+        # pass
+
+    validate_unique = ValidateUnique('name', "server", Server.name, server_id)
+    ServerForm.name = StringField('Name', [
+        ValidateRequired('Name'),
+        ValidateLength(3, 100),
+        validate_unique])
+
+    ServerForm.image = FileField('Image')
+
+    return ServerForm()
+
+
+# def channel_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
+#     class StaticForm(Form):
+#         pass
+    
+#     if 'name' in prop:
+#         validate_unique = ValidateUnique('nickname', User.name, user_id) if rgstr else Pass()
+#         StaticForm.name = MyStringField('Nickname', [
+#             ValidateRequired('Nickname'),
+#             ValidateLength(3, 100),
+#             validate_unique])
+
+#     if 'email' in prop:
+#         validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
+#         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
+#         StaticForm.email = EmailField('Email', [
+#             ValidateRequired('Email'),
+#             ValidateLength(3, 120),
+#             ValidateEmail(),
+#             validate_unique,
+#             validate_non_existing])
+
+#     if 'psw' in prop:
+#         StaticForm.psw = PasswordField('Password', [
+#             ValidateRequired('Password'),
+#             ValidateLength(8, 100)])
+
+#     if 'psw_conf' in prop:
+#         StaticForm.psw = MyPasswordField('Password', [
+#             ValidateRequired('Password'),
+#             ValidateLength(8, 100),
+#             ValidateEqual('conf')])
+
+#         StaticForm.conf  = PasswordField('Confirm Password')
+
+#     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
+#     if 'psw_disabled' in prop:
+#         StaticForm.psw_disabled = BooleanField('No change of password')
+
+#     if 'admin' in prop:
+#         StaticForm.admin = BooleanField('Admin')
+
+#     return StaticForm()
+
+
+# def message_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
+#     class StaticForm(Form):
+#         pass
+    
+#     if 'name' in prop:
+#         validate_unique = ValidateUnique('nickname', User.name, user_id) if rgstr else Pass()
+#         StaticForm.name = MyStringField('Nickname', [
+#             ValidateRequired('Nickname'),
+#             ValidateLength(3, 100),
+#             validate_unique])
+
+#     if 'email' in prop:
+#         validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
+#         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
+#         StaticForm.email = EmailField('Email', [
+#             ValidateRequired('Email'),
+#             ValidateLength(3, 120),
+#             ValidateEmail(),
+#             validate_unique,
+#             validate_non_existing])
+
+#     if 'psw' in prop:
+#         StaticForm.psw = PasswordField('Password', [
+#             ValidateRequired('Password'),
+#             ValidateLength(8, 100)])
+
+#     if 'psw_conf' in prop:
+#         StaticForm.psw = MyPasswordField('Password', [
+#             ValidateRequired('Password'),
+#             ValidateLength(8, 100),
+#             ValidateEqual('conf')])
+
+#         StaticForm.conf  = PasswordField('Confirm Password')
+
+#     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
+#     if 'psw_disabled' in prop:
+#         StaticForm.psw_disabled = BooleanField('No change of password')
+
+#     if 'admin' in prop:
+#         StaticForm.admin = BooleanField('Admin')
+
+#     return StaticForm()

@@ -1,15 +1,29 @@
 <!-- header.html -->
+
 <header id="l-header" class="c-flex-wrapper--row">
     <div class="l-header__wrap">
-    <a href="{{url_for('user.entry.entry')}}" id="l-header__home-entry"><h3>Log Base</h3></a>
-    <div id="l-header__mainmenu-toggler" class="toggler u-dn-pc">
-        <div id="l-header__mainmenu-opener" class="c-btn--quad c-btn--hover-bg-primary">
-            <i class="fa-solid fa-bars"></i>
+        <div class="l-header__leftmenu">
+            {% if server %}
+            <a href="{{url_for('user.entry.entry')}}" class="l-header__home-entry--arrow"></a>
+            <button id="l-header__server-banner">
+                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" class="l-header__server-img">
+                <p class="l-header__server-name">{{server.name}}</p>
+            </button>
+            <button id="l-header__channel-banner" class="u-dn-tab-min">
+                <p class="l-header__channel-name"># {{channel.name}}</p>
+            </button>
+            {% else %}
+            <a href="{{url_for('user.entry.entry')}}" class="l-header__home-entry"><h3>Log Base</h3></a>
+            {% endif %}
         </div>
-        <div id="l-header__mainmenu-closer" class="c-btn--quad c-btn--hover-bg-primary">
-            <i class="fa-solid fa-xmark"></i>
+        <div id="l-header__mainmenu-toggler" class="toggler u-dn-pc">
+            <div id="l-header__mainmenu-opener" class="c-btn--quad c-btn--hover-bg-primary">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <div id="l-header__mainmenu-closer" class="c-btn--quad c-btn--hover-bg-primary">
+                <i class="fa-solid fa-xmark"></i>
+            </div>
         </div>
-    </div>
     </div>
     <ul id="l-header__mainmenu" class="u-non-anim-pc">
 
@@ -27,7 +41,7 @@
             </div>
             <ul class="l-header__submenu tgl-reactor">
             <li>
-                <div id="l-header__modal-opener--p-index-func-channel" class="l-header__sub-layer-entry">
+                <div id="l-header__modal-opener--p-entry-func-channel" class="l-header__sub-layer-entry">
                 <div class="l-header__submenu-pilar-icon"></div>
                 <div>
                     <p class="l-header__submenu-item-title">チャンネル</p>
@@ -36,7 +50,7 @@
                 </div>
             </li>
             <li>
-                <div id="l-header__modal-opener--p-index-func-meeting" class="l-header__sub-layer-entry">
+                <div id="l-header__modal-opener--p-entry-func-meeting" class="l-header__sub-layer-entry">
                 <div class="l-header__submenu-pilar-icon"></div>
                 <div>
                     <p class="l-header__submenu-item-title">ミーティング</p>
@@ -45,7 +59,7 @@
                 </div>
             </li>
             <li>
-                <div id="l-header__modal-opener--p-index-func-message" class="l-header__sub-layer-entry">
+                <div id="l-header__modal-opener--p-entry-func-message" class="l-header__sub-layer-entry">
                 <div class="l-header__submenu-pilar-icon"></div>
                 <div>
                     <p class="l-header__submenu-item-title">メッセージ</p>

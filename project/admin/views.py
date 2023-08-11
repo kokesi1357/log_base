@@ -4,7 +4,7 @@
 from flask import Blueprint, g, session, request, flash, redirect, render_template, url_for
 import functools
 from project.app import db
-from project.models.user import User
+from project.models.models import User
 from project.form import user_form
 from time import time
 

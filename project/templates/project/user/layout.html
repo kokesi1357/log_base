@@ -17,6 +17,8 @@
     {% block main %}{% endblock %}
 </div>
 
+{% if request.path == "/entry/" %}
 {% include 'project/user/shared/footer.html' %}
+{% endif %}
 
 {% endblock %}
