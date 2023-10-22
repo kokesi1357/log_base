@@ -2,18 +2,68 @@
 
 <header id="l-header" class="c-flex-wrapper--row">
     <div class="l-header__wrap">
-        <div class="l-header__leftmenu">
+        <div class="l-header__leftmenu row">
             {% if server %}
-            <a href="{{url_for('user.entry.entry')}}" class="l-header__home-entry--arrow"></a>
-            <button id="l-header__server-banner">
-                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" class="l-header__server-img">
-                <p class="l-header__server-name">{{server.name}}</p>
-            </button>
-            <button id="l-header__channel-banner" class="u-dn-tab-min">
-                <p class="l-header__channel-name"># {{channel.name}}</p>
-            </button>
+                <a href="{{url_for('user.entry.entry')}}"
+                    class="l-header__home-entry--arrow col-sp-2"></a>
+                <div id="l-header__server-banner" class="col-sp-11">
+                    {% if server_img %}<img src="{{ server_img }}" class="l-header__server-img">{% endif %}
+                    <p class="l-header__server-name u-string-shortener">{{ server.name }}</p>
+                </div>
+
+                {% if channel %}
+                <button class="l-header__channel-banner u-dn-pc col-sp-11 toggler">
+                    <i class="fa-solid fa-chevron-up"></i>
+                    <p class="l-header__channel-name u-string-shortener"># {{ channel.name }}</p>
+                </button>
+                <ul class="l-header__channel-list u-dn-pc tgl-reactor" id="header-channel-list">
+                    {% if chnl_form %}
+                    <button class="p-index__channel-header modal-opener"
+                    onclick="open_modal_with_closer_id('add-channel')">
+                        <p class="p-index__channel-name">Create Channel</p>
+                        <i class="fa-solid fa-plus"></i>
+                    </button>
+                    {% endif %}
+
+                    {% for c in server.channels %}
+                    {% if c.id == channel.id %}
+                    <li class="p-index__channel-wrap u-active-item row" id="header-channel--{{ c.id }}"
+                    data-chnl_id="{{ c.id }}">
+                    {% else %}
+                    <li class="p-index__channel-wrap row" id="header-channel--{{ c.id }}"
+                    data-chnl_id="{{ c.id }}">
+                    {% endif %}
+                        <div class="p-index__channel-name-wrap col-sp-20"
+                        onclick="execute_channel_switch(this.parentNode)">
+                            <div class="hash-mark"><i class="fa-solid fa-hashtag"></i></div>
+                            <p class="channel-name u-string-shortener">{{ c.name }}</p>
+                        </div>
+                        <button class="p-index__channel-invite-btn col-sp-2">
+                            <i class="fa-solid fa-user-plus"></i>
+                        </button>
+                        {% if chnl_form %}
+                        <button class="p-index__channel-setting-btn col-sp-2 modal-opener"
+                        onclick="prefill_channel_update(this.parentNode); open_modal_with_closer_id('update-channel')">
+                            <i class="fa-solid fa-gear"></i>
+                        </button>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+
+                {% elif server.owner_id == g.user.id %}
+                <button class="l-header__channel-banner u-dn-pc col-sp-11"
+                onclick="open_modal_with_closer_id('add-channel')">
+                    <i class="fa-solid fa-plus"></i>
+                    <p class="l-header__channel-name u-string-shortener">Create Channel</p>
+                </button>
+
+                {% else %}
+                <div class="l-header__channel-banner u-dn-pc col-sp-11">No Channels</div>
+                {% endif %}
+
             {% else %}
-            <a href="{{url_for('user.entry.entry')}}" class="l-header__home-entry"><h3>Log Base</h3></a>
+            <a href="{{ url_for('user.entry.entry') }}" class="l-header__home-entry"><h3>Log Base</h3></a>
             {% endif %}
         </div>
         <div id="l-header__mainmenu-toggler" class="toggler u-dn-pc">
@@ -26,47 +76,49 @@
         </div>
     </div>
     <ul id="l-header__mainmenu" class="u-non-anim-pc">
-
         {% if not g.user %}
-        <li class="l-header__mainmenu-item">
-            <div id="l-header__top-entry" class="l-header__main-layer-entry">トップ</div>
+        <li id="scroll--entry-top" class="l-header__mainmenu-item">
+            <div class="l-header__main-layer-entry">トップ</div>
         </li>
-        <li class="l-header__mainmenu-item">
-            <div id="l-header__about-entry" class="l-header__main-layer-entry">このサイトについて</div>
+        <li id="scroll--entry-about" class="l-header__mainmenu-item">
+            <div class="l-header__main-layer-entry">このサイトについて</div>
         </li>
-        <li class="l-header__mainmenu-item">
-            <div id="l-header__func-entry" class="l-header__submenu-toggler toggler">
+        <li id="scroll--entry-func" class="l-header__mainmenu-item">
+            <div class="l-header__submenu-toggler toggler">
                 <p>機能</p>
                 <div class="l-header__submenu-arrow u-dn-pc"></div>
             </div>
             <ul class="l-header__submenu tgl-reactor">
-            <li>
-                <div id="l-header__modal-opener--p-entry-func-channel" class="l-header__sub-layer-entry">
-                <div class="l-header__submenu-pilar-icon"></div>
-                <div>
-                    <p class="l-header__submenu-item-title">チャンネル</p>
-                    <p class="l-header__submenu-item-detail">スムーズなタスク整理</p>
-                </div>
-                </div>
-            </li>
-            <li>
-                <div id="l-header__modal-opener--p-entry-func-meeting" class="l-header__sub-layer-entry">
-                <div class="l-header__submenu-pilar-icon"></div>
-                <div>
-                    <p class="l-header__submenu-item-title">ミーティング</p>
-                    <p class="l-header__submenu-item-detail">生産的なミーティング環境</p>
-                </div>
-                </div>
-            </li>
-            <li>
-                <div id="l-header__modal-opener--p-entry-func-message" class="l-header__sub-layer-entry">
-                <div class="l-header__submenu-pilar-icon"></div>
-                <div>
-                    <p class="l-header__submenu-item-title">メッセージ</p>
-                    <p class="l-header__submenu-item-detail">グループのコミュニケーションを効率化</p>
-                </div>
-                </div>
-            </li>
+                <li>
+                    <div class="l-header__sub-layer-entry modal-opener toggler"
+                        data-target_id="#modal-closer--func-channel">
+                        <div class="l-header__submenu-pilar-icon"></div>
+                        <div>
+                            <p class="l-header__submenu-item-title">チャンネル</p>
+                            <p class="l-header__submenu-item-detail">スムーズなタスク整理</p>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="l-header__sub-layer-entry modal-opener toggler"
+                        data-target_id="#modal-closer--func-meeting">
+                        <div class="l-header__submenu-pilar-icon"></div>
+                        <div>
+                            <p class="l-header__submenu-item-title">ミーティング</p>
+                            <p class="l-header__submenu-item-detail">生産的なミーティング環境</p>
+                        </div>
+                    </div>
+                </li>
+                <li>
+                    <div class="l-header__sub-layer-entry modal-opener toggler"
+                        data-target_id="#modal-closer--func-message">
+                        <div class="l-header__submenu-pilar-icon"></div>
+                        <div>
+                            <p class="l-header__submenu-item-title">メッセージ</p>
+                            <p class="l-header__submenu-item-detail">グループのコミュニケーションを効率化</p>
+                        </div>
+                    </div>
+                </li>
             </ul>
         </li>
         <li class="l-header__mainmenu-item">
@@ -95,24 +147,33 @@
             </li>
             </ul>
         </li>
-        {% endif %}
 
-        {% if g.user%}
+        {% else %}
         <li class="l-header__mainmenu-item">
             <div class="l-header__submenu-toggler toggler">
                 <p>Account</p>
                 <div class="l-header__submenu-arrow u-dn-pc"></div>
-                </div>
-                <ul class="l-header__submenu tgl-reactor">
-                    <li>
-                        <a href="{{url_for('user.logout')}}" class="l-header__sub-layer-entry">
-                            <div class="l-header__submenu-pilar-icon"></div>
-                            <div>
-                                <p class="l-header__submenu-item-title">Logout</p>
-                            </div>
-                        </a>
-                    </li>
-                </ul>
+            </div>
+            <ul class="l-header__submenu tgl-reactor">
+                {% if user_form %}
+                <li>
+                    <a class="l-header__sub-layer-entry" onclick="open_fixed_section_with_closer_id('user-settings')">
+                        <div class="l-header__submenu-pilar-icon"></div>
+                        <div>
+                            <p class="l-header__submenu-item-title">Settings</p>
+                        </div>
+                    </a>
+                </li>
+                {% endif %}
+                <li>
+                    <a href="{{url_for('user.logout')}}" class="l-header__sub-layer-entry">
+                        <div class="l-header__submenu-pilar-icon"></div>
+                        <div>
+                            <p class="l-header__submenu-item-title">Logout</p>
+                        </div>
+                    </a>
+                </li>
+            </ul>
         </li>
         {% endif %}
 

@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://kit.fontawesome.com/c39d0aac49.js" crossorigin="anonymous"></script>
         <link rel="stylesheet" href="{{ url_for('static',filename='node/dist/css/main.min.css') }}" media="screen">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700">
+        <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
         <title>
             {% block title %}Log Base{% endblock %}
         </title>
@@ -15,7 +18,10 @@
         <div id="loading"><div class="loader"></div></div>
         {% block layout %}
         {% endblock %}
-        <div id="modal-overlay" class="toggler"></div>
+        <div id="overlay" class="toggler"></div>
+        {% if g.user %}
+            <input type="hidden" id="user-name" value="{{ g.user.name }}">
+        {% endif %}
         <script src="/static/node/dist/ignored/js/variable.js"></script>
         <script src="/static/node/dist/js/main.js"></script>
         <script src="/static/node/dist/js/main.min.js"></script>

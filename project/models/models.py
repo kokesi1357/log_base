@@ -3,7 +3,7 @@
 
 from sqlalchemy import *
 from sqlalchemy.orm import *
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from project.app import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -30,20 +30,27 @@ class User(db.Model):
     image_file_name = Column(String(100))
     admin = Column(Boolean, nullable=False, default=False)
     master = Column(Boolean, nullable=False, default=False)
-    date_added = Column(DateTime, default=datetime.utcnow() + timedelta(hours=-8))
+    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
-    # Users to Servers [many to many]  
+    # Users to Servers [many to many]
     servers = relationship(
         "Server",
         secondary=user_server_map_table,
-        back_populates="users"
+        back_populates="users",
     )
 
-    # User() to Servers [one to many]  
+    # User to Servers [one to many]  
     own_servers = relationship('Server', backref='owner', lazy=True, cascade="all, delete-orphan")
+    # User to Messages [one to many] 
+    messages = relationship('Message', backref='sender', lazy=True, cascade="all, delete-orphan")
+
 
     def __repr__(self):
         return '<Name %r>' % self.name
+
+    @property
+    def className(self):
+        return "User"
 
     @property
     def password(self):
@@ -64,13 +71,13 @@ class Server(db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
     image_file_name = Column(String(100))
-    date_added = Column(DateTime, default=datetime.utcnow() + timedelta(hours=-8))
+    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
     # Servers to Users [many to many]
     users = relationship(
         "User",
         secondary=user_server_map_table,
-        back_populates="servers"
+        back_populates="servers",
     )
 
     # Servers to User(Owner) [many to one]
@@ -81,6 +88,10 @@ class Server(db.Model):
 
     def __repr__(self):
         return '<Name %r>' % self.name
+    
+    @property
+    def className(self):
+        return "Server"
 
 
 
@@ -89,7 +100,7 @@ class Channel(db.Model):
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
-    date_added = Column(DateTime, default=datetime.utcnow() + timedelta(hours=-8))
+    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
     # Channels to Server [many to one]  
     server_id = Column(Integer, ForeignKey('server.id'), nullable=False)
@@ -100,23 +111,41 @@ class Channel(db.Model):
     def __repr__(self):
         return '<Name %r>' % self.name
 
+    @property
+    def className(self):
+        return "Channel"
+
 
 
 class Message(db.Model):
     __tablename__ = "message"
 
     id = Column(Integer, primary_key=True)
-    content = Column(String(100), nullable=False)
-    date_added = Column(DateTime, default=datetime.utcnow() + timedelta(hours=-8))
+    content = Column(String(100))
+    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
     # Messages to Channel [many to one]
     channel_id = Column(Integer, ForeignKey('channel.id'), nullable=False)
+    # Messages to User [many to one]
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
     # Message to Files [one to many]
     files = relationship('File', backref='message', lazy=True, cascade="all, delete-orphan")
 
     def __repr__(self):
-        return '<date %r>' % self.date_added
+        return '<Posted date %r>' % self.date_added
+
+    @property
+    def className(self):
+        return "Message"
+
+    @property
+    def dateToMin(self):
+        return self.date_added.strftime('%Y/%m/%d %H:%M')
+
+    @property
+    def dateToDay(self):
+        return self.date_added.strftime('%Y/%m/%d')
 
 
 
@@ -124,11 +153,15 @@ class File(db.Model):
     __tablename__ = "file"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100), nullable=False)
-    date_added = Column(DateTime, default=datetime.utcnow() + timedelta(hours=-8))
+    name = Column(String(100))
+    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
     # Channels to Server [many to one]  
     message_id = Column(Integer, ForeignKey('message.id'), nullable=False)
 
     def __repr__(self):
-        return '<date %r>' % self.date_added
+        return '<Name %r>' % self.name
+
+    @property
+    def className(self):
+        return "File"

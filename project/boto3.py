@@ -2,13 +2,12 @@
 
 import boto3
 import os
-from werkzeug.utils import secure_filename
-from project.file import split_filename, get_file_format, allowed_file
+from project.file import split_filename, get_file_format, allowed_file, \
+    standardize_filename
 
 
 
 BUCKET_NAME = 'logbase-bkt'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'gif'}
 
 
 
@@ -23,13 +22,13 @@ s3 = boto3.resource('s3',
 s3_client = s3.meta.client
 
 
-
-# ファイルの拡張子を可能なものは統一します(例：jpeg => jpg)
-def standardize_file_format(filename):
-    splited_filename = split_filename(filename)
-    if splited_filename[1] =='jpeg':
-        return splited_filename[0] +'.jpg'
-    return filename
+# s3バケットからオブジェクトのサイズを返します
+def s3_get_obj_size(filename):
+    try:
+        file_format = get_file_format(filename)
+        return s3.ObjectSummary(BUCKET_NAME, f"{file_format}/{filename}").size
+    except:
+        return None
 
 
 # s3バケットからオブジェクトのStreamingBodyを返します
@@ -44,17 +43,14 @@ def s3_get_body(filename):
 
 
 # s3バケットにオブジェクトをアップロードします
-def s3_upload_file(file):
+def s3_upload_file(file_binary, filename):
     try:
-        filename = standardize_file_format(secure_filename(file.filename))
-        if file and allowed_file(filename, ALLOWED_EXTENSIONS):
-                file_format = get_file_format(filename)
-                s3.Bucket(BUCKET_NAME).put_object(
-                    Key=f"{file_format}/{filename}",
-                    Body=file.read()
-                )
-                return True
-        return False
+        file_format = get_file_format(filename)
+        s3.Bucket(BUCKET_NAME).put_object(
+            Key=f"{file_format}/{filename}",
+            Body=file_binary
+        )
+        return True
     except:
         return False
 
@@ -78,13 +74,17 @@ def s3_create_presigned_url(filename, expiration=3600):
                 'Key': f"{file_format}/{filename}"},
             ExpiresIn=expiration
         )
+        # The response contains the presigned URL
+        return response
     except:
         return None
 
-    # The response contains the presigned URL
-    return response
-
 
 # s3バケット内のオブジェクトを削除します
-def s3_delete_obj(object_name):
-    s3.Object(BUCKET_NAME, object_name).delete()
+def s3_delete_obj(filename):
+    try:
+        file_format = get_file_format(filename)
+        s3.Object(BUCKET_NAME, f"{file_format}/{filename}").delete()
+        return True
+    except:
+        return False

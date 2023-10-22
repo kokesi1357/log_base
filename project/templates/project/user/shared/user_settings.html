@@ -1,0 +1,179 @@
+<!-- user_settings.html -->
+
+<section id="user-settings" class="l-main__fixed-section fixed-section" data-user_id="{{ g.user.id }}">
+    <div class="l-main__fixed-section-closer c-btn--quad c-btn--hover-bg-white-back fixed-section-closer toggler"
+        id="fixed-section-closer--user-settings">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="content">
+        <h1 class="l-main__section-header">My Account</h1>
+        <ul class="p-index-main__user-info-list">
+            <li>
+                <button class="p-index-main__user-image"
+                onclick="open_modal_with_closer_id('update-account-image')">
+                    {% if user_image %}
+                    <img src="{{ user_image }}" alt="" data-status="off">
+                    {% else %}
+                    <i class="fa-solid fa-user"></i>
+                    {% endif %}
+                </button>
+            </li>
+            <li>
+                <div class="p-index-main__user-info-label">
+                    <span class="u-f-w--bold">Nickname</span>
+                    <p id="user-info--name">{{ g.user.name }}</p>
+                </div>
+                <button class="c-btn--min-rect" 
+                onclick="open_modal_with_closer_id('update-account-name')">
+                    Edit
+                </button>
+            </li>
+            <li>
+                <div class="p-index-main__user-info-label">
+                    <span class="u-f-w--bold">Email</span>
+                    <p id="user-info--email">{{ g.user.email }}</p>
+                </div>
+                <button class="c-btn--min-rect"
+                onclick="open_modal_with_closer_id('update-account-email')">
+                    Edit
+                </button>
+            </li>
+            <li>
+                <button class="c-btn--outstanding-rect"
+                onclick="open_modal_with_closer_id('update-account-password')">
+                    Change Password
+                </button>
+            </li>
+        </ul>
+        <div class="c-partition--modal"></div>
+        <div class="p-modal-section">
+            <button class="p-form__submit c-btn--submit confirm-ajax"
+            data-confirm_txt="このアカウントを削除しますか？" data-ajax_func="leave-account">
+                Leave Log Base
+            </button>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- モーダル : プロフ画像 編集 -->
+<div class="p-modal p-modal--min u-preload modal">
+    <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+        id="modal-closer--update-account-image" onclick="reset_account_image_form()">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Set Image</div>
+            <form id="update-account--image-form" class="p-form-wrap--min" enctype="multipart/form-data" 
+            onsubmit="return false" novalidate>
+                <input type="hidden" id="update-account--image-delete" value="">
+
+                <div class="p-form__input-label u-dp-flx--center">
+                    <p class="p-form__error-msg p-form__image-error-msg"></p>
+                </div>
+                <div class="p-form__circle-preview-showcase">
+                    <label class="p-form__profile-image-label c-btn image-wrap" for="update-account--image">
+                        {% if user_image %}
+                        <img src="{{ user_image }}" alt="" data-status="off">
+                        {% else %}
+                        <i class="fa-solid fa-user"></i>
+                        {% endif %}
+                    </label>
+                    <button class="p-form__clear-circle-preview"><i class="fa-solid fa-circle-minus"></i></button>
+                </div>
+                {{ user_form.image(class="p-form__input u-dn image-input", id='update-account--image') }}
+
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id='update-account--image-submit', value="Apply") }}
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- モーダル : 名前 編集 -->
+<div class="p-modal p-modal--min u-preload modal">
+    <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+        id="modal-closer--update-account-name" onclick="reset_account_name_form()">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Set Nickname</div>
+            <form id="update-account--name-form" class="p-form__wrap--min"
+            onsubmit="return false" novalidate>
+
+                {{ user_form.name.label(class="p-form__input-label", for="update-account--name") }}
+                <p class="p-form__error-msg" id="error-msg--update-account-name"></p>
+                {{ user_form.name(class="p-form__input", id="update-account--name", placeholder="New Nickname") }}
+
+                {{ user_form.current_psw.label(class="p-form__input-label", for="update-account--name-psw") }}
+                <p class="p-form__error-msg" id="error-msg--update-account-name-psw"></p>
+                {{ user_form.current_psw(class="p-form__input", id="update-account--name-psw", placeholder="Password") }}
+
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--name-submit", value="Apply") }}
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- モーダル : Email 編集 -->
+<div class="p-modal p-modal--min u-preload modal">
+    <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+        id="modal-closer--update-account-email" onclick="reset_account_email_form()">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Set Email</div>
+            <form id="update-account--email-form" class="p-form__wrap--min"
+            onsubmit="return false" novalidate>
+
+                {{ user_form.email.label(class="p-form__input-label", for="update-account--email") }}
+                <p class="p-form__error-msg" id="error-msg--update-account-email"></p>
+                {{ user_form.email(class="p-form__input", id="update-account--email", placeholder="new@address.com") }}
+
+                {{ user_form.current_psw.label(class="p-form__input-label", for="update-account--email-psw") }}
+                <p class="p-form__error-msg" id="error-msg--update-account-email-psw"></p>
+                {{ user_form.current_psw(class="p-form__input", id="update-account--email-psw", placeholder="Password") }}
+
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--email-submit", value="Apply") }}
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- モーダル : password 編集 -->
+<div class="p-modal p-modal--min u-preload modal">
+    <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+        id="modal-closer--update-account-password" onclick="reset_account_psw_form()">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Set Password</div>
+            <form id="update-account--psw-form" class="p-form__wrap--min"
+            onsubmit="return false" novalidate>
+
+                <div class="u-dp-inln-blck">
+                    {{ user_form.psw.label(class="p-form__input-label", for="update-account--new-psw", text="NEW PASSWORD") }}
+                    <button id="p-form__password-visualizer" type="button">
+                        <i class="fa-solid fa-eye-slash"></i>
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+                <p class="p-form__error-msg" id="error-msg--update-account-new-psw"></p>
+                {{ user_form.psw(class="p-form__input", id="update-account--new-psw", placeholder="New Password") }}
+
+                {{ user_form.conf.label(class="p-form__input-label", for="update-account--conf-psw") }}
+                {{ user_form.conf(class="p-form__input", id="update-account--conf-psw", placeholder="Confirm New Password") }}
+
+                {{ user_form.current_psw.label(class="p-form__input-label", for="update-account--prev-psw") }}
+                <p class="p-form__error-msg" id="error-msg--update-account-prev-psw"></p>
+                {{ user_form.current_psw(class="p-form__input", id="update-account--prev-psw", placeholder="Current Password") }}
+
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--psw-submit", value="Apply") }}
+            </form>
+        </div>
+    </div>
+</div>

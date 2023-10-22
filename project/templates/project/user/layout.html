@@ -15,6 +15,9 @@
 
 <div class="l-main">
     {% block main %}{% endblock %}
+    {% if g.user %}
+    {% include 'project/user/shared/user_settings.html' %}
+    {% endif %}
 </div>
 
 {% if request.path == "/entry/" %}

@@ -25,7 +25,7 @@
             </div>
             <div class="p-entry-top__image-wrap col-sp-24 col-tab-14">
                 <div style="min-height: 40vh; background-color: gray; position: relative;">
-                    <img src="{{img}}" alt="" width="300">
+                    <img src="{{img}}" alt="当サイトのイメージ" width="300">
                 </div>
             </div>
         </div>
@@ -152,32 +152,149 @@
         <p class="l-main__section-brief">
         WEBアプリ内にて利用できる機能達を紹介します。
         </p>
-        <div class="p-entry-func__modal-entry col col-sp-24 col-tab-8">
-            <div class="p-entry-func__img-wrap">
-                <div id="p-entry-func__modal-opener--channel" class="p-entry-func__modal-opener toggler" data-toggle="off"></div>
+        <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
+            <div class="p-entry-func__img-wrap modal-opener toggler">
+                <div id="p-entry-func__modal-image--channel" class="p-entry-func__modal-opener toggler" data-toggle="off"></div>
             </div>
             <p class="p-entry-func__img-txt">チャンネル</p>
+            <div id="p-modal--func-channel" class="p-modal u-preload modal">
+                <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+                    id="modal-closer--func-channel">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="p-modal-wrap">
+                    <div class="p-modal-content row">
+                        <div class="p-modal-block col-sp-24 col-tab-8">
+                            <p class="p-modal-header">チャンネル</p>
+                            <p class="p-entry-func__modal-txt">
+                            Ariel, listen to me
+                            The human world, it's a mess
+                            Life under the sea is better than anything they've got up there
+                            <br>
+                            <br>
+                            The seaweed is always greener
+                            In somebody else's lake
+                            You dream about going up there
+                            But that is a big mistake
+                            Just look at the world around you
+                            Right here on the ocean floor
+                            Such wonderful things surround you
+                            What more is you lookin' for?
+                            <br>
+                            <br>
+                            Under the sea, under the sea
+                            Darling, it's better down where it's wetter
+                            Take it from me
+                            Up on the shore, they work all day
+                            Out in the sun they slave away
+                            While we devotin', full time to floatin'
+                            Under the sea (Ah-ha-ha)
+                            <br>
+                            <br>
+                            Down here all the fish is happy
+                            As off through the waves they roll
+                            The fish on the land ain't happy
+                            They sad cause they in their bowl
+                            But fish in the bowl is lucky
+                            They in for a worser fate
+                            One day when the boss get hungry
+                            Guess who's gon' be on the plate?
+                            Uh-oh!
+                            <br>
+                            <br>
+                            Under the sea, under the sea
+                            Nobody beat us
+                            Fry us and eat us in fricassee
+                            We what the land folks loves to cook
+                            Under the sea we off the hook
+                            We got no troubles, life is the bubbles
+                            Under the sea (Under the sea)
+                            Under the sea (Under the sea)
+                            Since life is sweet here
+                            We got the beat here naturally (Naturally-y-y-y)
+                            Even the sturgeon an' the ray
+                            They get the urge 'n' start to play
+                            We got the spirit, you got to hear it
+                            Under the sea
+                            <br>
+                            <br>
+                            [Bridge: Sebastian, Fluke]
+                            The newt play the flute
+                            The carp play the harp
+                            The plaice play the bass
+                            And they soundin' sharp
+                            The bass play the brass
+                            The chub play the tub
+                            The fluke is the duke of soul (Yeah)
+                            The ray he can play
+                            The lings on the strings
+                            The trout rockin' out
+                            The blackfish she sings
+                            The smelt and the sprat, they know where it's at
+                            An' oh that blowfish blow
+                            (Wah, ah-ha, yeah)
+                            </p>
+                        </div>
+                        <div class="p-modal-block col-sp-24 col-tab-16">
+                            <div class="p-entry-func__modal-thumnails modal-thumnails">
+                                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="チャンネルデザインのサムネイル 1" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/src/img/chip1.JPG')}}" alt="">
+                            </div>
+                            <div class="p-entry-func__modal-mainimage modal-mainimages">
+                                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="チャンネルデザイン 1">
+                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="p-entry-func__modal-entry col col-sp-24 col-tab-8">
-            <div class="p-entry-func__img-wrap">
-                <div id="p-entry-func__modal-opener--meeting" class="p-entry-func__modal-opener toggler" data-toggle="off"></div>
+        <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
+            <div class="p-entry-func__img-wrap modal-opener toggler" data-toggle="off">
+                <div id="p-entry-func__modal-image--meeting" class="p-entry-func__modal-opener"></div>
             </div>
             <p class="p-entry-func__img-txt">ミーティング</p>
+            <div id="p-modal--func-meeting" class="p-modal u-preload modal">
+                <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+                    id="modal-closer--func-meeting">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="p-modal-wrap">
+                    <div class="p-modal-content row">
+                        <div class="p-modal-block col-sp-24 col-tab-8">
+                            <p class="p-modal-header">ミーティング</p>
+                            <p class="p-entry-func__modal-txt">hey hey hoo</p>
+                        </div>
+                        <div class="p-modal-block col-sp-24 col-tab-16">
+                            <div class="p-entry-func__modal-thumnails modal-thumnails">
+                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="ミーティングデザインのサムネイル 1" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                            </div>
+                            <div class="p-entry-func__modal-mainimage modal-mainimages">
+                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="ミーティングデザイン 1">
+                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="p-entry-func__modal-entry col col-sp-24 col-tab-8">
-            <div class="p-entry-func__img-wrap">
-                <div id="p-entry-func__modal-opener--message" class="p-entry-func__modal-opener toggler" data-toggle="off"></div>
+        <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
+            <div class="p-entry-func__img-wrap modal-opener toggler">
+                <div id="p-entry-func__modal-image--message" class="p-entry-func__modal-opener toggler" data-toggle="off"></div>
             </div>
             <p class="p-entry-func__img-txt">メッセージ</p>
-        </div>
-        <div id="p-entry-func__modal--channel" class="p-modal u-preload">
-            <div id="p-entry-func__modal-closer--channel" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
-                <i class="fa-solid fa-xmark"></i>
-            </div>
-            <div class="p-modal-wrap">
-                <div class="p-modal-content row">
+            <div id="p-modal--func-message" class="p-modal u-preload modal">
+                <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
+                    id="modal-closer--func-message">
+                    <i class="fa-solid fa-xmark"></i>
+                </div>
+                <div class="p-modal-wrap">
+                    <div class="p-modal-content row">
                     <div class="p-modal-block col-sp-24 col-tab-8">
-                        <p class="p-modal-header">チャンネル</p>
+                        <p class="p-modal-header">メッセージ</p>
                         <p class="p-entry-func__modal-txt">
                         Ariel, listen to me
                         The human world, it's a mess
@@ -249,127 +366,13 @@
                     </div>
                     <div class="p-modal-block col-sp-24 col-tab-16">
                         <div class="p-entry-func__modal-thumnails modal-thumnails">
-                            <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="詳細" data-status="on">
-                            <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="詳細">
-                            <img src="{{url_for('static', filename='/node/src/img/chip1.JPG')}}" alt="詳細">
+                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="メッセージデザインのサムネイル 1" data-status="on">
                         </div>
                         <div class="p-entry-func__modal-mainimage modal-mainimages">
-                            <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="詳細">
-                            <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="詳細">
-                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="詳細">
+                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="メッセージデザイン 1">
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>
-        <div id="p-entry-func__modal--meeting" class="p-modal u-preload">
-            <div id="p-entry-func__modal-closer--meeting" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
-                <i class="fa-solid fa-xmark"></i>
-            </div>
-            <div class="p-modal-wrap">
-                <div class="p-modal-content row">
-                    <div class="p-modal-block col-sp-24 col-tab-8">
-                        <p class="p-modal-header">ミーティング</p>
-                        <p class="p-entry-func__modal-txt">hey hey hoo</p>
                     </div>
-                    <div class="p-modal-block col-sp-24 col-tab-16">
-                        <div class="p-entry-func__modal-thumnails modal-thumnails">
-                            <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="詳細" data-status="on">
-                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="詳細">
-                        </div>
-                        <div class="p-entry-func__modal-mainimage modal-mainimages">
-                            <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="詳細">
-                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="詳細">
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="p-entry-func__modal--message" class="p-modal u-preload">
-            <div id="p-entry-func__modal-closer--message" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
-                <i class="fa-solid fa-xmark"></i>
-            </div>
-            <div class="p-modal-wrap">
-                <div class="p-modal-content row">
-                <div class="p-modal-block col-sp-24 col-tab-8">
-                    <p class="p-modal-header">メッセージ</p>
-                    <p class="p-entry-func__modal-txt">
-                    Ariel, listen to me
-                    The human world, it's a mess
-                    Life under the sea is better than anything they've got up there
-                    <br>
-                    <br>
-                    The seaweed is always greener
-                    In somebody else's lake
-                    You dream about going up there
-                    But that is a big mistake
-                    Just look at the world around you
-                    Right here on the ocean floor
-                    Such wonderful things surround you
-                    What more is you lookin' for?
-                    <br>
-                    <br>
-                    Under the sea, under the sea
-                    Darling, it's better down where it's wetter
-                    Take it from me
-                    Up on the shore, they work all day
-                    Out in the sun they slave away
-                    While we devotin', full time to floatin'
-                    Under the sea (Ah-ha-ha)
-                    <br>
-                    <br>
-                    Down here all the fish is happy
-                    As off through the waves they roll
-                    The fish on the land ain't happy
-                    They sad cause they in their bowl
-                    But fish in the bowl is lucky
-                    They in for a worser fate
-                    One day when the boss get hungry
-                    Guess who's gon' be on the plate?
-                    Uh-oh!
-                    <br>
-                    <br>
-                    Under the sea, under the sea
-                    Nobody beat us
-                    Fry us and eat us in fricassee
-                    We what the land folks loves to cook
-                    Under the sea we off the hook
-                    We got no troubles, life is the bubbles
-                    Under the sea (Under the sea)
-                    Under the sea (Under the sea)
-                    Since life is sweet here
-                    We got the beat here naturally (Naturally-y-y-y)
-                    Even the sturgeon an' the ray
-                    They get the urge 'n' start to play
-                    We got the spirit, you got to hear it
-                    Under the sea
-                    <br>
-                    <br>
-                    [Bridge: Sebastian, Fluke]
-                    The newt play the flute
-                    The carp play the harp
-                    The plaice play the bass
-                    And they soundin' sharp
-                    The bass play the brass
-                    The chub play the tub
-                    The fluke is the duke of soul (Yeah)
-                    The ray he can play
-                    The lings on the strings
-                    The trout rockin' out
-                    The blackfish she sings
-                    The smelt and the sprat, they know where it's at
-                    An' oh that blowfish blow
-                    (Wah, ah-ha, yeah)
-                    </p>
-                </div>
-                <div class="p-modal-block col-sp-24 col-tab-16">
-                    <div class="p-entry-func__modal-thumnails modal-thumnails">
-                        <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="詳細" data-status="on">
-                    </div>
-                    <div class="p-entry-func__modal-mainimage modal-mainimages">
-                        <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="詳細">
-                    </div>
-                </div>
                 </div>
             </div>
         </div>

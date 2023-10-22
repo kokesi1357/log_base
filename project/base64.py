@@ -1,6 +1,8 @@
 # base64.py
 
 import base64
+import numpy as np
+import cv2
 from project.file import get_file_format, allowed_file
 
 
@@ -21,3 +23,10 @@ def translate_into_base64(file, filename):
         return None
     except:
         return None
+
+
+# ajax から受け取ったbase64画像をdecodeします
+def decode_js_base64(js_base64):
+    optimized_base64 = js_base64.split("base64,")[1]
+    img_binary = base64.b64decode(optimized_base64)
+    return img_binary

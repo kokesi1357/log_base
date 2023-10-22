@@ -4,177 +4,188 @@
 
 {% block main %}
 
-
-<!-- コメント / チャンネル作成 -->
-<!-- <div class="l-main__app-section">
-    <div class="p-index__sidebar u-dn-sp">
-        <div class="p-index__sidebar__channel-list-wrap">
-            <div class="p-index__sidebar__channel-header">
-                <p>CHANNELS</p>
-                <button class="p-index__sidebar__channel-new-btn">
+<!-- Serverページ -->
+<div class="l-main__app-section">
+    <div class="app-content row" id="server-board-wrap">
+        <div class="p-index__server-board col-sp-12 col-tab-6">
+            <div class="p-index__server-thumnail-wrap modal-opener toggler"
+            onclick="open_modal_with_closer_id('add-server')">
+                <button class="p-index__server-thumnail toggler">
                     <i class="fa-solid fa-plus"></i>
                 </button>
             </div>
-            <ul class="p-index__sidebar__channel-list">
-                <li class="p-index__sidebar__channel-wrap u-active-item row">
-                    <div class="p-index__sidebar__hash-mark col-tab-3"><i class="fa-solid fa-hashtag"></i></div>
-                    <p class="p-index__sidebar__channel-name col-tab-17">general</p>
-                    <button class="p-index__sidebar__invite-btn col-tab-2">
-                        <i class="fa-solid fa-user-plus"></i>
-                    </button>
-                    <button class="p-index__sidebar__setting-btn col-tab-2">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                </li>
-                <li class="p-index__sidebar__channel-wrap row">
-                    <div class="p-index__sidebar__hash-mark col-tab-3"><i class="fa-solid fa-hashtag"></i></div>
-                    <p class="p-index__sidebar__channel-name col-tab-17">hello</p>
-                    <button class="p-index__sidebar__invite-btn col-tab-2">
-                        <i class="fa-solid fa-user-plus"></i>
-                    </button>
-                    <button class="p-index__sidebar__setting-btn col-tab-2">
-                        <i class="fa-solid fa-gear"></i>
-                    </button>
-                </li>
-            </ul>
+            <p class="p-index__server-title">Add Server</p>
         </div>
-    </div>
-    <main class="p-index-main" style="position:relative;">
-        <div class="p-index-main__output">
-        </div>
-        <div class="p-index-main__input">
-            <div class="p-index-main__input-bar">
-            </div>
-        </div>
-    </main>
-</div> -->
-
-<!-- モーダル : チャンネル作成 -->
-<!-- <div id="p-index__modal--new-server" class="p-modal u-preload">
-    <div id="p-index__modal-closer--new-server" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
-        <i class="fa-solid fa-xmark"></i>
-    </div>
-    <div class="p-modal-wrap">
-        <div class="p-modal-content row">
-            <div class="p-modal-header">Create Server</div>
-            <form method="POST" id="server_form" class="p-form__wrap" novalidate enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
-
-                {{ form.name.label(class="p-form__input-label") }}
-                <p class="p-form__error-msg">{{form.name.errors[0]}}</p>
-                {{ form.name(class="p-form__input") }}
-
-                <label for="image" class="p-form__image-label">
-                    <div class="u-dp-flx">
-                        <span>Image</span>
-                        <p id="p-form__image-error-msg" class="p-form__error-msg"></p>
-                    </div>
-                    <div class="p-form__image-block">
-                        <div class="p-form__image-wrap">
-                            <i class="fa-solid fa-image"></i>
-                        </div>
-                        <span class="p-form__filename">No file chosen</span>
-                    </div>
-                </label>
-                {{ form.image(class="u-dn") }}
-
-                {{ form.submit(class='p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary') }}
-            </form>
-        </div>
-    </div>
-</div> -->
-
-
-
-
-
-<!-- Serverページ -->
-<div class="l-main__app-section">
-    <div class="app-content row">
-        <button id="p-index__modal-opener--new-server" class="p-index__server-board toggler col-sp-12 col-tab-6" data-toggle="off">
-            <div class="p-index__server-thumnail-wrap">
-                <div class="p-index__server-thumnail">
-                    <i class="fa-solid fa-plus"></i>
-                </div>
-            </div>
-            <p class="p-index__server-title">New Server</p>
-        </button>
-        {% if own_servers_info %}
-            {% for osi in own_servers_info %}
-            <div class="p-index__server-board col-sp-12 col-tab-6">
+        {% if g.user.own_servers %}
+            {% for os in g.user.own_servers %}
+            {% if os.channels %}
+                {% set channel_id = os.channels[0].id %}
+            {% else %}
+                {% set channel_id = 0 %}
+            {% endif %}
+            <div class="p-index__server-board col-sp-12 col-tab-6" id="server-board-{{ os.id }}" data-id="{{ os.id }}">
                 <div class="p-index__server-thumnail-wrap">
-                    <button class="p-index__server-thumnail">
-                        {% if osi.base64 %}
-                        <img src="{{osi.base64}}" alt="詳細">
+                    <a href="{{url_for('user.in_server', server_id=os.id)}}" class="p-index__server-thumnail">
+                        {% if server_img_dict.os[loop.index0] %}
+                        <img src="{{server_img_dict.os[loop.index0]}}" alt="サーバーのサムネイル">
                         {% else %}
                         <p>No Image</p>
                         {% endif %}
-                    </button>
-                    <button class="p-index__server-edit-btn toggler">
+                    </a>
+                    <button class="p-index__server-edit-btn modal-opener toggler"
+                    onclick="prefill_server_update(this.parentNode.parentNode); open_modal_with_closer_id('update-server')">
                         <i class="fa-solid fa-gear"></i>
                     </button>
                 </div>
-                <p class="p-index__server-title">{{osi.name}}</p>
+                <p class="p-index__server-title">{{ os.name }}</p>
             </div>
             {% endfor %}
         {% endif %}
 
-        {% if servers_info %}
-            {% for si in servers_info %}
-            <button class="p-index__server-board col-sp-12 col-tab-6">
+        {% if g.user.servers %}
+            {% for s in g.user.servers %}
+            <div class="p-index__server-board col-sp-12 col-tab-6" id="joined-server-board-{{ s.id }}" >
                 <div class="p-index__server-thumnail-wrap">
-                    <div class="p-index__server-thumnail">
-                        {% if si.base64 %}
-                        <img src="{{si.base64}}" alt="詳細">
+                    <a href="{{ url_for('user.in_server', server_id=s.id) }}"
+                    class="p-index__server-thumnail">
+                        {% if server_img_dict.s[loop.index0] %}
+                        <img src="{{server_img_dict.s[loop.index0]}}" alt="詳細">
                         {% else %}
                         <p>No Image</p>
                         {% endif %}
-                    </div>
-                    <button class="p-index__server-edit-btn toggler"> 
+                    </a>
+                    <button class="p-index__server-edit-btn confirm-ajax" data-server_id="{{ s.id }}"
+                    data-confirm_txt="サーバー {{ s.name }} から退出しますか？" data-ajax_func="leave-server"> 
                         <i class="fa-solid fa-person-through-window"></i>
                     </button>
                 </div>
-                <p class="p-index__server-title">{{si.name}}</p>
-            </button>
+                <p class="p-index__server-title">{{ s.name }}</p>
+            </div>
             {% endfor %}
         {% endif %}
     </div>
 </div>
 
-<!-- モーダル : サーバー作成 -->
-<div id="p-index__modal--new-server" class="p-modal u-preload">
-    <div id="p-index__modal-closer--new-server" class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back toggler">
+
+<!-- モーダル：#サーバー追加 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad modal-closer toggler" id="modal-closer--add-server">
         <i class="fa-solid fa-xmark"></i>
     </div>
     <div class="p-modal-wrap">
-        <div class="p-modal-content row">
-            <div class="p-modal-header">Create Server</div>
-            <form method="POST" id="server_form" class="p-form__wrap" novalidate enctype="multipart/form-data">
-                {{ form.hidden_tag() }}
+        <div class="p-modal-content row" id="modal--add-server">
+            <div class="p-modal-header">Add Server</div>
+            <div class="p-modal-section">
+                <button class="p-form__submit c-btn--submit-full toggler" id="entry--create-server"
+                onclick="switch_modal_content(this)">CREATE SERVER</button>
+                <button class="p-form__submit c-btn--submit-full toggler" id="entry--join-server"
+                onclick="switch_modal_content(this)">JOIN SERVER</button>
+            </div>
+        </div>
 
-                {{ form.name.label(class="p-form__input-label") }}
-                <p class="p-form__error-msg">{{form.name.errors[0]}}</p>
-                {{ form.name(class="p-form__input") }}
-
-                <label for="image" class="p-form__image-label">
-                    <div class="u-dp-flx">
-                        <span>Image</span>
-                        <p id="p-form__image-error-msg" class="p-form__error-msg"></p>
+        <div class="p-modal-content u-dn row" id="modal--create-server">
+            <div class="p-modal-header">
+                <button class="p-modal__content-switch--left" onclick="switch_modal_content(this)">
+                    <i class="fa-solid fa-angles-left"></i>
+                </button>
+                Create Server
+            </div>
+            <form id="add-server-form" class="p-form__wrap" novalidate enctype="multipart/form-data"
+                onsubmit="return false">
+                {{ form.name.label(class="p-form__input-label", for="add-server--name") }}
+                <p class="p-form__error-msg" id="error-msg--add-server-name"></p>
+                {{ form.name(class="p-form__input", id="add-server--name") }}
+                <label for="add-server--image" class="p-form__image-label">
+                    <div class="p-form__input-label u-dp-flx">
+                        <span>IMAGE</span>
+                        <p class="p-form__error-msg p-form__image-error-msg"></p>
                     </div>
-                    <div class="p-form__image-block">
-                        <div class="p-form__image-wrap">
+                    <div class="p-form__file-block">
+                        <div class="p-form__image-wrap image-wrap" id="add-server--image-wrap">
                             <i class="fa-solid fa-image"></i>
                         </div>
-                        <span class="p-form__filename">No file chosen</span>
+                        <div class="p-form__filename">No file chosen</div>
                     </div>
                 </label>
-                {{ form.image(class="u-dn") }}
-
-                {{ form.submit(class='p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary') }}
+                {{ form.image(class="p-form__server-image u-dn image-input", id="add-server--image") }}
+                <div class="p-form__submit c-btn--submit u-pointer" id="add-server--submit">SUBMIT</div>
             </form>
+        </div>
+
+        <div class="p-modal-content u-dn row" id="modal--join-server">
+            <div class="p-modal-header">
+                <button class="p-modal__content-switch--left" onclick="switch_modal_content(this)">
+                    <i class="fa-solid fa-angles-left"></i>
+                </button>
+                Join Server
+            </div>
+            <div class="p-form__search-bar-wrap">
+                <form name="server-search-form">
+                    <input type="text" class="p-form__input p-form__search-bar optimized-text-input"
+                    id="server-search-bar" placeholder="Explore servers" autocomplete="off">
+                </form>
+                <div class="p-form__search-bar-status">
+                    <div id="p-form__search-bar-status--blank"><i class="fa-solid fa-magnifying-glass"></i></div>
+                    <div id="p-form__search-bar-status--filled" class="u-dn">
+                        <p class="status-text u-dn-tab-max">"ENTER" to Search</p>
+                        <button onclick="clear_server_search_bar()">
+                            <i class="fa-solid fa-circle-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="p-form__search-bar-result">
+                <p id="found-server-num" class="annotation u-txt-center"></p>
+                <br>
+                <p id="click-urge" class="annotation u-dn">▼ Click to join</p>
+                <ul class="p-form__server-banner-list"></ul>
+            </div>
         </div>
     </div>
 </div>
 
+
+<!-- モーダル：#サーバー編集 -->
+<div class="p-index__server-update-modal p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad toggler modal-closer" id="modal-closer--update-server">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Server Settings</div>
+            <form id="update-server-form" class="p-modal-section" novalidate enctype="multipart/form-data"
+            onsubmit="return false">
+                {{ update_form.name.label(for="update-server--name", class="p-form__input-label") }}
+                <p class="p-form__error-msg" id="error-msg--update-server-name">{{update_form.name.errors[0]}}</p>
+                {{ update_form.name(class="p-form__input", id="update-server--name") }}
+
+                <label for="update-server--image" class="p-form__image-label">
+                    <div class="p-form__input-label u-dp-flx">
+                        <span>Image</span>
+                        <p class="p-form__error-msg p-form__image-error-msg"></p>
+                    </div>
+                    <div class="p-form__file-block">
+                        <div class="p-form__image-wrap image-wrap" id="updatet-server--image-wrap">
+                            <i class="fa-solid fa-image"></i>
+                        </div>
+                        <div class="p-form__filename">No file chosen</div>
+                    </div>
+                </label>
+                {{ update_form.image(class="p-form__server-image u-dn image-input", id="update-server--image") }}
+
+                <div id="update-server--delete-image-wrap"></div>
+
+                <div class="p-form__submit c-btn--submit u-pointer" id="update-server--submit">SUBMIT</div>
+            </form>
+            <div class="c-partition--modal"></div>
+            <div class="p-modal-section">
+                <button class="p-form__submit c-btn--submit confirm-ajax" id="update-server--delete"
+                data-ajax_func="delete-server">
+                    Delete Server
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

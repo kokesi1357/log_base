@@ -23,14 +23,14 @@
             </a>
             {% endif %}
         </div>
-        <h1 class="l-main__section-header">{{title}}</h1>
+        <h1 class="l-main__section-header">{{ title }}</h1>
         <form method="POST" id="user_form" class="p-form__wrap" novalidate>
             {{ form.hidden_tag() }}
 
             {% if title in ['Sign Up'] %}
                 {{ form.name.label(class="p-form__input-label") }}
                 <p class="p-form__error-msg" id="error_name" data-error="{{form.is_valid('name')}}">
-                    {{form.name.errors[0]}}
+                    {{ form.name.errors[0] }}
                 </p>
                 {{ form.name(class="p-form__input", placeholder="Nickname") }}
             {% endif %}
@@ -39,20 +39,22 @@
             {% if title in ['Sign Up', 'Log In', 'Forgot Password?'] %}
                 {{ form.email.label(class="p-form__input-label") }}
                 <p class="p-form__error-msg" id="error_email" data-error="{{form.is_valid('email')}}">
-                    {{form.email.errors[0]}}
+                    {{ form.email.errors[0] }}
                 </p>
                 {{ form.email(class="p-form__input", placeholder="email@address.com") }}
             {% endif %}
 
 
             {% if title in ['Sign Up', 'Log In', 'Reset Passoword'] %}
-                {{ form.psw.label(class="p-form__input-label") }}
-                <button id="p-form__password-visualizer" type="button">
-                    <i class="fa-solid fa-eye-slash"></i>
-                    <i class="fa-solid fa-eye"></i>
-                </button>
+                <div>
+                    {{ form.psw.label(class="p-form__input-label") }}
+                    <button id="p-form__password-visualizer" type="button">
+                        <i class="fa-solid fa-eye-slash"></i>
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
                 <p class="p-form__error-msg" id="error_psw" data-error="{{form.is_valid('psw')}}">
-                    {{form.psw.errors[0]}}
+                    {{ form.psw.errors[0] }}
                 </p>
                 {{ form.psw(class="p-form__input", placeholder="Password") }}
             {% endif %}
@@ -69,7 +71,7 @@
             {% endif %}
 
 
-            {{ form.submit(class='p-form__submit c-btn--submit c-btn--bg-primary c-btn--hover-bg-secondary') }}
+            {{ form.submit(class='p-form__submit c-btn--submit') }}
         </form>
     </div>
 </div>

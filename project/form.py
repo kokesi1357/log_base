@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, PasswordField, \
-    BooleanField, SubmitField, FileField, TextAreaField
-from wtforms.validators import ValidationError, StopValidation, \
-    DataRequired, Length, Email, EqualTo
+    BooleanField, SubmitField, FileField, TextAreaField, MultipleFileField, HiddenField
+from wtforms.validators import ValidationError, DataRequired, \
+    Length, Email, EqualTo
 from project.models.models import User, Server, Channel, Message, File
 
 
@@ -51,11 +51,12 @@ class ValidateUnique(object):
         existing_data = None
         if self.class_name == "user":
             existing_data = User.query.filter(self.class_member==field.data).first()
-        if self.class_name == "server":
+        elif self.class_name == "server":
             existing_data = Server.query.filter(self.class_member==field.data).first()
 
-        if existing_data and (self.data_id == None or existing_data.id != self.data_id):
-            raise ValidationError(self.message)
+        if existing_data:
+            if self.data_id == None or existing_data.id != self.data_id:
+                raise ValidationError(self.message)
 
 
 # Non existing user (unregistered or non-admin)
@@ -88,6 +89,7 @@ class Pass(object):
 
 # Field classes --------------------------------------------
 
+#? MyField みたいな継承元つくる？
 class MyStringField(StringField):
     def __init__(self, label, validators, **kwargs):
         super(MyStringField, self).__init__(label, validators, **kwargs)
@@ -118,7 +120,7 @@ class MyPasswordField(PasswordField):
 
 # Base
 class Form(FlaskForm):
-    submit = SubmitField('Submit')
+    submit = SubmitField('SUBMIT')
 
     def is_valid(self, type):
         result = 0
@@ -128,153 +130,103 @@ class Form(FlaskForm):
 
 
 # User
+# rgstr:True => unique判定, editであればuser_idを入れ自名とのunique判定は無効
 def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
     class UserForm(Form):
         def __repr__(self):
             return 'UserForm'
-        # pass
     
     if 'name' in prop:
         validate_unique = ValidateUnique('nickname', "user", User.name, user_id) if rgstr else Pass()
-        UserForm.name = MyStringField('Nickname', [
-            ValidateRequired('Nickname'),
+        UserForm.name = MyStringField('NICKNAME', [
+            ValidateRequired('NICKNAME'),
             ValidateLength(3, 100),
             validate_unique])
 
     if 'email' in prop:
-        validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
+        validate_unique = ValidateUnique('email', "user", User.email, user_id) if rgstr else Pass()
         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
-        UserForm.email = EmailField('Email', [
-            ValidateRequired('Email'),
+        UserForm.email = EmailField('EMAIL', [
+            ValidateRequired('EMAIL'),
             ValidateLength(3, 120),
             ValidateEmail(),
             validate_unique,
             validate_non_existing])
 
+    if 'img' in prop:
+        UserForm.image = FileField('IMAGE')
+
     if 'psw' in prop:
-        UserForm.psw = PasswordField('Password', [
-            ValidateRequired('Password'),
+        UserForm.psw = PasswordField('PASSWORD', [
+            ValidateRequired('PASSWORD'),
+            ValidateLength(8, 100)])
+
+    if 'current_psw' in prop:
+        UserForm.current_psw = PasswordField('CURRENT PASSWORD', [
+            ValidateRequired('CURRENT PASSWORD'),
             ValidateLength(8, 100)])
 
     if 'psw_conf' in prop:
-        UserForm.psw = MyPasswordField('Password', [
-            ValidateRequired('Password'),
+        UserForm.psw = MyPasswordField('PASSWORD', [
+            ValidateRequired('PASSWORD'),
             ValidateLength(8, 100),
             ValidateEqual('conf')])
 
-        UserForm.conf  = PasswordField('Confirm Password')
+        UserForm.conf  = PasswordField('CONFIRM PASSWORD')
 
     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
     if 'psw_disabled' in prop:
-        UserForm.psw_disabled = BooleanField('No change of password')
+        UserForm.psw_disabled = BooleanField('NO CHANGE OF PASSWORD')
 
     if 'admin' in prop:
-        UserForm.admin = BooleanField('Admin')
+        UserForm.admin = BooleanField('ADMIN')
 
     return UserForm()
 
 
 # Server
-def server_form(server_id=None):
+def server_form(type=None, id=None):
     class ServerForm(Form):
         def __repr__(self):
             return 'ServerForm'
-        # pass
 
-    validate_unique = ValidateUnique('name', "server", Server.name, server_id)
-    ServerForm.name = StringField('Name', [
-        ValidateRequired('Name'),
+    validate_unique = ValidateUnique('name', "server", Server.name, id)
+    ServerForm.name = StringField('NAME', [
+        ValidateRequired('NAME'),
         ValidateLength(3, 100),
         validate_unique])
 
-    ServerForm.image = FileField('Image')
+    ServerForm.image = FileField('IMAGE')
+
+    if type and type is "update":
+        ServerForm.delete_image = BooleanField('DELETE IMAGE')
 
     return ServerForm()
 
 
-# def channel_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
-#     class StaticForm(Form):
-#         pass
-    
-#     if 'name' in prop:
-#         validate_unique = ValidateUnique('nickname', User.name, user_id) if rgstr else Pass()
-#         StaticForm.name = MyStringField('Nickname', [
-#             ValidateRequired('Nickname'),
-#             ValidateLength(3, 100),
-#             validate_unique])
+# Channel
+def channel_form():
+    class ChannelForm(Form):
+        def __repr__(self):
+            return 'ChannelrForm'
 
-#     if 'email' in prop:
-#         validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
-#         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
-#         StaticForm.email = EmailField('Email', [
-#             ValidateRequired('Email'),
-#             ValidateLength(3, 120),
-#             ValidateEmail(),
-#             validate_unique,
-#             validate_non_existing])
+    ChannelForm.name = StringField('NAME', [
+        ValidateRequired('NAME'),
+        ValidateLength(3, 100)])
 
-#     if 'psw' in prop:
-#         StaticForm.psw = PasswordField('Password', [
-#             ValidateRequired('Password'),
-#             ValidateLength(8, 100)])
-
-#     if 'psw_conf' in prop:
-#         StaticForm.psw = MyPasswordField('Password', [
-#             ValidateRequired('Password'),
-#             ValidateLength(8, 100),
-#             ValidateEqual('conf')])
-
-#         StaticForm.conf  = PasswordField('Confirm Password')
-
-#     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
-#     if 'psw_disabled' in prop:
-#         StaticForm.psw_disabled = BooleanField('No change of password')
-
-#     if 'admin' in prop:
-#         StaticForm.admin = BooleanField('Admin')
-
-#     return StaticForm()
+    return ChannelForm()
 
 
-# def message_form(prop=None, rgstr=False, user_id=None, lgin_type=False): 
-#     class StaticForm(Form):
-#         pass
-    
-#     if 'name' in prop:
-#         validate_unique = ValidateUnique('nickname', User.name, user_id) if rgstr else Pass()
-#         StaticForm.name = MyStringField('Nickname', [
-#             ValidateRequired('Nickname'),
-#             ValidateLength(3, 100),
-#             validate_unique])
+# Message
+def message_form(): 
+    class MessageForm(Form):
+        def __repr__(self):
+            return 'MessageForm'
 
-#     if 'email' in prop:
-#         validate_unique = ValidateUnique('email', User.email, user_id) if rgstr else Pass()
-#         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
-#         StaticForm.email = EmailField('Email', [
-#             ValidateRequired('Email'),
-#             ValidateLength(3, 120),
-#             ValidateEmail(),
-#             validate_unique,
-#             validate_non_existing])
+    MessageForm.content = TextAreaField('CONTENT')
 
-#     if 'psw' in prop:
-#         StaticForm.psw = PasswordField('Password', [
-#             ValidateRequired('Password'),
-#             ValidateLength(8, 100)])
+    MessageForm.files = MultipleFileField()
 
-#     if 'psw_conf' in prop:
-#         StaticForm.psw = MyPasswordField('Password', [
-#             ValidateRequired('Password'),
-#             ValidateLength(8, 100),
-#             ValidateEqual('conf')])
+    MessageForm.files_to_delete = StringField()
 
-#         StaticForm.conf  = PasswordField('Confirm Password')
-
-#     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
-#     if 'psw_disabled' in prop:
-#         StaticForm.psw_disabled = BooleanField('No change of password')
-
-#     if 'admin' in prop:
-#         StaticForm.admin = BooleanField('Admin')
-
-#     return StaticForm()
+    return MessageForm()
