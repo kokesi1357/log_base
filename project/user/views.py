@@ -67,7 +67,7 @@ def is_user_expired():
 
 
 # Check if user exists
-def user_exist():
+def does_user_exist():
     try:
         if g.user.id:
             return True
@@ -141,7 +141,7 @@ def is_logged_in(view):
 def login_required(view):
     @wraps(view)
     def censored_view(*args, **kwargs):
-        if not is_user_in_session() or not user_exist():
+        if not is_user_in_session() or not does_user_exist():
             return redirect(url_for('user.entry.login'))
         return view(*args, **kwargs)
     return censored_view
@@ -446,10 +446,7 @@ def add_server():
 
         data = {
             "result" : True,
-            "new_srvr" : {
-                "id" : new_server.id,
-                "chnl_id" : new_server.channels[0].id
-            }
+            "new_srvr" : { "id" : new_server.id }
         }
         return data
 
@@ -578,7 +575,7 @@ def leave_server(server_id):
 #   メッセージ一覧および、メッセージの作成、更新、削除   |
 # -----------------------------------------------
 
-# [Helper]  
+# [Helper]
 def store_files(files, msg_id):
     file_obj_list = []
     for fl in files:
@@ -596,7 +593,7 @@ def store_files(files, msg_id):
         s3_upload_file(fl)
     db.session.commit()
 
-
+# [Helper] in_server用
 def get_msg_files(messages):
     msg_files = {"img":[], "dcmnt":[]}
     for m in messages:
@@ -619,7 +616,7 @@ def get_msg_files(messages):
         msg_files["dcmnt"].append(dcmnts)
     return msg_files
 
-
+# [Helper] in_server用
 def get_sender_images(channel):
     sender_images = {}
     for m in channel.messages:
@@ -629,42 +626,11 @@ def get_sender_images(channel):
     return sender_images
 
 
-# In Server
-@user_bp.route('/server/<int:server_id>', methods=['GET'])
-@login_required
-@is_user_server_member
-def in_server(server_id):
-    server = Server.query.filter_by(id=server_id).first()
-    server_img = get_base64_from_s3(server.image_file_name) \
-        if server.image_file_name else ""
-
-    channel = server.channels[0] \
-        if server.channels else None
-    chnl_form = channel_form() if server.owner_id == g.user.id else ""
-
-    msg_sender_imgs = get_sender_images(channel) \
-        if channel else None
-    msg_files = get_msg_files(channel.messages) \
-        if channel else None
-    msg_form = message_form()
-
-    return render_temp(
-        'project/user/main/in_server.html', server.name,
-        server=server, server_img=server_img,
-        channel=channel, chnl_form=chnl_form,
-        msg_sender_imgs=msg_sender_imgs, msg_files=msg_files, msg_form=msg_form)
-
-
-# Switch channel [Ajax]
-#! 余裕があればin_serverで使用されてるget_msg_files等とまとめる
-@user_bp.route('/channel/<int:channel_id>/switch', methods=['GET'])
-@login_required
-@is_user_server_member
-def switch_channel(channel_id):
-    channel = Channel.query.filter_by(id=channel_id).first()
-    if channel:
+# [Helper] Ajax用 (in_serverでは、ここではなくjinja2側で抽出した方が早いデータがあるため)
+def get_msg_data_for_json(msg):
+    if isinstance(msg, list):
         msg_data = { "messages" : [], "sender_b64" : {} }
-        for i, m in enumerate(channel.messages):
+        for i, m in enumerate(msg):
             msg_data["messages"].append({
                 "id" : m.id,
                 "date" : m.dateToDay,
@@ -694,6 +660,72 @@ def switch_channel(channel_id):
                 msg_data["sender_b64"][m.sender.name] = \
                     get_base64_from_s3(m.sender.image_file_name)
 
+    else:
+        msg_data = {
+            "id" : msg.id,
+            "date" : msg.dateToDay,
+            "pricise_date" : msg.dateToMin,
+            "sender_name" : msg.sender.name,
+            "sender_img" : get_base64_from_s3(msg.sender.image_file_name) \
+                if msg.sender.image_file_name else "",
+            "content" : msg.content.replace("\n", "<br>"),
+            "files" : {
+                "img" : [],
+                "dcmnt" : []
+            }
+        }
+        for f in msg.files:
+            if allowed_file(f.name, "image"):
+                msg_data['files']['img'].append({
+                    "s3name" : f.name,
+                    "base64" : get_base64_from_s3(f.name)
+                    # json['file_list'][i]['base64'] # ajax側で生成したbase64を再利用
+                })
+            else:
+                msg_data['files']['dcmnt'].append({
+                    "s3name" : f.name,
+                    "true_name" : lift_s3_format(f.name),
+                    "url" : s3_create_presigned_url(f.name),
+                    "size" : optimize_size_unit(s3_get_obj_size(f.name))
+                })
+
+    return msg_data
+
+
+# In Server
+@user_bp.route('/server/<int:server_id>', methods=['GET'])
+@login_required
+@is_user_server_member
+def in_server(server_id):
+    server = Server.query.filter_by(id=server_id).first()
+    server_img = get_base64_from_s3(server.image_file_name) \
+        if server.image_file_name else ""
+
+    channel = server.channels[0] \
+        if server.channels else None
+    chnl_form = channel_form() if server.owner_id == g.user.id else ""
+
+    msg_sender_imgs = get_sender_images(channel) \
+        if channel else None
+    msg_files = get_msg_files(channel.messages) \
+        if channel else None
+    msg_form = message_form()
+
+    return render_temp(
+        'project/user/main/in_server.html', server.name,
+        server=server, server_img=server_img,
+        channel=channel, chnl_form=chnl_form,
+        msg_sender_imgs=msg_sender_imgs, msg_files=msg_files, msg_form=msg_form)
+
+
+# Switch channel [Ajax]
+@user_bp.route('/channel/<int:channel_id>/switch', methods=['GET'])
+@login_required
+@is_user_server_member
+def switch_channel(channel_id):
+    channel = Channel.query.filter_by(id=channel_id).first()
+    if channel:
+        msg_data = get_msg_data_for_json(channel.messages)
         data = {
             "result" : True,
             "chnl_name" : channel.name,
@@ -726,7 +758,6 @@ def add_channel(server_id):
             "result" : False,
             "error_msg" : { "name" : form.name.errors[0] }
         })
-
 
 
 # Update channel [Ajax]
@@ -763,12 +794,14 @@ def delete_channel(channel_id):
         return jsonify({ "result" : False })
 
 
+
+
 # ---------------------------------------------
 #   指定チャンネル内でのメッセージの投稿、更新、削除   |
 # ---------------------------------------------
 
 # Post message [Ajax]
-#! 余裕があればin_serverで使用されてるget_msg_files等とまとめる (switch_channelと一緒)
+
 @user_bp.route('/channel/<int:channel_id>/post_msg', methods=['POST'])
 @login_required
 @is_user_server_member
@@ -784,8 +817,9 @@ def post_message(channel_id):
         db.session.add(msg)
         db.session.commit()
 
+        # postされたファイルのdb用オブジェクトを生成 => s3にアップロード
         if json['file_list']:
-            # POSTされたファイル数の数だけ空のfileデータを生成し、リストに格納 (後から肉付けしていく)
+            # postされたファイル数の数だけ空のfileデータを生成し、リストに格納 (後から肉付けしていく)
             file_obj_list = []
             for fl in json['file_list']:
                 fl_obj = File(message_id=msg.id)
@@ -806,36 +840,9 @@ def post_message(channel_id):
                 )
             db.session.commit()
 
-        message = {
-            "id" : msg.id,
-            "date" : msg.dateToDay,
-            "pricise_date" : msg.dateToMin,
-            "sender_name" : msg.sender.name,
-            "sender_img" : get_base64_from_s3(msg.sender.image_file_name) \
-                if msg.sender.image_file_name else "",
-            "content" : msg.content.replace("\n", "<br>"),
-            "files" : {
-                "img" : [],
-                "dcmnt" : []
-            }
-        }
-        for i, f in enumerate(msg.files):
-            if allowed_file(f.name, "image"):
-                message['files']['img'].append({
-                    "s3name" : f.name,
-                    "base64" : json['file_list'][i]['base64'] # ajax側で生成したbase64を再利用
-                })
-            else:
-                message['files']['dcmnt'].append({
-                    "s3name" : f.name,
-                    "true_name" : lift_s3_format(f.name),
-                    "url" : s3_create_presigned_url(f.name),
-                    "size" : optimize_size_unit(s3_get_obj_size(f.name))
-                })
-
         data = {
             "result" : True,
-            "message" : message
+            "message" : get_msg_data_for_json(msg)
         }
         return jsonify(data)
 
@@ -855,6 +862,7 @@ def update_message(message_id):
         return jsonify({ "result" : True })
     else:
         return jsonify({ "result" : False })
+
 
 # Delete message [Ajax]
 @user_bp.route('/message/<int:message_id>/delete', methods=['GET'])
@@ -888,6 +896,46 @@ def delete_file(file_name):
         db.session.commit()
 
     return jsonify({ "result" : True })
+
+
+# Auto update message list [Ajax]
+@user_bp.route('/channel/<int:channel_id>/auto_update', methods=['POST'])
+@login_required
+@is_user_server_member
+def auto_update(channel_id):
+    new_msgs = Message.query.filter(
+        Message.channel_id == channel_id,
+        Message.id > int(request.form['latest_id']) 
+    ).all()
+    if new_msgs:
+        data = {
+            "result" : True,
+            "msg_data" : get_msg_data_for_json(new_msgs)
+        }
+    else:
+        data = { "result" : False }
+
+    return jsonify(data)
+
+
+
+
+# ------------------------
+#   ビデオ通話での情報操作   |
+# ------------------------
+
+@user_bp.route('/reciever/<int:user_id>/info', methods=['GET'])
+@login_required
+@is_user_server_member
+def get_reciever_info(user_id):
+    reciever = User.query.filter_by(id=user_id).first()
+    data = {
+        "name" : reciever.name,
+        "b64" : get_base64_from_s3(reciever.image_file_name)
+    }
+    return jsonify(data)
+
+
 
 
 # ----------------------
@@ -928,9 +976,6 @@ def update_account_name():
     form = user_form(['name', 'current_psw'], True, g.user.id)
     form.name.data = request.form['name']
     form.current_psw.data = request.form['psw']
-    print("----------------")
-    print(form.current_psw.data)
-    print("----------------")
     data = {
         "result" : False,
         "error_msg" : {
@@ -959,26 +1004,63 @@ def update_account_name():
 @user_bp.route('/update_account_email', methods=['POST'])
 @login_required
 def update_account_email():
-    form = user_form(['email', 'current_psw'], True, g.user.id)
+    form = user_form(['email', 'current_psw'], True)
+    form.email.data = request.form['email']
+    form.current_psw.data = request.form['psw']
+    data = {
+        "result" : False,
+        "error_msg" : {
+            "email" : "",
+            "psw" : ""
+        }
+    }
 
-    if form.validate_on_submit() and g.user.verify_password(form.current_psw.data):
-        g.user.email = form.email.data
-        db.session.commit()
+    if form.validate_on_submit():
+        if g.user.verify_password(request.form['psw']):
+            g.user.email = form.email.data
+            db.session.commit()
+            data["result"] = True
+        else:
+            data["error_msg"]["psw"] = "Doesn't match your current password"
+    else:
+        if form.email.errors:
+            data["error_msg"]["email"] = form.email.errors[0]
+        if form.current_psw.errors:
+            data["error_msg"]["psw"] = form.current_psw.errors[0]
 
-    return redirect(request.referrer)
+    return jsonify(data)
 
 
 # Update password  [Ajax]
 @user_bp.route('/update_account_password', methods=['POST'])
 @login_required
 def update_account_password():
-    form = user_form(['current_psw', 'psw_conf'])
+    form = user_form(['psw_conf', 'current_psw'])
+    form.psw.data = request.form['psw']
+    form.conf.data = request.form['conf_psw']
+    form.current_psw.data = request.form['prev_psw']
+    data = {
+        "result" : False,
+        "error_msg" : {
+            "psw" : "",
+            "prev_psw" : ""
+        }
+    }
 
-    if form.validate_on_submit() and g.user.verify_password(form.current_psw.data):
-        g.user.password = form.psw.data
-        db.session.commit()
+    if form.validate_on_submit():
+        if g.user.verify_password(form.current_psw.data):
+            g.user.password = form.psw.data
+            db.session.commit()
+            data["result"] = True
+        else:
+            data["error_msg"]["prev_psw"] = "Doesn't match your current password"
+    else:
+        if form.psw.errors:
+            data["error_msg"]["psw"] = form.psw.errors[0]
+        if form.current_psw.errors:
+            data["error_msg"]["prev_psw"] = form.current_psw.errors[0]
 
-    return redirect(request.referrer)
+    return jsonify(data)
 
 
 #【Log out】
@@ -993,6 +1075,8 @@ def logout():
 @user_bp.route('/leave', methods=['GET'])
 @login_required
 def leave():
-    db.session.delete(g.user)
-    db.session.commit()
+    if not g.user.sample:
+        db.session.delete(g.user)
+        db.session.commit()
+        clear_user_session()
     return redirect(request.referrer)

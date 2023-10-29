@@ -7,6 +7,7 @@ const TGL_TARGET_LIST = {
         ".p-slide-wrap",
         "#body" 
     ],
+    "phone-operator-opener" : ["#phone-operator"]
 };
 
 const OVERLAY = document.getElementById("overlay");

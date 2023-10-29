@@ -15,11 +15,11 @@
                 <div class="p-user-list__head col-tab-6">Created Date</div>
             </div>
             {% for user in users %}
-                {% if user.master == false and (user.admin == false or g.admin.master == true) %}
+                {% if user.master == false and (user.admin == false and user.sample == false or g.admin.master == true) %}
                     <div class="p-user-list__user-info-list row">
                         <div class="p-user-list__user-info-wrap col-tab-2">
                             <p class="u-dn-tab-min">Id : </p>
-                            <p class="p-user-list__user-info">{{user.id}}</p>
+                            <p class="p-user-list__user-info">{{ user.id }}</p>
                         </div>
                         <div class="p-user-list__user-info-wrap col-tab-6 col-sp-8">
                             <p class="u-dn-tab-min">Name : </p>
@@ -27,17 +27,17 @@
                                 {% if user.admin == true %}
                                 Administrator
                                 {% else %}
-                                {{user.name}}
+                                {{ user.name }}
                                 {% endif %}
                             </a>
                         </div>
                         <div class="p-user-list__user-info-wrap col-tab-8">
                             <p class="u-dn-tab-min">Email : </p>
-                            <p class="p-user-list__user-info">{{user.email}}</p>
+                            <p class="p-user-list__user-info">{{ user.email }}</p>
                         </div>
                         <div class="p-user-list__user-info-wrap col-tab-6">
                             <p class="u-dn-tab-min">Born : </p>
-                            <p class="p-user-list__user-info">{{user.date_added.strftime('%Y/%m/%d %H:%M')}}</p>
+                            <p class="p-user-list__user-info">{{ user.date_added.strftime('%Y/%m/%d %H:%M') }}</p>
                         </div>
                         <div class="p-user-list__user-info-wrap col-tab-2">
                             <button

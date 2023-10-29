@@ -45,13 +45,90 @@
                 {% endfor %}
             </ul>
         </div>
+
+        <!-- ? 上のチャンネルリストのmaxwidthを 100%-下のheight にjsで操作する? -->
+        <section class="p-index__side-user-section">
+            <div class="p-index__phone-operator" id="phone-operator" data-status="off">
+                <div class="p-index__phone-book u-dn" id="phone-book">
+                    <p class="note-for-call">! 選択したユーザーに発信します !</p>
+                    <ul class="p-index__callable-user-list">
+                        {% for i in range(6) %}
+                        <li class="user-list">
+                            <div class="user-list-image">
+                                <img src="{{ user_image }}" alt="">
+                                <!-- <i class="fa-solid fa-user"></i> -->
+                            </div>
+                            <p class="user-list-name u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                            <button class="cancel-call-btn"
+                            onclick="">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <!-- ! 通話中画面の作成 -->
+                <div class="p-index__side-call-monitor">
+                    <div class="side-user-display">
+                        <video id="side-caller-video" autoplay></video>
+                        <!-- <img src="{{ user_image }}" alt=""> -->
+                        <div class="user-name">
+                            <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                            <i class="fa-solid fa-microphone-slash"></i>
+                        </div>
+                    </div>
+                    <div class="side-user-display">
+                        <!-- <video id="side-receiver-video" src=""></video> -->
+                        <img src="{{ user_image }}" alt="">
+                        <div class="user-name">
+                            <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                            <i class="fa-solid fa-microphone-slash"></i>
+                        </div>
+                    </div>
+                    <div class="side-call-menu">
+                        <button class="menu-btn" data-=""
+                        onclick="open_fixed_section_by_section_id('full-screen-video')">
+                            <i class="fa-solid fa-expand"></i>
+                        </button>
+                        <button class="menu-btn u-bg--alert" id="video-go" data-=""
+                        onclick="">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <button class="menu-btn mute-btn" data-=""
+                        onclick="">
+                            <i class="fa-solid fa-microphone-slash"></i>
+                            <!-- <i class="fa-solid fa-microphone"></i> -->
+                        </button> 
+                    </div>
+                </div>
+
+            </div>
+            <div class="p-index__user-status-bar">
+                <!-- <span class="connecting">Connecting<span></span></span> -->
+                <span class="connected">Connected<span></span></span>
+            </div>
+            <div class="p-index__user-action-list row">
+                <div class="p-index__side-user-image">
+                    {% if user_image %}
+                    <img src="{{ user_image }}" alt="">
+                    {% else %}
+                    <i class="fa-solid fa-user"></i>
+                    {% endif %}
+                </div>
+                <p class="u-string-shortener u-f-w--bold col-sp-13">{{ g.user.name }}</p>
+                <button class="p-index__user-action-btn col-sp-3 toggler" id="phone-operator-opener">
+                    <i class="fa-solid fa-phone"></i>
+                </button>
+                <button class="p-index__user-action-btn col-sp-3"
+                onclick="open_fixed_section_by_section_id('user-settings')">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+            </div>
+        </section>
     </div>
 
     <!-- メッセージ一覧等 -->
-    {% set area_list =[
-        "A", "B", "C", "D", "E", 
-        "F", "G", "H", "I", "J" ]
-    %}
     {% set ns = namespace(prev_date = "") %}
     <main class="p-index-main">
         <div class="p-index-main__output">
@@ -271,7 +348,6 @@
     </div>
 
 
-
     {% if chnl_form %}
     <!-- モーダル : チャンネル作成 -->
     <div class="p-modal u-preload modal">
@@ -320,6 +396,47 @@
     </div>
     {% endif %}
 </div>
+
+
+
+<!-- 固定 : ビデオ通話のフルスクリーン -->
+<section id="full-screen-video" class="l-main__fixed-section fixed-section">
+    <div class="p-index__full-call-menu">
+        <button class="menu-btn fixed-section-closer toggler"
+        id="fixed-section-closer--full-screen-video">
+            <i class="fa-solid fa-compress"></i>
+        </button>
+        <button class="menu-btn u-bg--alert" data-=""
+        onclick="">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+        <button class="menu-btn" data-=""
+        onclick="">
+            <!-- <i class="fa-solid fa-microphone-slash"></i> -->
+            <i class="fa-solid fa-microphone"></i>
+        </button>
+    </div>
+    <div class="wide-content">
+        <div class="p-index__full-call-monitor">
+            <div class="full-user-display">
+                <video id="full-caller-video" autoplay></video>
+                <!-- <img src="{{ user_image }}" alt=""> -->
+                <div class="user-name">
+                    <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                    <i class="fa-solid fa-microphone-slash"></i>
+                </div>
+            </div>
+            <div class="full-user-display">
+                <!-- <video id="full-receiver-video" src=""></video> -->
+                <img src="{{ user_image }}" alt="">
+                <div class="user-name">
+                    <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                    <i class="fa-solid fa-microphone-slash"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 
 
 {% endblock %}

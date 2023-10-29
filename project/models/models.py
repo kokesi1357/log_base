@@ -28,6 +28,7 @@ class User(db.Model):
     email = Column(String(120), unique=True, nullable=False)
     hashed_password = Column(String(128), nullable=False)
     image_file_name = Column(String(100))
+    sample = Column(Boolean, nullable=False, default=False)
     admin = Column(Boolean, nullable=False, default=False)
     master = Column(Boolean, nullable=False, default=False)
     date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))

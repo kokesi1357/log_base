@@ -33,10 +33,10 @@ class ValidateEmail(Email):
 
 # Equality
 class ValidateEqual(EqualTo):
-    def __init__(self, type):
+    def __init__(self, fieldname, repr):
         super().__init__(
-            fieldname=type,
-            message=f"*Must match the {type} field.")
+            fieldname=fieldname,
+            message=f"*Must match the { repr } field.")
 
 
 # Data uniqueness
@@ -70,13 +70,6 @@ class ValidateNonExisting(object):
         user = User.query.filter(self.class_member==field.data).first()
         if user == None or (self.lgin_type == "user" and user.admin):
             raise ValidationError(self.message)
-
-
-class ValidateFileFormat(object):
-    def __init__(self, type, class_member, lgin_type=None):
-        self.message = f"* User with this {type} doesn\'t exist."
-        self.class_member = class_member
-        self.lgin_type = lgin_type
 
 
 # Non validation class
@@ -161,18 +154,18 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
             ValidateRequired('PASSWORD'),
             ValidateLength(8, 100)])
 
-    if 'current_psw' in prop:
-        UserForm.current_psw = PasswordField('CURRENT PASSWORD', [
-            ValidateRequired('CURRENT PASSWORD'),
-            ValidateLength(8, 100)])
-
     if 'psw_conf' in prop:
         UserForm.psw = MyPasswordField('PASSWORD', [
             ValidateRequired('PASSWORD'),
             ValidateLength(8, 100),
-            ValidateEqual('conf')])
+            ValidateEqual('conf', 'confirm')])
 
         UserForm.conf  = PasswordField('CONFIRM PASSWORD')
+
+    if 'current_psw' in prop:
+        UserForm.current_psw = PasswordField('CURRENT PASSWORD', [
+            ValidateRequired('CURRENT PASSWORD'),
+            ValidateLength(8, 100)])
 
     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
     if 'psw_disabled' in prop:
@@ -180,6 +173,9 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
 
     if 'admin' in prop:
         UserForm.admin = BooleanField('ADMIN')
+
+    if 'sample' in prop:
+        UserForm.sample = BooleanField('SAMPLE')
 
     return UserForm()
 

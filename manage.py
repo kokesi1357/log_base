@@ -71,29 +71,20 @@ def create_user():
     db.session.commit()
 
 
-@manager_cli.command('test')
-def delete():
-    u = User.query.filter_by(name="kenken").first()
-    u2 = User.query.filter_by(name="kentest").first()
-    # u2.servers.append(u.own_servers[0])
-    # db.session.commit()
+import random
 
-    # m = Message(content="heye", user_id=u2.id, files=[File(name="hey")],
-    #             channel_id=u2.servers[0].channels[0].id)
-    # db.session.add(m)
-    # db.session.commit()
-
-    db.session.delete(u2)
+@manager_cli.command('add_msg')
+def add_msg():
+    channel = Channel.query.filter_by(id=1).first()
+    channel.messages.append(
+        Message(content=str(random.randrange(100000)), user_id=3)
+    )
     db.session.commit()
-    
-    # print("--------------------------")
-    # print(u2.servers)
-    # print("--------------------------")
-    # print(u2.own_servers)
-    print("--------------------------")
-    print(u.own_servers[0].users)
-    # print("--------------------------")
-    # print(u.messages)
+
+    print("-----------")
+    print(channel.messages)
+    print("-----------")
+
 
 
 app.cli.add_command(manager_cli)

@@ -12,12 +12,13 @@
         <form method="POST" id="user_form" class="p-form__wrap" novalidate>
             {{ form.hidden_tag() }}
 
-
             {% if g.admin.master %}
-                <div class="p-form__checkbox-wrap">
-                    {{ form.admin(class="p-form__checkbox p-form__disabled-trigger", onchange="checkbox_disable_input(this)") }}
-                    {{ form.admin.label(class="p-form__checkbox-label") }}
-                </div>
+            <div class="p-form__checkbox-wrap">
+                {{ form.admin(class="p-form__checkbox p-form__disabled-trigger", onchange="checkbox_disable_input(this)") }}
+                {{ form.admin.label(class="p-form__checkbox-label") }}
+                {{ form.sample(class="p-form__checkbox p-form__disabled-trigger") }}
+                {{ form.sample.label(class="p-form__checkbox-label") }}
+            </div>
             {% endif %}
 
 

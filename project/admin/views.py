@@ -155,6 +155,7 @@ def index():
     return render_temp('project/admin/main/index.html')
 
 
+#? ページネーションつけよう! (user_list)
 #【User Management】User List
 @admin_bp.route('/user_list')
 @login_required
@@ -167,25 +168,33 @@ def user_list():
 @admin_bp.route('/add_user', methods=['GET', 'POST'])
 @login_required
 def add_user():
-    form = user_form(['name', 'email', 'psw', 'psw_conf', 'admin'], True)
+    form = user_form(['name', 'email', 'psw', 'psw_conf', 'admin', 'sample'], True)
 
     if request.method == 'POST': 
         # ユーザーがAdminとして登録される場合、名前をNoneで統一し、名前のvalidationを無効化します
         form = adjust_validators(form)
+        # ユーザー作成者がmasterでないと、sampleおよびadminユーザーを生成できないようにする
+        if not g.admin.master:
+            form.sample.data = False
+            form.admin.data = False
 
         if form.validate_on_submit():
             user_to_add = User(
                 name=form.name.data if not form.admin.data else "Administrator",
                 email=form.email.data,
                 password=form.psw.data,
-                admin=form.admin.data
+                admin=form.admin.data,
+                sample=form.sample.data
             )
             db.session.add(user_to_add)
             db.session.commit()
             flash(f"User [ {user_to_add.name} ] was successfully added!")
+
             form.name.data = ''
             form.email.data = ''
             form.psw.data = ''
+            form.admin.data = False
+            form.sample.data = False
 
     return render_temp('project/admin/main/add_user.html', 'Add User', form)
 
@@ -235,19 +244,15 @@ def delete_user(id):
     user_to_delete = User.query.get_or_404(id)
 
     try:
-        name = user_to_delete.name
-        db.session.delete(user_to_delete)
-        db.session.commit()
-        flash(f"User [ {name} ] was successfully deleted!")
+        if g.admin.master == True \
+        or (user_to_delete.sample != True and user_to_delete.admin != True):
+            name = user_to_delete.name
+            db.session.delete(user_to_delete)
+            db.session.commit()
+            flash(f"User [ {name} ] was successfully deleted!")
+        else:
+            flash(f"The target [ {name} ] is undeletable User!")
     except:
         flash('Woops!! There was a problem deleting a user. Try again...')
 
     return redirect(url_for('admin.user_list'))
-
-
-
-
-# やること
-# ユーザーフィルターしよう！(登録順, adminのみ, 一般のみ, )
-# ユーザー検索(email, name) 非同期？ いやいい
-#* ページネーションつけよう! (user_list)

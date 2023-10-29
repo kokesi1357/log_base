@@ -1,10 +1,10 @@
 <!-- user_settings.html -->
 
-<section id="user-settings" class="l-main__fixed-section fixed-section" data-user_id="{{ g.user.id }}">
-    <div class="l-main__fixed-section-closer c-btn--quad c-btn--hover-bg-white-back fixed-section-closer toggler"
+<section id="user-settings" class="l-main__fixed-section fixed-section">
+    <button class="l-main__fixed-section-closer c-btn--quad c-btn--hover-bg-white-back fixed-section-closer toggler"
         id="fixed-section-closer--user-settings">
         <i class="fa-solid fa-xmark"></i>
-    </div>
+    </button>
     <div class="content">
         <h1 class="l-main__section-header">My Account</h1>
         <ul class="p-index-main__user-info-list">
@@ -45,13 +45,15 @@
                 </button>
             </li>
         </ul>
+        {% if g.user.sample == false %}
         <div class="c-partition--modal"></div>
         <div class="p-modal-section">
-            <button class="p-form__submit c-btn--submit confirm-ajax"
-            data-confirm_txt="このアカウントを削除しますか？" data-ajax_func="leave-account">
+            <button class="p-form__submit c-btn--submit confirm"
+            data-confirm_txt="このアカウントを削除しますか？" data-url="{{ url_for('user.leave') }}">
                 Leave Log Base
             </button>
         </div>
+        {% endif %}
     </div>
 </section>
 
