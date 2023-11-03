@@ -969,6 +969,14 @@ def update_account_image():
     return jsonify({ "result" : True })
 
 
+def my_validate_form(form):
+    form.validate_on_submit()
+    result = True
+    for field in form.values():
+        if field.errors:
+            result = False
+    return { "result" : result, "form" : form }
+
 # Update name [Ajax]
 @user_bp.route('/update_account_name', methods=['POST'])
 @login_required
@@ -983,7 +991,8 @@ def update_account_name():
             "psw" : ""
         }
     }
-
+    # validated = my_validate_form(form)
+    # if validated["result"]:
     if form.validate_on_submit():
         if g.user.verify_password(request.form['psw']):
             g.user.name = form.name.data
@@ -996,6 +1005,10 @@ def update_account_name():
             data["error_msg"]["name"] = form.name.errors[0]
         if form.current_psw.errors:
             data["error_msg"]["psw"] = form.current_psw.errors[0]
+        # if validated["form"].name.errors:
+        #     data["error_msg"]["name"] = validated["form"].name.errors[0]
+        # if validated["form"].current_psw.errors:
+        #     data["error_msg"]["psw"] = validated["form"].current_psw.errors[0]
 
     return jsonify(data)
 

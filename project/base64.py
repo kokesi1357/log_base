@@ -1,8 +1,6 @@
 # base64.py
 
 import base64
-import numpy as np
-import cv2
 from project.file import get_file_format, allowed_file
 
 

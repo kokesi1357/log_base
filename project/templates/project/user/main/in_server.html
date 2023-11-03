@@ -27,20 +27,22 @@
                 <li class="p-index__channel-wrap row" id="side-channel--{{ c.id }}"
                 data-chnl_id="{{ c.id }}">
                 {% endif %}
-                    <div class="p-index__channel-name-wrap col-tab-20"
+                    <div class="p-index__channel-name-wrap col-tab-22"
                     onclick="execute_channel_switch(this.parentNode)">
                         <div class="hash-mark"><i class="fa-solid fa-hashtag"></i></div>
                         <p class="channel-name u-string-shortener">{{ c.name }}</p>
                     </div>
 
-                    <button class="p-index__channel-invite-btn col-tab-2">
+                    {% if server.owner_id == g.user.id %}
+                    <!-- <button class="p-index__channel-invite-btn col-tab-2">
                         <i class="fa-solid fa-user-plus"></i>
-                    </button>
+                    </button> -->
 
                     <button class="p-index__channel-setting-btn col-tab-2 modal-opener"
                     onclick="prefill_channel_update(this.parentNode); open_modal_with_closer_id('update-channel')">
                         <i class="fa-solid fa-gear"></i>
                     </button>
+                    {% endif %}
                 </li>
                 {% endfor %}
             </ul>
@@ -294,7 +296,7 @@
 <div>
     <!-- モーダル：メッセージに添付するファイル拡張子の使用不可を警告 -->
     <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp toggler"
+        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
             id="modal-closer--unavailable-format">
             <i class="fa-solid fa-xmark"></i>
         </div>
@@ -312,7 +314,7 @@
 
     <!-- モーダル：メッセージに添付するファイル数の上限オーバーを警告 -->
     <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp  toggler"
+        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
             id="modal-closer--too-many-uploads">
             <i class="fa-solid fa-xmark"></i>
         </div>
@@ -326,7 +328,7 @@
 
     <!-- モーダル：メッセージに添付するファイルの容量オーバーを警告 -->
     <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp  toggler"
+        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
             id="modal-closer--too-large-data">
             <i class="fa-solid fa-xmark"></i>
         </div>

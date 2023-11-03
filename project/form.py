@@ -113,6 +113,11 @@ class MyPasswordField(PasswordField):
 
 # Base
 class Form(FlaskForm):
+    # 本番ではデフォで設定されているcsrf protectionをオフにしていないと、
+    # ajax経由のformをvalidate()した際、必ずfalseを返す
+    # form内にhidden_tag()した際、自動でcsrf
+    class Meta:
+        csrf = False
     submit = SubmitField('SUBMIT')
 
     def is_valid(self, type):
@@ -197,6 +202,7 @@ def server_form(type=None, id=None):
     if type and type is "update":
         ServerForm.delete_image = BooleanField('DELETE IMAGE')
 
+    ServerForm.Meta.csrf = False
     return ServerForm()
 
 

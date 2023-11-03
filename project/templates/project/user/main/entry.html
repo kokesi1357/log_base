@@ -8,7 +8,7 @@
     <div class="content">
         <h1 class="l-main__section-header">WELCOME TO LOG BASE</h1>
         <div class="row">
-            <div class="p-entry-top__entry-wrap col-sp-24 col-tab-10">
+            <div class="p-entry-top__entry-wrap col-sp-24 col-tab-10 u-mrgn-center--hrzn">
                 <a href="{{url_for('user.entry.login')}}" class="p-entry-top__entry p-entry-top__signin-entry">
                     サインイン
                     <i class="fa-solid fa-angles-right"></i>
@@ -17,133 +17,128 @@
                     アカウントを作成
                     <i class="fa-solid fa-angles-right"></i>
                 </a>
-                <a href="{{url}}" download="linnbenton.pdf" target="_blank" rel="noopener noreferrer">download</a>
-                <form method=post enctype="multipart/form-data">
-                    <p><label>ファイル: <input name="file" type="file" placeholder="入力"></label>
-                    <p><input type="submit" value="確定！"></p>
-                </form>
             </div>
-            <div class="p-entry-top__image-wrap col-sp-24 col-tab-14">
+            <!-- <div class="p-entry-top__image-wrap col-sp-24 col-tab-14 ">
                 <div style="min-height: 40vh; background-color: gray; position: relative;">
                     <img src="{{img}}" alt="当サイトのイメージ" width="300">
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </section>
 <section id="p-entry-about" class="l-main__section">
     <div class="content row">
         <h1 class="l-main__section-header">このサイトについて</h1>
-        <div class="p-entry-about__brief-wrap col-sp-24 col-tab-12">
-        <div class="l-main__section-brief">
-            こちらはポートフォリオ用に作成したWEBアプリです。
-            <br>
-            基本用途はグループ内でのメッセージのやり取りですが、
-            <br>
-            デスクトップではビデオチャット機能もございます。
-            <br>
-            どうぞ手塩にかけ育てたプロダクトに触れていってください。
+        <div class="p-entry-about__brief-wrap col-sp-24 col-tab-12 u-mrgn-center--hrzn">
+            <div class="l-main__section-brief">
+                こちらはポートフォリオ用に作成したWEBアプリです。
+                <br>
+                基本用途はグループ内でのメッセージのやり取りですが、
+                <br>
+                デスクトップではビデオチャット機能もございます。
+                <br>
+                どうぞ手塩にかけ育てたプロダクトに触れていってください。
+            </div>
+            <!-- <div>
+                <a href="#" class="p-entry-about__github-entry">GitHub <i class="fa-brands fa-github"></i></a>
+            </div> -->
         </div>
-        <div>
-            <a href="#" class="p-entry-about__github-entry">GitHub <i class="fa-brands fa-github"></i></a>
-        </div>
-        </div>
-        <div class="col-sp-24 col-tab-12">
-        <h3 class="p-entry-about__news-section-head">- Latest news -</h3>
-        <ul class="p-entry-about__news-list">
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-            <li class="p-entry-about__news-wrap">
-                <div class="p-entry-about__news-header-wrap">
-                    <div class="p-entry-about__news-pilar-icon"></div>
-                    <p class="p-entry-about__news-header">news title 1</p>
-                </div>
-                <p class="p-entry-about__news-date">2023/03/21</p>
-                <p class="p-entry-about__news-content">
-                    This is the latest news on this web application.
-                    <br>
-                    This is still being under construction.
-                    <br> We offer great apology for your inconvenience.
-                </p>
-            </li>
-        </ul>
-        </div>
+        <!-- <div class="col-sp-24 col-tab-12">
+            <h3 class="p-entry-about__news-section-head">- Latest news -</h3>
+            <ul class="p-entry-about__news-list">
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+                <li class="p-entry-about__news-wrap">
+                    <div class="p-entry-about__news-header-wrap">
+                        <div class="p-entry-about__news-pilar-icon"></div>
+                        <p class="p-entry-about__news-header">news title 1</p>
+                    </div>
+                    <p class="p-entry-about__news-date">2023/03/21</p>
+                    <p class="p-entry-about__news-content">
+                        This is the latest news on this web application.
+                        <br>
+                        This is still being under construction.
+                        <br> We offer great apology for your inconvenience.
+                    </p>
+                </li>
+            </ul>
+        </div> -->
     </div>
 </section>
 <section id="p-entry-func" class="l-main__section">
@@ -167,84 +162,23 @@
                         <div class="p-modal-block col-sp-24 col-tab-8">
                             <p class="p-modal-header">チャンネル</p>
                             <p class="p-entry-func__modal-txt">
-                            Ariel, listen to me
-                            The human world, it's a mess
-                            Life under the sea is better than anything they've got up there
-                            <br>
-                            <br>
-                            The seaweed is always greener
-                            In somebody else's lake
-                            You dream about going up there
-                            But that is a big mistake
-                            Just look at the world around you
-                            Right here on the ocean floor
-                            Such wonderful things surround you
-                            What more is you lookin' for?
-                            <br>
-                            <br>
-                            Under the sea, under the sea
-                            Darling, it's better down where it's wetter
-                            Take it from me
-                            Up on the shore, they work all day
-                            Out in the sun they slave away
-                            While we devotin', full time to floatin'
-                            Under the sea (Ah-ha-ha)
-                            <br>
-                            <br>
-                            Down here all the fish is happy
-                            As off through the waves they roll
-                            The fish on the land ain't happy
-                            They sad cause they in their bowl
-                            But fish in the bowl is lucky
-                            They in for a worser fate
-                            One day when the boss get hungry
-                            Guess who's gon' be on the plate?
-                            Uh-oh!
-                            <br>
-                            <br>
-                            Under the sea, under the sea
-                            Nobody beat us
-                            Fry us and eat us in fricassee
-                            We what the land folks loves to cook
-                            Under the sea we off the hook
-                            We got no troubles, life is the bubbles
-                            Under the sea (Under the sea)
-                            Under the sea (Under the sea)
-                            Since life is sweet here
-                            We got the beat here naturally (Naturally-y-y-y)
-                            Even the sturgeon an' the ray
-                            They get the urge 'n' start to play
-                            We got the spirit, you got to hear it
-                            Under the sea
-                            <br>
-                            <br>
-                            [Bridge: Sebastian, Fluke]
-                            The newt play the flute
-                            The carp play the harp
-                            The plaice play the bass
-                            And they soundin' sharp
-                            The bass play the brass
-                            The chub play the tub
-                            The fluke is the duke of soul (Yeah)
-                            The ray he can play
-                            The lings on the strings
-                            The trout rockin' out
-                            The blackfish she sings
-                            The smelt and the sprat, they know where it's at
-                            An' oh that blowfish blow
-                            (Wah, ah-ha, yeah)
+
                             </p>
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
-                                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="チャンネルデザインのサムネイル 1" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/src/img/chip1.JPG')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel3_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel4_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel5_min.png')}}" alt="">
                             </div>
                             <div class="p-entry-func__modal-mainimage modal-mainimages">
-                                <img src="{{url_for('static', filename='/node/dist/img/sunflower_min.jpg')}}" alt="チャンネルデザイン 1">
-                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel3_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel4_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/channel5_min.png')}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -269,12 +203,12 @@
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
-                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="ミーティングデザインのサムネイル 1" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
                             </div>
                             <div class="p-entry-func__modal-mainimage modal-mainimages">
-                                <img src="{{url_for('static', filename='/node/dist/img/space_big_min.png')}}" alt="ミーティングデザイン 1">
-                                <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -366,10 +300,12 @@
                     </div>
                     <div class="p-modal-block col-sp-24 col-tab-16">
                         <div class="p-entry-func__modal-thumnails modal-thumnails">
-                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="メッセージデザインのサムネイル 1" data-status="on">
+                            <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
+                            <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
                         </div>
                         <div class="p-entry-func__modal-mainimage modal-mainimages">
-                            <img src="{{url_for('static', filename='/node/dist/img/icescream_min.png')}}" alt="メッセージデザイン 1">
+                            <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
+                            <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
                         </div>
                     </div>
                     </div>
