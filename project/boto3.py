@@ -12,13 +12,16 @@ BUCKET_NAME = 'logbase-bkt'
 
 
 # ローカル環境でのs3アクセス
-s3 = boto3.resource('s3',
-        aws_access_key_id=os.environ.get('AWS_ACCESS'),
-        aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS'),
-        region_name='ap-northeast-1'
-)
+if os.environ.get('APP_SETTINGS') is not 'project.config.ProductionConfig':
+    s3 = boto3.resource('s3',
+            aws_access_key_id=os.environ.get('AWS_ACCESS'),
+            aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS'),
+            region_name='ap-northeast-1'
+    )
 # EC2環境でのアクセス
-# s3 = boto3.resource('s3')
+else:
+    s3 = boto3.resource('s3')
+
 s3_client = s3.meta.client
 
 

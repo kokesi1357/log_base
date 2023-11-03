@@ -692,6 +692,20 @@ def get_msg_data_for_json(msg):
     return msg_data
 
 
+# [Helper] in_server用
+def get_server_member_imgs(server):
+    member_images = []
+    for u in server.users:
+        if u.image_file_name:
+            member_images.append(
+                get_base64_from_s3(u.image_file_name)
+            )
+        else:
+            member_images.append(None)
+    return member_images
+
+
+
 # In Server
 @user_bp.route('/server/<int:server_id>', methods=['GET'])
 @login_required
@@ -700,6 +714,7 @@ def in_server(server_id):
     server = Server.query.filter_by(id=server_id).first()
     server_img = get_base64_from_s3(server.image_file_name) \
         if server.image_file_name else ""
+    server_mem_imgs = get_server_member_imgs(server)
 
     channel = server.channels[0] \
         if server.channels else None
@@ -713,7 +728,7 @@ def in_server(server_id):
 
     return render_temp(
         'project/user/main/in_server.html', server.name,
-        server=server, server_img=server_img,
+        server=server, server_img=server_img, server_mem_imgs=server_mem_imgs,
         channel=channel, chnl_form=chnl_form,
         msg_sender_imgs=msg_sender_imgs, msg_files=msg_files, msg_form=msg_form)
 

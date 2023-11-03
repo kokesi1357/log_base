@@ -14,8 +14,6 @@
         </title>
     </head>
     <body id="body">
-        <script>
-        </script>
         <div id="loading"><div class="loader"></div></div>
         {% block layout %}
         {% endblock %}
@@ -26,47 +24,5 @@
         <script src="/static/node/dist/ignored/js/variable.js"></script>
         <script src="/static/node/dist/js/main.js"></script>
         <script src="/static/node/dist/js/main.min.js"></script>
-        <script>
-            stream_video = () => {
-                const video = document.getElementById('side-caller-video');
-                const video2 = document.getElementById('full-caller-video');
-                navigator.mediaDevices
-                    .getUserMedia({
-                        video: true,
-                        audio: false,
-                    })
-                    .then((stream) => {
-                        video.srcObject = stream;
-                        video.play();
-                        video2.srcObject = stream;
-                        video2.play();
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                    });
-            }
-
-            let go_btn = document.getElementById('video-go');
-            if (go_btn) go_btn.addEventListener('click', stream_video);
-
-
-            const PEER = new Peer();
-
-            // Connect
-            const CONN = PEER.connect('another-peers-id');
-            // on open will be launch when you successfully connect to PeerServer
-            PEER.on('open', function(){
-                // here you have conn.id
-                PEER.send('hi!');
-            });
-
-            // Receive
-            PEER.on('connection', function(conn) {
-                conn.on('data', function(data){
-                    // Will print 'hi!'
-                    console.log(data);
-                });
-            });
-        </script>
     </body>
 </html>

@@ -51,17 +51,20 @@
         <!-- ? 上のチャンネルリストのmaxwidthを 100%-下のheight にjsで操作する? -->
         <section class="p-index__side-user-section">
             <div class="p-index__phone-operator" id="phone-operator" data-status="off">
-                <div class="p-index__phone-book u-dn" id="phone-book">
+                <div class="p-index__phone-book" id="phone-book">
                     <p class="note-for-call">! 選択したユーザーに発信します !</p>
                     <ul class="p-index__callable-user-list">
-                        {% for i in range(6) %}
-                        <li class="user-list">
+                        {% for u in server.users %}
+                        <li class="user-list u-pointer ">
                             <div class="user-list-image">
-                                <img src="{{ user_image }}" alt="">
-                                <!-- <i class="fa-solid fa-user"></i> -->
+                                {% if server_mem_imgs[loop.index0] %}
+                                    <img src="{{ server_mem_imgs[loop.index0] }}" alt="">
+                                {% else %}
+                                    <i class="fa-solid fa-user"></i>
+                                {% endif %}
                             </div>
-                            <p class="user-list-name u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
-                            <button class="cancel-call-btn"
+                            <p class="user-list-name u-string-shortener u-f-w--bold">{{ u.name }}</p>
+                            <button class="cancel-call-btn u-dn"
                             onclick="">
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
@@ -70,10 +73,10 @@
                     </ul>
                 </div>
 
-                <!-- ! 通話中画面の作成 -->
-                <div class="p-index__side-call-monitor">
+                <!-- 通話中画面の作成 -->
+                <div class="p-index__side-call-monitor u-dn">
                     <div class="side-user-display">
-                        <video id="side-caller-video" autoplay></video>
+                        <video id="side-my-video" autoplay></video>
                         <!-- <img src="{{ user_image }}" alt=""> -->
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
@@ -81,8 +84,8 @@
                         </div>
                     </div>
                     <div class="side-user-display">
-                        <!-- <video id="side-receiver-video" src=""></video> -->
-                        <img src="{{ user_image }}" alt="">
+                        <video id="side-other-video" src=""></video>
+                        <!-- <img src="{{ user_image }}" alt=""> -->
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
                             <i class="fa-solid fa-microphone-slash"></i>
@@ -101,14 +104,14 @@
                         onclick="">
                             <i class="fa-solid fa-microphone-slash"></i>
                             <!-- <i class="fa-solid fa-microphone"></i> -->
-                        </button> 
+                        </button>
                     </div>
                 </div>
 
             </div>
             <div class="p-index__user-status-bar">
-                <!-- <span class="connecting">Connecting<span></span></span> -->
-                <span class="connected">Connected<span></span></span>
+                <span class="connecting u-dn">Connecting<span></span></span>
+                <span class="connected u-dn">Connected<span></span></span>
             </div>
             <div class="p-index__user-action-list row">
                 <div class="p-index__side-user-image">
@@ -421,7 +424,7 @@
     <div class="wide-content">
         <div class="p-index__full-call-monitor">
             <div class="full-user-display">
-                <video id="full-caller-video" autoplay></video>
+                <video id="full-my-video" autoplay></video>
                 <!-- <img src="{{ user_image }}" alt=""> -->
                 <div class="user-name">
                     <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
@@ -429,8 +432,8 @@
                 </div>
             </div>
             <div class="full-user-display">
-                <!-- <video id="full-receiver-video" src=""></video> -->
-                <img src="{{ user_image }}" alt="">
+                <video id="full-other-video" src=""></video>
+                <!-- <img src="{{ user_image }}" alt=""> -->
                 <div class="user-name">
                     <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
                     <i class="fa-solid fa-microphone-slash"></i>
