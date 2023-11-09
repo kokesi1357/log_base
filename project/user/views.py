@@ -1,11 +1,13 @@
 # project > user > views.py
 
 from project.app import db
+import os
 from flask import Blueprint, g, request, session, flash, redirect, url_for, \
     render_template, jsonify
 from functools import wraps
 from time import time
 from project.models.models import User, Server, Channel, Message, File
+from project.env import is_production
 from project.form import user_form, server_form, channel_form, message_form
 from project.file import standardize_filename, translate_into_s3_format, \
     allowed_file, lift_s3_format, optimize_size_unit
@@ -23,7 +25,6 @@ from project.base64 import translate_into_base64, decode_js_base64
 user_bp = Blueprint('user', __name__,)
 entry_bp = Blueprint('entry', __name__, url_prefix='/entry')
 user_bp.register_blueprint(entry_bp)
-
 
 
 
@@ -110,9 +111,9 @@ def get_base64_from_s3(filename):
 # Render a template with specific keywords
 def render_temp(path, title=None, form=None, **kwargs):
     u_form = user_form(['name', 'email', 'current_psw', 'psw_conf', 'img'], True) \
-        if is_user_in_session() else None
-    user_image = get_base64_from_s3(g.user.image_file_name) \
-        if is_user_in_session() else None
+        if is_user_in_session() else None 
+    user_image = get_base64_from_s3(g.user.image.name) \
+        if is_user_in_session() and g.user.image else None
 
     return render_template(
         path,
@@ -120,6 +121,7 @@ def render_temp(path, title=None, form=None, **kwargs):
         form=form,
         user_form=u_form,
         user_image=user_image,
+        is_production=is_production(),
         g=g,
         request=request,
         **kwargs
@@ -193,13 +195,6 @@ def before_request():
 
 
 # Views for unauthorized users  -----------------------------------------
-#! entry と user blueprints にわけて実装中 -> header 有無を切替るのにURL情報を使用しようとする算段
-#! user : 単一画面での情報編集等なのでheaderは常に表示 
-#! entry : は "entry"をURL付属で判別可能
-#! password 変更などのテンプレを使い回す際の棲み分けは？???
-#! -> user は全体非同期でいくのでテンプレ引用のみでOK(headerへの仕掛けいらない)
-#! ->> やっぱいるか...パスワ変更時にメール認証あるし
-#! ->>> メール認証いらん、既存pswで...ログイン状態ならpswわかるし、忘れならログ前でリセット行為するはず
 
 # ----------------------------------------------
 #   ユーザーのサインアップ、ログイン、パスワードの更新   |
@@ -230,15 +225,15 @@ def signup():
     form = user_form(['name', 'email', 'psw_conf'], True)
 
     if form.validate_on_submit():
-        subject = "【Log Base】Please confirm your email !"
+        subject = '【Log Base】Please confirm your email !'
         token = signup_token(form)
         url = url_for('user.entry.confirm_signup', token=token, _external=True)
         html = render_temp('project/user/email/confirm_user_account.html', url=url)
         send_email(form.email.data, subject, html)
-        flash(f"We sent a user authentication email to [ {form.email.data} ]. Activate your account via the email.")
+        flash(f'We sent a user authentication email to [ {form.email.data} ]. Activate your account via the email.')
         return redirect(url_for('user.entry.entry'))
 
-    return render_temp('project/user/main/auth.html', 'Sign Up', form)
+    return render_temp('project/user/main/auth.html', 'SIGN UP', form)
 
 
 #【Sign up】Confirm a request to create user account
@@ -262,7 +257,7 @@ def confirm_signup(token):
 @entry_bp.route('/login', methods=['GET', 'POST'])
 @is_logged_in
 def login():
-    form = user_form(['email', 'psw'], lgin_type="user")
+    form = user_form(['email', 'psw'], lgin_type='user')
 
     if form.validate_on_submit():
         user_to_login = User.query.filter_by(email=form.email.data).first()
@@ -271,7 +266,7 @@ def login():
             set_user_session(user_to_login)
             return redirect(url_for('user.index'))
 
-    return render_temp('project/user/main/auth.html', 'Log In', form)
+    return render_temp('project/user/main/auth.html', 'LOG IN', form)
 
 
 #【Password Reset】
@@ -288,17 +283,17 @@ def forgot_password():
             flash(f'User with {email} doesn\'t exist.')
             return redirect(url_for('user.forgot_password'))
 
-        subject = "【Log Base】Please confirm your email !"
+        subject = '【Log Base】Please confirm your email !'
         token = psw_reset_token(email)
         url = url_for('user.entry.confirm_password_reset', token=token, _external=True)
         html = render_temp('project/user/email/confirm_password_reset.html', url=url)
         send_email(email, subject, html)
-        flash(f"We sent a confirmation email to [ {email} ]. Confirm the email to reset the password for your account.")
+        flash(f'We sent a confirmation email to [ {email} ]. Confirm the email to reset the password for your account.')
         return redirect(url_for('user.entry.entry'))
 
     return render_temp(
         'project/user/main/auth.html',
-        'Forgot Password?', form)
+        'FORGET PASSWORD?', form)
 
 
 #【Password Reset】Inspect a received token and go to the reset page 
@@ -332,7 +327,7 @@ def reset_password(email):
 
     return render_temp(
         'project/user/main/auth.html',
-        'Reset Passoword', form)
+        'RESET PASSWORD', form)
 
 
 
@@ -341,19 +336,23 @@ def reset_password(email):
 
 # 削除されるmodelクラスに応じて、紐づくs3上のファイルも削除します
 def delete_linked_s3(target):
-    if target.className == "User":
+    if target.className == 'User':
+        if target.image:
+            s3_delete_obj(target.image.name)
         for os in target.own_servers:
             for c in os.channels:
                 for m in c.messages:
                     result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == "Server":
+    elif target.className == 'Server':
+        if target.image:
+            s3_delete_obj(target.image.name)
         for c in target.channels:
             for m in c.messages:
                 result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == "Channel":
+    elif target.className == 'Channel':
         for m in target.messages:
             result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == "Message":
+    elif target.className == 'Message':
         result = [s3_delete_obj(f.name) for f in target.files]
 
 
@@ -370,34 +369,19 @@ def get_server_img():
     server_img = []
     if g.user.own_servers:
         for os in g.user.own_servers:
-            if os.image_file_name:
-                img = get_base64_from_s3(os.image_file_name)
+            if os.image:
+                img = get_base64_from_s3(os.image.name)
             else:
-                img = ""
+                img = ''
             own_server_img.append(img)
     if g.user.servers:
         for s in g.user.servers:
-            if s.image_file_name:
-                img = get_base64_from_s3(s.image_file_name)
+            if s.image:
+                img = get_base64_from_s3(s.image.name)
             else:
-                img = ""
+                img = ''
             server_img.append(img)
-    return {"os":own_server_img, "s":server_img}
-
-
-def get_server_update_forms(server_id=None, edited_form=None):
-    server_forms = []
-    if g.user.own_servers:
-        for os in g.user.own_servers:
-            os_dict = {}
-            form = server_form(image_presence=os.image_file_name!=None)
-            if server_id and os.id == server_id:
-                os_dict["form"] = edited_form
-            else:
-                form.name.data = os.name
-                os_dict["form"] = form
-            server_forms.append(os_dict)
-    return server_forms
+    return {'os':own_server_img, 's':server_img}
 
 
 # Server List
@@ -405,7 +389,7 @@ def get_server_update_forms(server_id=None, edited_form=None):
 @login_required
 def index():
     form = server_form()
-    update_form = server_form("update")
+    update_form = server_form('update')
     return render_temp(
         'project/user/main/index.html', 'LOG BASE',
         form=form, server_img_dict=get_server_img(), update_form=update_form)
@@ -423,8 +407,12 @@ def add_server():
         new_server = Server(
             name=form.name.data,
             owner_id=g.user.id,
+            date_added =request.form['date'],
             channels=[
-                Channel(name="General")
+                Channel(
+                    name='General',
+                    date_added=request.form['date']
+                )
             ]
         )
         db.session.add(new_server)
@@ -433,28 +421,26 @@ def add_server():
         js_base64 = request.form['base64']
         filename = request.form['filename']
         # フォームに画像ファイルが存在し、拡張子が適正な場合、db用のファイル名を生成
-        if js_base64 and allowed_file(filename, "image"):
+        if js_base64 and allowed_file(filename, 'image'):
             filename_for_db = translate_into_s3_format(
-                standardize_filename(filename), "s", new_server.id)
-        else:
-            filename_for_db = None
-        new_server.image_file_name = filename_for_db
-        db.session.commit()
-        # 画像ファイルをs3用に改名してs3バケットへアップロード
-        if filename_for_db:
+                standardize_filename(filename), 's', new_server.id)
+            file = File(name=filename_for_db, server_id=new_server.id)
+            db.session.add(file)
+            db.session.commit()
+            # 画像ファイルをs3用に改名してs3バケットへアップロード
             s3_upload_file(decode_js_base64(js_base64), filename_for_db)
 
         data = {
-            "result" : True,
-            "new_srvr" : { "id" : new_server.id }
+            'result' : True,
+            'new_srvr' : { 'id' : new_server.id }
         }
         return data
 
     # ajaxでエラーメッセージを表示してもらう
     else:
         data = {
-            "result" : False,
-            "error_msg" : { "name" : form.name.errors[0] }
+            'result' : False,
+            'error_msg' : { 'name' : form.name.errors[0] }
         }
         return jsonify(data)
 
@@ -465,38 +451,49 @@ def add_server():
 @is_user_server_member
 def update_server(server_id):
     server = Server.query.filter_by(id=server_id).first()
-    update_form = server_form("update", server_id)
+    update_form = server_form('update', server_id)
     update_form.name.data = request.form['name']
 
     if update_form.validate_on_submit():
         js_base64 = request.form['base64']
         filename = request.form['filename']
-        deleting_image = request.form['delete_image']
+        delete_image = True if request.form['delete_image'] == 'true' else False
 
         # フィールドにfileが存在し、拡張子が適正の場合、db用のfilenameを生成
         if filename and allowed_file(filename):
             filename_for_db = translate_into_s3_format(
-                standardize_filename(filename), "s", server_id)
+                standardize_filename(filename), 's', server_id)
         else:
             filename_for_db = None
-        # 単に画像を削除したい or 更新したい場合、既存画像の削除を実行
-        if deleting_image or filename_for_db:
-            s3_delete_obj(server.image_file_name)
-        # 画像更新
-        if filename_for_db:
-                result = s3_upload_file(decode_js_base64(js_base64), filename_for_db)
+
+        # サーバー画像に関与する場合、s3バケット内の画像を削除
+        if server.image and (delete_image or filename_for_db):
+            s3_delete_obj(server.image.name)
+
+        # 単に画像を削除したい場合
+        if delete_image:
+            db.session.delete(server.image)
+        # 画像を更新したい場合
+        elif filename_for_db:
+            # 既存画像がある場合
+            if server.image:
+                server.image.name = filename_for_db
+            # 画像が存在しない場合
+            else:
+                file = File(name=filename_for_db, server_id=server.id)
+                db.session.add(file)
+            s3_upload_file(decode_js_base64(js_base64), filename_for_db)
 
         server.name = update_form.name.data
-        server.image_file_name = filename_for_db
         db.session.commit()
 
-        data = { "result" : True }
+        data = { 'result' : True }
         return jsonify(data)
 
     else:
         data = {
-            "result" : False,
-            "error_msg" : { "name" : update_form.name.errors[0] }
+            'result' : False,
+            'error_msg' : { 'name' : update_form.name.errors[0] }
         }
         return jsonify(data)
 
@@ -508,16 +505,16 @@ def search_server():
     kw = request.form['keyword']
     servers = db.session.query(Server).filter(Server.name.contains(kw))
     data = {
-        "kw" : kw,
-        "server_info" : []
+        'kw' : kw,
+        'server_info' : []
     }
     for s in servers:
         if s in g.user.servers or s in g.user.own_servers:
             continue
-        data["server_info"].append({
+        data['server_info'].append({
             'name' : s.name,
             'num' : len(s.users)+1,
-            'img' : get_base64_from_s3(s.image_file_name) if s.image_file_name else ""
+            'img' : get_base64_from_s3(s.image.name) if s.image else ''
         })
     return jsonify(data)
 
@@ -543,14 +540,14 @@ def join_server(server_name):
 def delete_server(server_id):
     try:
         server_to_delete = Server.query.filter_by(id=server_id).first()
-        if server_to_delete.image_file_name:
-            s3_delete_obj(server_to_delete.image_file_name)
+        if server_to_delete.image:
+            s3_delete_obj(server_to_delete.image.name)
         delete_linked_s3(server_to_delete)
         db.session.delete(server_to_delete)
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     except:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 # Leave Server [Ajax]
@@ -563,9 +560,9 @@ def leave_server(server_id):
         index = server.users.index(g.user)
         server.users.pop(index)
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 
@@ -587,34 +584,36 @@ def store_files(files, msg_id):
     for i, fl in enumerate(files):
         filename =  \
             translate_into_s3_format(
-                standardize_filename(fl.filename), "f", file_obj_list[i].id)
+                standardize_filename(fl.filename), 'f', file_obj_list[i].id)
         file_obj_list[i].name = filename
         fl.filename = filename
         s3_upload_file(fl)
     db.session.commit()
 
+
 # [Helper] in_server用
 def get_msg_files(messages):
-    msg_files = {"img":[], "dcmnt":[]}
+    msg_files = {'img':[], 'dcmnt':[]}
     for m in messages:
         imgs = [];
         dcmnts = [];
         for f in m.files:
-            if allowed_file(f.name, "image"):
+            if allowed_file(f.name, 'image'):
                 imgs.append({
-                    "s3name" : f.name,
-                    "base64" : get_base64_from_s3(f.name)
+                    's3name' : f.name,
+                    'base64' : get_base64_from_s3(f.name)
                 })
             else:
                 dcmnts.append({
-                    "name" : lift_s3_format(f.name),
-                    "s3name" : f.name,
-                    "url" : s3_create_presigned_url(f.name),
-                    "size" : optimize_size_unit(s3_get_obj_size(f.name))
+                    'name' : lift_s3_format(f.name),
+                    's3name' : f.name,
+                    'url' : s3_create_presigned_url(f.name),
+                    'size' : optimize_size_unit(s3_get_obj_size(f.name))
                 })
-        msg_files["img"].append(imgs)
-        msg_files["dcmnt"].append(dcmnts)
+        msg_files['img'].append(imgs)
+        msg_files['dcmnt'].append(dcmnts)
     return msg_files
+
 
 # [Helper] in_server用
 def get_sender_images(channel):
@@ -622,71 +621,70 @@ def get_sender_images(channel):
     for m in channel.messages:
         if m.sender.name not in sender_images:
             sender_images[m.sender.name] = \
-                get_base64_from_s3(m.sender.image_file_name)
+                get_base64_from_s3(m.sender.image.name) if m.sender.image else None
     return sender_images
 
 
 # [Helper] Ajax用 (in_serverでは、ここではなくjinja2側で抽出した方が早いデータがあるため)
 def get_msg_data_for_json(msg):
     if isinstance(msg, list):
-        msg_data = { "messages" : [], "sender_b64" : {} }
+        msg_data = { 'messages' : [], 'sender_b64' : {} }
         for i, m in enumerate(msg):
-            msg_data["messages"].append({
-                "id" : m.id,
-                "date" : m.dateToDay,
-                "pricise_date" : m.dateToMin,
-                "sender_name" : m.sender.name,
-                "content" : m.content.replace("\n", "<br>"),
-                "files" : {
-                    "img" : [],
-                    "dcmnt" : []
+            msg_data['messages'].append({
+                'id' : m.id,
+                'date' : m.dateToDay,
+                'pricise_date' : m.dateToMin,
+                'sender_name' : m.sender.name,
+                'content' : m.content.replace('\n', '<br>'),
+                'files' : {
+                    'img' : [],
+                    'dcmnt' : []
                 }
             })
             for f in m.files:
-                if allowed_file(f.name, "image"):
-                    msg_data["messages"][i]["files"]["img"].append({
-                        "s3name" : f.name,
-                        "base64" : get_base64_from_s3(f.name)
+                if allowed_file(f.name, 'image'):
+                    msg_data['messages'][i]['files']['img'].append({
+                        's3name' : f.name,
+                        'base64' : get_base64_from_s3(f.name)
                     })
                 else:
-                    msg_data["messages"][i]["files"]["dcmnt"].append({
-                        "s3name" : f.name,
-                        "true_name" : lift_s3_format(f.name),
-                        "url" : s3_create_presigned_url(f.name),
-                        "size" : optimize_size_unit(s3_get_obj_size(f.name))
+                    msg_data['messages'][i]['files']['dcmnt'].append({
+                        's3name' : f.name,
+                        'true_name' : lift_s3_format(f.name),
+                        'url' : s3_create_presigned_url(f.name),
+                        'size' : optimize_size_unit(s3_get_obj_size(f.name))
                     })
             # 差出人のアイコン画像を格納
-            if m.sender.image_file_name and m.sender.name not in msg_data["sender_b64"]:
-                msg_data["sender_b64"][m.sender.name] = \
-                    get_base64_from_s3(m.sender.image_file_name)
+            if m.sender.image and m.sender.name not in msg_data['sender_b64']:
+                msg_data['sender_b64'][m.sender.name] = \
+                    get_base64_from_s3(m.sender.image.name)
 
     else:
         msg_data = {
-            "id" : msg.id,
-            "date" : msg.dateToDay,
-            "pricise_date" : msg.dateToMin,
-            "sender_name" : msg.sender.name,
-            "sender_img" : get_base64_from_s3(msg.sender.image_file_name) \
-                if msg.sender.image_file_name else "",
-            "content" : msg.content.replace("\n", "<br>"),
-            "files" : {
-                "img" : [],
-                "dcmnt" : []
+            'id' : msg.id,
+            'date' : msg.dateToDay,
+            'pricise_date' : msg.dateToMin,
+            'sender_name' : msg.sender.name,
+            "sender_img" : get_base64_from_s3(msg.sender.image.name) \
+                if msg.sender.image else '',
+            'content' : msg.content.replace('\n', '<br>'),
+            'files' : {
+                'img' : [],
+                'dcmnt' : []
             }
         }
         for f in msg.files:
-            if allowed_file(f.name, "image"):
+            if allowed_file(f.name, 'image'):
                 msg_data['files']['img'].append({
-                    "s3name" : f.name,
-                    "base64" : get_base64_from_s3(f.name)
-                    # json['file_list'][i]['base64'] # ajax側で生成したbase64を再利用
+                    's3name' : f.name,
+                    'base64' : get_base64_from_s3(f.name)
                 })
             else:
                 msg_data['files']['dcmnt'].append({
-                    "s3name" : f.name,
-                    "true_name" : lift_s3_format(f.name),
-                    "url" : s3_create_presigned_url(f.name),
-                    "size" : optimize_size_unit(s3_get_obj_size(f.name))
+                    's3name' : f.name,
+                    'true_name' : lift_s3_format(f.name),
+                    'url' : s3_create_presigned_url(f.name),
+                    'size' : optimize_size_unit(s3_get_obj_size(f.name))
                 })
 
     return msg_data
@@ -694,14 +692,16 @@ def get_msg_data_for_json(msg):
 
 # [Helper] in_server用
 def get_server_member_imgs(server):
-    member_images = []
+    member_images = { 'owner' : None, 'mem' : [] }
+    member_images['owner'] = \
+        get_base64_from_s3(server.owner.image.name) if server.owner.image else None
     for u in server.users:
-        if u.image_file_name:
-            member_images.append(
-                get_base64_from_s3(u.image_file_name)
+        if u.image:
+            member_images['mem'].append(
+                get_base64_from_s3(u.image.name)
             )
         else:
-            member_images.append(None)
+            member_images['mem'].append(None)
     return member_images
 
 
@@ -712,18 +712,14 @@ def get_server_member_imgs(server):
 @is_user_server_member
 def in_server(server_id):
     server = Server.query.filter_by(id=server_id).first()
-    server_img = get_base64_from_s3(server.image_file_name) \
-        if server.image_file_name else ""
+    server_img = get_base64_from_s3(server.image.name) if server.image else ''
     server_mem_imgs = get_server_member_imgs(server)
 
-    channel = server.channels[0] \
-        if server.channels else None
-    chnl_form = channel_form() if server.owner_id == g.user.id else ""
+    channel = server.channels[0] if server.channels else None
+    chnl_form = channel_form() if server.owner_id == g.user.id else ''
 
-    msg_sender_imgs = get_sender_images(channel) \
-        if channel else None
-    msg_files = get_msg_files(channel.messages) \
-        if channel else None
+    msg_sender_imgs = get_sender_images(channel) if channel else None
+    msg_files = get_msg_files(channel.messages) if channel else None
     msg_form = message_form()
 
     return render_temp(
@@ -742,14 +738,14 @@ def switch_channel(channel_id):
     if channel:
         msg_data = get_msg_data_for_json(channel.messages)
         data = {
-            "result" : True,
-            "chnl_name" : channel.name,
-            "msg_data" : msg_data
+            'result' : True,
+            'chnl_name' : channel.name,
+            'msg_data' : msg_data
         }
         return jsonify(data)
 
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 # Add channel [Ajax]
@@ -760,18 +756,21 @@ def add_channel(server_id):
     form = channel_form()
     form.name.data = request.form['name']
     if form.validate_on_submit():
-        channel = Channel(name=form.name.data)
+        channel = Channel(
+            name=form.name.data,
+            date_added=request.form['date']
+        )
         server = Server.query.filter_by(id=server_id).first()
         server.channels.append(channel)
         db.session.commit()
         return jsonify({
-            "result" : True ,
-            "chnl_id" : channel.id
+            'result' : True ,
+            'chnl_id' : channel.id
         })
     else:
         return jsonify({
-            "result" : False,
-            "error_msg" : { "name" : form.name.errors[0] }
+            'result' : False,
+            'error_msg' : { 'name' : form.name.errors[0] }
         })
 
 
@@ -786,11 +785,11 @@ def update_channel(channel_id):
         channel = Channel.query.filter_by(id=channel_id).first()
         channel.name = form.name.data
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     else:
         return jsonify({
-            "result" : False,
-            "error_msg" : { "name" : form.name.errors[0] }
+            'result' : False,
+            'error_msg' : { 'name' : form.name.errors[0] }
         })
 
 
@@ -804,9 +803,9 @@ def delete_channel(channel_id):
         delete_linked_s3(channel_to_delete)
         db.session.delete(channel_to_delete)
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 
@@ -827,6 +826,7 @@ def post_message(channel_id):
         msg = Message(
             content = json['content'],
             channel_id = channel.id,
+            date_added=json['date'],
             user_id = g.user.id
         )
         db.session.add(msg)
@@ -834,6 +834,9 @@ def post_message(channel_id):
 
         # postされたファイルのdb用オブジェクトを生成 => s3にアップロード
         if json['file_list']:
+            print("--------")
+            print(len(json['file_list']))
+            print("--------")
             # postされたファイル数の数だけ空のfileデータを生成し、リストに格納 (後から肉付けしていく)
             file_obj_list = []
             for fl in json['file_list']:
@@ -843,26 +846,29 @@ def post_message(channel_id):
             db.session.commit()
 
             for i, fl in enumerate(json['file_list']):
+                print("--------")
+                print(fl['name'])
+                print("--------")
                 filename_for_db =  \
                     translate_into_s3_format(
-                        standardize_filename(fl["name"]), "f", file_obj_list[i].id)
+                        standardize_filename(fl['name']), 'f', file_obj_list[i].id)
                 # 空fileデータに、s3用に生成したfilenameを肉付けしていく
                 file_obj_list[i].name = filename_for_db
                 # s3にアップロード
                 s3_upload_file(
-                    decode_js_base64(fl["base64"]), 
+                    decode_js_base64(fl['base64']), 
                     filename_for_db
                 )
             db.session.commit()
 
         data = {
-            "result" : True,
-            "message" : get_msg_data_for_json(msg)
+            'result' : True,
+            'message' : get_msg_data_for_json(msg)
         }
         return jsonify(data)
 
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 # update message (contentのみ) [Ajax]
@@ -874,9 +880,9 @@ def update_message(message_id):
     if msg:
         msg.content = request.form['content']
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 # Delete message [Ajax]
@@ -888,9 +894,9 @@ def delete_message(message_id):
         delete_linked_s3(msg)
         db.session.delete(msg)
         db.session.commit()
-        return jsonify({ "result" : True })
+        return jsonify({ 'result' : True })
     else:
-        return jsonify({ "result" : False })
+        return jsonify({ 'result' : False })
 
 
 # Delete attached file [Ajax]
@@ -906,11 +912,11 @@ def delete_file(file_name):
     db.session.commit()
 
     # テキストもファイルもからになった場合、メッセージを削除
-    if (len(msg.files) == 0 and msg.content == ""):
+    if (len(msg.files) == 0 and msg.content == ''):
         db.session.delete(msg)
         db.session.commit()
 
-    return jsonify({ "result" : True })
+    return jsonify({ 'result' : True })
 
 
 # Auto update message list [Ajax]
@@ -924,11 +930,11 @@ def auto_update(channel_id):
     ).all()
     if new_msgs:
         data = {
-            "result" : True,
-            "msg_data" : get_msg_data_for_json(new_msgs)
+            'result' : True,
+            'msg_data' : get_msg_data_for_json(new_msgs)
         }
     else:
-        data = { "result" : False }
+        data = { 'result' : False }
 
     return jsonify(data)
 
@@ -945,8 +951,8 @@ def auto_update(channel_id):
 def get_reciever_info(user_id):
     reciever = User.query.filter_by(id=user_id).first()
     data = {
-        "name" : reciever.name,
-        "b64" : get_base64_from_s3(reciever.image_file_name)
+        'name' : reciever.name,
+        'b64' : get_base64_from_s3(reciever.image.name) if reciever.image else ''
     }
     return jsonify(data)
 
@@ -963,34 +969,35 @@ def get_reciever_info(user_id):
 def update_account_image():
     js_b64 = request.form['b64']
     filename = request.form['filename']
-    delete_image = request.form['image_delete']
+    delete_image = True if request.form['image_delete'] == 'true' else False
 
-    s3_delete_obj(g.user.image_file_name)
+    if g.user.image:
+        s3_delete_obj(g.user.image.name)
+
+    # 画像削除の場合
     if delete_image:
-        g.user.image_file_name = None
+        db.session.delete(g.user.image)
         db.session.commit()
-
-    # s3にアップロードかつdbでのファイル名称を変更
+    # 画像更新の場合
     else:
+        # s3にアップロードかつdbでのファイル名称を変更
         filename_for_db = translate_into_s3_format( 
-                standardize_filename(filename), "u", g.user.id)
+                standardize_filename(filename), 'u', g.user.id)
         s3_upload_file(
             decode_js_base64(js_b64), 
             filename_for_db
         )
-        g.user.image_file_name = filename_for_db
+        # 画像がある場合
+        if g.user.image:
+            g.user.image.name = filename_for_db
+        # 画像が存在しない場合
+        else:
+            file = File(name=filename_for_db, user_id=g.user.id)
+            db.session.add(file)
         db.session.commit()
 
-    return jsonify({ "result" : True })
+    return jsonify({ 'result' : True })
 
-
-def my_validate_form(form):
-    form.validate_on_submit()
-    result = True
-    for field in form.values():
-        if field.errors:
-            result = False
-    return { "result" : result, "form" : form }
 
 # Update name [Ajax]
 @user_bp.route('/update_account_name', methods=['POST'])
@@ -1000,30 +1007,25 @@ def update_account_name():
     form.name.data = request.form['name']
     form.current_psw.data = request.form['psw']
     data = {
-        "result" : False,
-        "error_msg" : {
-            "name" : "",
-            "psw" : ""
+        'result' : False,
+        'error_msg' : {
+            'name' : '',
+            'psw' : ''
         }
     }
-    # validated = my_validate_form(form)
-    # if validated["result"]:
+
     if form.validate_on_submit():
         if g.user.verify_password(request.form['psw']):
             g.user.name = form.name.data
             db.session.commit()
-            data["result"] = True
+            data['result'] = True
         else:
-            data["error_msg"]["psw"] = "Doesn't match your current password"
+            data['error_msg']['psw'] = "Doesn't match your current password"
     else:
         if form.name.errors:
-            data["error_msg"]["name"] = form.name.errors[0]
+            data['error_msg']['name'] = form.name.errors[0]
         if form.current_psw.errors:
-            data["error_msg"]["psw"] = form.current_psw.errors[0]
-        # if validated["form"].name.errors:
-        #     data["error_msg"]["name"] = validated["form"].name.errors[0]
-        # if validated["form"].current_psw.errors:
-        #     data["error_msg"]["psw"] = validated["form"].current_psw.errors[0]
+            data['error_msg']['psw'] = form.current_psw.errors[0]
 
     return jsonify(data)
 
@@ -1036,10 +1038,10 @@ def update_account_email():
     form.email.data = request.form['email']
     form.current_psw.data = request.form['psw']
     data = {
-        "result" : False,
-        "error_msg" : {
-            "email" : "",
-            "psw" : ""
+        'result' : False,
+        'error_msg' : {
+            'email' : '',
+            'psw' : ''
         }
     }
 
@@ -1047,14 +1049,14 @@ def update_account_email():
         if g.user.verify_password(request.form['psw']):
             g.user.email = form.email.data
             db.session.commit()
-            data["result"] = True
+            data['result'] = True
         else:
-            data["error_msg"]["psw"] = "Doesn't match your current password"
+            data['error_msg']['psw'] = "Doesn't match your current password"
     else:
         if form.email.errors:
-            data["error_msg"]["email"] = form.email.errors[0]
+            data['error_msg']['email'] = form.email.errors[0]
         if form.current_psw.errors:
-            data["error_msg"]["psw"] = form.current_psw.errors[0]
+            data['error_msg']['psw'] = form.current_psw.errors[0]
 
     return jsonify(data)
 
@@ -1068,10 +1070,10 @@ def update_account_password():
     form.conf.data = request.form['conf_psw']
     form.current_psw.data = request.form['prev_psw']
     data = {
-        "result" : False,
-        "error_msg" : {
-            "psw" : "",
-            "prev_psw" : ""
+        'result' : False,
+        'error_msg' : {
+            'psw' : '',
+            'prev_psw' : ''
         }
     }
 
@@ -1079,14 +1081,14 @@ def update_account_password():
         if g.user.verify_password(form.current_psw.data):
             g.user.password = form.psw.data
             db.session.commit()
-            data["result"] = True
+            data['result'] = True
         else:
-            data["error_msg"]["prev_psw"] = "Doesn't match your current password"
+            data['error_msg']['prev_psw'] = "Doesn't match your current password"
     else:
         if form.psw.errors:
-            data["error_msg"]["psw"] = form.psw.errors[0]
+            data['error_msg']['psw'] = form.psw.errors[0]
         if form.current_psw.errors:
-            data["error_msg"]["prev_psw"] = form.current_psw.errors[0]
+            data['error_msg']['prev_psw'] = form.current_psw.errors[0]
 
     return jsonify(data)
 

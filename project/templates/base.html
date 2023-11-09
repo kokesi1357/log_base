@@ -4,7 +4,9 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://kit.fontawesome.com/c39d0aac49.js" crossorigin="anonymous"></script>
+        {% if is_production %}
         <link rel="stylesheet" href="{{ url_for('static',filename='node/dist/css/main.min.css') }}" media="screen">
+        {% endif %}
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto+Condensed:700">
         <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
@@ -15,14 +17,141 @@
     </head>
     <body id="body">
         <div id="loading"><div class="loader"></div></div>
-        {% block layout %}
-        {% endblock %}
+        {% block layout %}{% endblock %}
         <div id="overlay" class="toggler"></div>
+
         {% if g.user %}
-            <input type="hidden" id="user-name" value="{{ g.user.name }}">
+        <input type="hidden" id="user-name" value="{{ g.user.name }}">
         {% endif %}
+
         <script src="/static/node/dist/ignored/js/variable.js"></script>
-        <script src="/static/node/dist/js/main.js"></script>
+
+        {% if is_production %}
         <script src="/static/node/dist/js/main.min.js"></script>
+        {% else %}
+        <script src="/static/node/dist/js/main.js"></script>
+        {% endif %}
+
+        <script>
+            // client id は user-settings に記させる自信の名前を用いる
+            const MY_ID = (get_element('#user-info--name')) ?
+                get_element('#user-info--name').textContent : null;
+            const PEER = new Peer(MY_ID);
+
+            const PHONE_BOOK = get_element('#phone-book');
+            const SIDE_CALL_MONITOR = get_element('.p-index__side-call-monitor')[0];
+
+            const SIDE_MY_VIDEO = get_element('#side-my-video');
+            const FULL_MY_VIDEO = get_element('#full-my-video');
+            const SIDE_OTHER_VIDEO = get_element('#side-other-video');
+            const FULL_OTHER_VIDEO = get_element('#full-other-video');
+            const CONNECTING_TXT = get_element('.connecting')[0]
+            const CONNECTED_TXT = get_element('.connected')[0]
+
+            const USER_LIST = get_element('.p-index__callable-user-list li')
+
+
+            // 「 Connecting 」 のテキストをサイドバー上に表示します
+            turn_on_connecting_txt = () => {
+                CONNECTING_TXT.classList.remove('u-dn');
+            }
+
+
+            // 「 Connected 」 のテキストをサイドバー上に表示します
+            //  Connecting 」のテキストを非表示にします
+            turn_on_connected_txt = () => {
+                if (!CONNECTING_TXT.classList.contains('u-dn'))
+                    CONNECTING_TXT.classList += ' u-dn';
+                CONNECTED_TXT.classList.remove('u-dn');
+            }
+
+
+            //  Connecting 」および「 Connected 」のテキストを非表示にします
+            turn_off_connect_txt = () => {
+                if (!CONNECTING_TXT.classList.contains('u-dn'))
+                    CONNECTING_TXT.classList += ' u-dn';
+                if (!CONNECTED_TXT.classList.contains('u-dn'))
+                    CONNECTED_TXT.classList += ' u-dn';
+            }
+
+
+            // サイドバーにて、ビデオモニターを表示、電話帳を非表示にします
+            turn_on_video_monitor = () => {
+                PHONE_BOOK.classList += ' u-dn';
+                SIDE_CALL_MONITOR.classList.remove('u-dn');
+            }
+
+
+            // サイドバーにて、電話帳の任意の相手を押下した際、相手に電話をかけます
+            USER_LIST.map(li => {
+                li.addEventListener('click', () => {
+                    turn_on_connecting_txt();
+                    // 相手のidを取得
+                    let other_id = get_element('p', li)[0].textContent;
+
+                    // 通信開始
+                    navigator.mediaDevices.getUserMedia({video : true, audio : true})
+                    .then(function (stream) {
+                        // 取得したカメラ映像を相手に送信
+                        let call = PEER.call(other_id, stream);
+                        if (call != null) {
+                            turn_on_connected_txt();
+                            turn_on_video_monitor();
+                            // 自信のモニターを表示
+                            SIDE_MY_VIDEO.srcObject = stream;
+                            SIDE_MY_VIDEO.play();
+                            FULL_MY_VIDEO.srcObject = stream;
+                            FULL_MY_VIDEO.play();
+
+                            // 相手からのストリーミングデータ受信処理
+                            call.on('stream', function(stream) {
+                                // 相手から受信した映像を表示
+                                SIDE_OTHER_VIDEO.srcObject = stream;
+                                SIDE_OTHER_VIDEO.play();
+                                FULL_OTHER_VIDEO.srcObject = stream;
+                                FULL_OTHER_VIDEO.play();
+                            });
+                        }
+                    }).catch(function (error) {
+                        // カメラ映像、オーディオへのアクセスが失敗した場合
+                        // エラー内容をconsole.logで出力
+                        console.log(error);
+                        turn_off_connect_txt();
+                    });
+                });
+            })
+
+
+            // 応答
+            PEER.on('call', function(call){
+                navigator.mediaDevices.getUserMedia({video : true, audio : true})
+                .then(function (stream) {
+                    turn_on_connected_txt();
+                    turn_on_video_monitor();
+                    // 自信のモニターを表示
+                    SIDE_MY_VIDEO.srcObject = stream;
+                    SIDE_MY_VIDEO.play();
+                    FULL_MY_VIDEO.srcObject = stream;
+                    FULL_MY_VIDEO.play();
+
+                    // 取得したカメラ映像を相手に送信
+                    call.answer(stream);
+                    // 相手からのストリーミングデータ受信処理
+                    call.on('stream', function(stream) {
+                        // 相手から受信した映像を表示
+                        SIDE_OTHER_VIDEO.srcObject = stream;
+                        SIDE_OTHER_VIDEO.play();
+                        FULL_OTHER_VIDEO.srcObject = stream;
+                        FULL_OTHER_VIDEO.play();
+                    });
+
+                }).catch(function (error) {
+                    // カメラ映像、オーディオへのアクセスが失敗した場合
+                    // エラー内容をconsole.logで出力
+                    console.log(error);
+                    turn_off_connect_txt();
+                });
+            });
+        </script>
     </body>
 </html>

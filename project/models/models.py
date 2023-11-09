@@ -21,13 +21,12 @@ user_server_map_table = Table(
 
 # User class holds info of an actual user and relationships with multiple posts.
 class User(db.Model):
-    __tablename__ = "user"
+    __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100), unique=True)
     email = Column(String(120), unique=True, nullable=False)
     hashed_password = Column(String(128), nullable=False)
-    image_file_name = Column(String(100))
     sample = Column(Boolean, nullable=False, default=False)
     admin = Column(Boolean, nullable=False, default=False)
     master = Column(Boolean, nullable=False, default=False)
@@ -35,15 +34,17 @@ class User(db.Model):
 
     # Users to Servers [many to many]
     servers = relationship(
-        "Server",
+        'Server',
         secondary=user_server_map_table,
-        back_populates="users",
+        back_populates='users',
     )
 
     # User to Servers [one to many]  
-    own_servers = relationship('Server', backref='owner', lazy=True, cascade="all, delete-orphan")
+    own_servers = relationship('Server', backref='owner', lazy=True, cascade='all, delete-orphan')
     # User to Messages [one to many] 
-    messages = relationship('Message', backref='sender', lazy=True, cascade="all, delete-orphan")
+    messages = relationship('Message', backref='sender', lazy=True, cascade='all, delete-orphan')
+    # User to File [one to one]
+    image = relationship('File', backref='user', lazy=True, cascade='all, delete-orphan', uselist=False)
 
 
     def __repr__(self):
@@ -51,11 +52,11 @@ class User(db.Model):
 
     @property
     def className(self):
-        return "User"
+        return 'User'
 
     @property
     def password(self):
-        raise AttributeError("Password is not hashed.")
+        raise AttributeError('Password is not hashed.')
 
     @password.setter
     def password(self, psw):
@@ -67,63 +68,61 @@ class User(db.Model):
 
 
 class Server(db.Model):
-    __tablename__ = "server"
+    __tablename__ = 'server'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), unique=True)
-    image_file_name = Column(String(100))
-    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
+    date_added = Column(String, nullable=False) # ajax内で生成した日付を付与
 
     # Servers to Users [many to many]
     users = relationship(
-        "User",
+        'User',
         secondary=user_server_map_table,
-        back_populates="servers",
+        back_populates='servers',
     )
-
     # Servers to User(Owner) [many to one]
-    owner_id = Column(Integer, ForeignKey("user.id"), nullable=False)
-
+    owner_id = Column(Integer, ForeignKey('user.id'), nullable=False)
     # Server to Channels [one to many]
-    channels = relationship('Channel', backref='server', lazy=True, cascade="all, delete-orphan")
+    channels = relationship('Channel', backref='server', lazy=True, cascade='all, delete-orphan')
+    # Server to File [one to one]
+    image = relationship('File', backref='server', lazy=True, cascade='all, delete-orphan', uselist=False)
 
     def __repr__(self):
         return '<Name %r>' % self.name
     
     @property
     def className(self):
-        return "Server"
+        return 'Server'
 
 
 
 class Channel(db.Model):
-    __tablename__ = "channel"
+    __tablename__ = 'channel'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(30), nullable=False)
-    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
+    date_added = Column(String, nullable=False) # ajax内で生成した日付を付与
 
     # Channels to Server [many to one]  
     server_id = Column(Integer, ForeignKey('server.id'), nullable=False)
-
     # Channels to Messages [one to many]  
-    messages = relationship('Message', backref='channel', lazy=True, cascade="all, delete-orphan")
+    messages = relationship('Message', backref='channel', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):
         return '<Name %r>' % self.name
 
     @property
     def className(self):
-        return "Channel"
+        return 'Channel'
 
 
 
 class Message(db.Model):
-    __tablename__ = "message"
+    __tablename__ = 'message'
 
     id = Column(Integer, primary_key=True)
     content = Column(String(100))
-    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
+    date_added = Column(String, nullable=False) # ajax内で生成した日付を付与
 
     # Messages to Channel [many to one]
     channel_id = Column(Integer, ForeignKey('channel.id'), nullable=False)
@@ -131,38 +130,41 @@ class Message(db.Model):
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
 
     # Message to Files [one to many]
-    files = relationship('File', backref='message', lazy=True, cascade="all, delete-orphan")
+    files = relationship('File', backref='message', lazy=True, cascade='all, delete-orphan')
 
     def __repr__(self):
         return '<Posted date %r>' % self.date_added
 
     @property
     def className(self):
-        return "Message"
+        return 'Message'
 
     @property
     def dateToMin(self):
-        return self.date_added.strftime('%Y/%m/%d %H:%M')
+        return self.date_added.rsplit(':', 1)[0]
 
     @property
     def dateToDay(self):
-        return self.date_added.strftime('%Y/%m/%d')
+        return self.date_added.split(' ', 1)[0]
 
 
 
 class File(db.Model):
-    __tablename__ = "file"
+    __tablename__ = 'file'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(100))
-    date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
-    # Channels to Server [many to one]  
-    message_id = Column(Integer, ForeignKey('message.id'), nullable=False)
+    # File to User [one to one]
+    user_id = Column(Integer, ForeignKey('user.id'))
+    # File to Server [one to one]
+    server_id = Column(Integer, ForeignKey('server.id'))
+    # Channels to Server [many to one]
+    message_id = Column(Integer, ForeignKey('message.id'))
 
     def __repr__(self):
         return '<Name %r>' % self.name
 
     @property
     def className(self):
-        return "File"
+        return 'File'

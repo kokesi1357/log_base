@@ -5,7 +5,7 @@ import math
 
 
 ALLOWED_FILE_EXTENSIONS =['txt', 'pdf', 'jpg', 'jpeg', 'png','gif']
-ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png']
+ALLOWED_IMAGE_EXTENSIONS = ['jpg', 'jpeg', 'png', 'gif']
 
 
 # ファイル名をベース名[0] + 拡張子[1]に分け配列で返します
@@ -74,9 +74,9 @@ def lift_s3_format(filename):
 # file sizeを適切な単位に変換します
 def optimize_size_unit(size):
     try:
-        units = ("B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB")
+        units = ('B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', "ZB")
         i = math.floor(math.log(size, 1024)) if size > 0 else 0
         size = round(size / 1024 ** i, 2)
-        return f"{size} {units[i]}"
+        return f'{size} {units[i]}'
     except:
         return None

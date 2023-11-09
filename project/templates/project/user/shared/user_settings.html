@@ -6,7 +6,7 @@
         <i class="fa-solid fa-xmark"></i>
     </button>
     <div class="content">
-        <h1 class="l-main__section-header">My Account</h1>
+        <h1 class="l-main__section-header">MY ACCOUNT</h1>
         <ul class="p-index-main__user-info-list">
             <li>
                 <button class="p-index-main__user-image"
@@ -20,7 +20,7 @@
             </li>
             <li>
                 <div class="p-index-main__user-info-label">
-                    <span class="u-f-w--bold">Nickname</span>
+                    <span class="u-f-w--bold">NICKNAME</span>
                     <p id="user-info--name">{{ g.user.name }}</p>
                 </div>
                 <button class="c-btn--min-rect" 
@@ -30,7 +30,7 @@
             </li>
             <li>
                 <div class="p-index-main__user-info-label">
-                    <span class="u-f-w--bold">Email</span>
+                    <span class="u-f-w--bold">EMAIL</span>
                     <p id="user-info--email">{{ g.user.email }}</p>
                 </div>
                 <button class="c-btn--min-rect"
@@ -41,7 +41,7 @@
             <li>
                 <button class="c-btn--outstanding-rect"
                 onclick="open_modal_with_closer_id('update-account-password')">
-                    Change Password
+                    CHANGE PASSWORD
                 </button>
             </li>
         </ul>
@@ -50,7 +50,7 @@
         <div class="p-modal-section">
             <button class="p-form__submit c-btn--submit confirm"
             data-confirm_txt="このアカウントを削除しますか？" data-url="{{ url_for('user.leave') }}">
-                Leave Log Base
+                LEAVE LOG BASE
             </button>
         </div>
         {% endif %}
@@ -67,7 +67,7 @@
     </div>
     <div class="p-modal-wrap">
         <div class="p-modal-content row">
-            <div class="p-modal-header">Set Image</div>
+            <div class="p-modal-header">SET IMAGE</div>
             <form id="update-account--image-form" class="p-form-wrap--min" enctype="multipart/form-data" 
             onsubmit="return false" novalidate>
                 <input type="hidden" id="update-account--image-delete" value="">
@@ -87,7 +87,7 @@
                 </div>
                 {{ user_form.image(class="p-form__input u-dn image-input", id='update-account--image') }}
 
-                {{ user_form.submit(class='p-form__submit c-btn--submit', id='update-account--image-submit', value="Apply") }}
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id='update-account--image-submit', value="APPLY") }}
             </form>
         </div>
     </div>
@@ -101,7 +101,7 @@
     </div>
     <div class="p-modal-wrap">
         <div class="p-modal-content row">
-            <div class="p-modal-header">Set Nickname</div>
+            <div class="p-modal-header">SET NICKNAME</div>
             <form id="update-account--name-form" class="p-form__wrap--min"
             onsubmit="return false" novalidate>
 
@@ -113,7 +113,7 @@
                 <p class="p-form__error-msg" id="error-msg--update-account-name-psw"></p>
                 {{ user_form.current_psw(class="p-form__input", id="update-account--name-psw", placeholder="Password") }}
 
-                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--name-submit", value="Apply") }}
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--name-submit", value="APPLY") }}
             </form>
         </div>
     </div>
@@ -127,7 +127,7 @@
     </div>
     <div class="p-modal-wrap">
         <div class="p-modal-content row">
-            <div class="p-modal-header">Set Email</div>
+            <div class="p-modal-header">SET EMAIL</div>
             <form id="update-account--email-form" class="p-form__wrap--min"
             onsubmit="return false" novalidate>
 
@@ -139,7 +139,7 @@
                 <p class="p-form__error-msg" id="error-msg--update-account-email-psw"></p>
                 {{ user_form.current_psw(class="p-form__input", id="update-account--email-psw", placeholder="Password") }}
 
-                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--email-submit", value="Apply") }}
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--email-submit", value="APPLY") }}
             </form>
         </div>
     </div>
@@ -153,7 +153,7 @@
     </div>
     <div class="p-modal-wrap">
         <div class="p-modal-content row">
-            <div class="p-modal-header">Set Password</div>
+            <div class="p-modal-header">SET PASSWORD</div>
             <form id="update-account--psw-form" class="p-form__wrap--min"
             onsubmit="return false" novalidate>
 
@@ -174,7 +174,7 @@
                 <p class="p-form__error-msg" id="error-msg--update-account-prev-psw"></p>
                 {{ user_form.current_psw(class="p-form__input", id="update-account--prev-psw", placeholder="Current Password") }}
 
-                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--psw-submit", value="Apply") }}
+                {{ user_form.submit(class='p-form__submit c-btn--submit', id="update-account--psw-submit", value="APPLY") }}
             </form>
         </div>
     </div>

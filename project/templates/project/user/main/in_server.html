@@ -54,11 +54,29 @@
                 <div class="p-index__phone-book" id="phone-book">
                     <p class="note-for-call">! 選択したユーザーに発信します !</p>
                     <ul class="p-index__callable-user-list">
-                        {% for u in server.users %}
+                        {% if g.user.id != server.owner_id %}
                         <li class="user-list u-pointer ">
                             <div class="user-list-image">
-                                {% if server_mem_imgs[loop.index0] %}
-                                    <img src="{{ server_mem_imgs[loop.index0] }}" alt="">
+                                {% if server_mem_imgs['owner'] %}
+                                    <img src="{{ server_mem_imgs['owner'] }}" alt="">
+                                {% else %}
+                                    <i class="fa-solid fa-user"></i>
+                                {% endif %}
+                            </div>
+                            <p class="user-list-name u-string-shortener u-f-w--bold">{{ server.owner.name }}</p>
+                            <button class="cancel-call-btn u-dn"
+                            onclick="">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </li>
+                        {% endif %}
+
+                        {% for u in server.users %}
+                        {% if g.user.id != u.id %}
+                        <li class="user-list u-pointer ">
+                            <div class="user-list-image">
+                                {% if server_mem_imgs['mem'][loop.index0] %}
+                                    <img src="{{ server_mem_imgs['mem'][loop.index0] }}" alt="">
                                 {% else %}
                                     <i class="fa-solid fa-user"></i>
                                 {% endif %}
@@ -69,6 +87,7 @@
                                 <i class="fa-solid fa-xmark"></i>
                             </button>
                         </li>
+                        {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
@@ -362,7 +381,7 @@
         </div>
         <div class="p-modal-wrap">
             <div class="p-modal-content row">
-                <div class="p-modal-header">Create Channel</div>
+                <div class="p-modal-header">CREATE CHANNEL</div>
                 <form id="add-channel-form" class="p-form__wrap" data-server_id="{{ server.id }}"
                 novalidate onsubmit="return false">
                     {{ chnl_form.name.label(class="p-form__input-label", for="add-channel--name") }}
@@ -382,7 +401,7 @@
         </div>
         <div class="p-modal-wrap">
             <div class="p-modal-content row">
-                <div class="p-modal-header">Channel Settings</div>
+                <div class="p-modal-header">CHANNEL SETTINGS</div>
                 <form class="p-form__wrap" id="update-channel-form" novalidate onsubmit="return false">
                     {{ chnl_form.name.label(class="p-form__input-label", for="update-channel--name") }}
                     <p class="p-form__error-msg" id="error-msg--update-channel-name"></p>

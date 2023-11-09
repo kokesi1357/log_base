@@ -2,6 +2,7 @@
 
 import boto3
 import os
+from project.env import is_production
 from project.file import split_filename, get_file_format, allowed_file, \
     standardize_filename
 
@@ -11,16 +12,17 @@ BUCKET_NAME = 'logbase-bkt'
 
 
 
+
+# EC2環境でのアクセス
+if is_production():
+    s3 = boto3.resource('s3')
 # ローカル環境でのs3アクセス
-if os.environ.get('APP_SETTINGS') is not 'project.config.ProductionConfig':
+else:
     s3 = boto3.resource('s3',
             aws_access_key_id=os.environ.get('AWS_ACCESS'),
             aws_secret_access_key=os.environ.get('AWS_SECRET_ACCESS'),
             region_name='ap-northeast-1'
     )
-# EC2環境でのアクセス
-else:
-    s3 = boto3.resource('s3')
 
 s3_client = s3.meta.client
 
@@ -29,7 +31,10 @@ s3_client = s3.meta.client
 def s3_get_obj_size(filename):
     try:
         file_format = get_file_format(filename)
-        return s3.ObjectSummary(BUCKET_NAME, f"{file_format}/{filename}").size
+        if is_production():
+            return s3.ObjectSummary(BUCKET_NAME, f'production/{file_format}/{filename}').size
+        else:
+            return s3.ObjectSummary(BUCKET_NAME, f'local/{file_format}/{filename}').size
     except:
         return None
 
@@ -39,7 +44,10 @@ def s3_get_obj_size(filename):
 def s3_get_body(filename):
     try:
         file_format = get_file_format(filename)
-        obj = s3.Bucket(BUCKET_NAME).Object(f"{file_format}/{filename}")
+        if is_production():
+            obj = s3.Bucket(BUCKET_NAME).Object(f'production/{file_format}/{filename}')
+        else:
+            obj = s3.Bucket(BUCKET_NAME).Object(f'local/{file_format}/{filename}')
         return obj.get()['Body']
     except:
         return None
@@ -49,8 +57,9 @@ def s3_get_body(filename):
 def s3_upload_file(file_binary, filename):
     try:
         file_format = get_file_format(filename)
+        key = f'production/{file_format}/{filename}' if is_production() else f'local/{file_format}/{filename}'
         s3.Bucket(BUCKET_NAME).put_object(
-            Key=f"{file_format}/{filename}",
+            Key=key,
             Body=file_binary
         )
         return True
@@ -70,11 +79,13 @@ def s3_create_presigned_url(filename, expiration=3600):
     # Generate a presigned URL for the S3 object
     try:
         file_format = get_file_format(filename)
+        key = f'production/{file_format}/{filename}' if is_production() else f'local/{file_format}/{filename}'
         response = s3_client.generate_presigned_url(
             'get_object',
             Params={
                 'Bucket': BUCKET_NAME,
-                'Key': f"{file_format}/{filename}"},
+                'Key': key
+            },
             ExpiresIn=expiration
         )
         # The response contains the presigned URL
@@ -87,7 +98,8 @@ def s3_create_presigned_url(filename, expiration=3600):
 def s3_delete_obj(filename):
     try:
         file_format = get_file_format(filename)
-        s3.Object(BUCKET_NAME, f"{file_format}/{filename}").delete()
+        key = f'production/{file_format}/{filename}' if is_production() else f'local/{file_format}/{filename}'
+        s3.Object(BUCKET_NAME, key).delete()
         return True
     except:
         return False

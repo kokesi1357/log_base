@@ -3,7 +3,8 @@
 import os
 from flask.cli import AppGroup
 from project.app import app, db
-from project.boto3 import s3
+from project.env import is_production
+from project.boto3 import s3_delete_obj
 from project.models.models import User, Server, Channel, Message, File
 
 
@@ -19,7 +20,13 @@ def create_db():
 @manager_cli.command('drop_db')
 def drop_db():
     """Drops the db tables."""
-    db.drop_all()
+    # files = File.query.order_by(File.date_added)
+    files = db.session.query(File).all()
+    for f in files:
+        print('--------')
+        print(f.name)
+    #     s3_delete_obj(f.name)
+    # db.drop_all()
 
 
 @manager_cli.command('create_master')
@@ -34,60 +41,8 @@ def create_master():
     )
     db.session.commit()
 
-@manager_cli.command('create_sample_user')
-def create_master():
-    """Creates a sample user."""
-    db.session.add(
-        User(
-            name="ken",
-            email="k@k.com",
-            password="kkkkkkkk")
-    )
-    db.session.commit()
-
-
-@manager_cli.command('create_testuser')
-def create_user():
-    """Creates a sample user and its surroundings."""
-    u = User(name="kenken", email="k@k.com", password="kkkkkkkk")
-    db.session.add(u)
-    # db.session.commit()
-    u2 = User(name="kentest", email="k@kk.com", password="kkkkkkkk")
-    db.session.add(u2)
-    db.session.commit()
-
-    u = User.query.filter_by(name="kenken").first()
-    u.own_servers = [Server(name="kenserver", owner_id=u.id, channels=[
-                        Channel(name="channel1", messages=[
-                            Message(content="content1", user_id=u.id, files=[
-                                File(name="hey")
-                            ])
-                        ])
-                    ])
-                ]
-    db.session.commit()
-
-    u2.servers.append(u.own_servers[0])
-    db.session.commit()
-
-
-import random
-
-@manager_cli.command('add_msg')
-def add_msg():
-    channel = Channel.query.filter_by(id=1).first()
-    channel.messages.append(
-        Message(content=str(random.randrange(100000)), user_id=3)
-    )
-    db.session.commit()
-
-    print("-----------")
-    print(channel.messages)
-    print("-----------")
-
-
 
 app.cli.add_command(manager_cli)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', debug=True)

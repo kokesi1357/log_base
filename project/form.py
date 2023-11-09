@@ -16,19 +16,19 @@ class ValidateLength(Length):
         super().__init__(
             min=min,
             max=max,
-            message=f"*Must be {min} - {max} characters long.")
+            message=f'*Must be {min} - {max} characters long.')
 
 
 # Required
 class ValidateRequired(DataRequired):
     def __init__(self, type):
-        super().__init__( message=f"*{type} is required." )
+        super().__init__( message=f'*{type} is required.' )
 
 
 # Email
 class ValidateEmail(Email):
     def __init__(self):
-        super().__init__( message="*Invalid address (e.g email@address.com)." )
+        super().__init__( message='*Invalid address (e.g email@address.com).' )
 
 
 # Equality
@@ -36,22 +36,22 @@ class ValidateEqual(EqualTo):
     def __init__(self, fieldname, repr):
         super().__init__(
             fieldname=fieldname,
-            message=f"*Must match the { repr } field.")
+            message=f'*Must match the { repr } field.')
 
 
 # Data uniqueness
 class ValidateUnique(object):
     def __init__(self, type, class_name, class_member, data_id=None):
-        self.message = f"*The {type} has alerady been registered."
+        self.message = f'*The {type} has alerady been registered.'
         self.class_name = class_name
         self.class_member = class_member
         self.data_id = data_id
 
     def __call__(self, form, field):
         existing_data = None
-        if self.class_name == "user":
+        if self.class_name == 'user':
             existing_data = User.query.filter(self.class_member==field.data).first()
-        elif self.class_name == "server":
+        elif self.class_name == 'server':
             existing_data = Server.query.filter(self.class_member==field.data).first()
 
         if existing_data:
@@ -62,13 +62,13 @@ class ValidateUnique(object):
 # Non existing user (unregistered or non-admin)
 class ValidateNonExisting(object):
     def __init__(self, type, class_member, lgin_type=None):
-        self.message = f"* User with this {type} doesn\'t exist."
+        self.message = f'* User with this {type} doesn\'t exist.'
         self.class_member = class_member
         self.lgin_type = lgin_type
 
     def __call__(self, form, field):
         user = User.query.filter(self.class_member==field.data).first()
-        if user == None or (self.lgin_type == "user" and user.admin):
+        if user == None or (self.lgin_type == 'user' and user.admin):
             raise ValidationError(self.message)
 
 
@@ -135,14 +135,14 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
             return 'UserForm'
     
     if 'name' in prop:
-        validate_unique = ValidateUnique('nickname', "user", User.name, user_id) if rgstr else Pass()
+        validate_unique = ValidateUnique('nickname', 'user', User.name, user_id) if rgstr else Pass()
         UserForm.name = MyStringField('NICKNAME', [
             ValidateRequired('NICKNAME'),
             ValidateLength(3, 100),
             validate_unique])
 
     if 'email' in prop:
-        validate_unique = ValidateUnique('email', "user", User.email, user_id) if rgstr else Pass()
+        validate_unique = ValidateUnique('email', 'user', User.email, user_id) if rgstr else Pass()
         validate_non_existing = ValidateNonExisting('email', User.email, lgin_type) if lgin_type else Pass()
         UserForm.email = EmailField('EMAIL', [
             ValidateRequired('EMAIL'),
@@ -191,7 +191,7 @@ def server_form(type=None, id=None):
         def __repr__(self):
             return 'ServerForm'
 
-    validate_unique = ValidateUnique('name', "server", Server.name, id)
+    validate_unique = ValidateUnique('name', 'server', Server.name, id)
     ServerForm.name = StringField('NAME', [
         ValidateRequired('NAME'),
         ValidateLength(3, 100),
@@ -199,7 +199,7 @@ def server_form(type=None, id=None):
 
     ServerForm.image = FileField('IMAGE')
 
-    if type and type is "update":
+    if type and type is 'update':
         ServerForm.delete_image = BooleanField('DELETE IMAGE')
 
     ServerForm.Meta.csrf = False

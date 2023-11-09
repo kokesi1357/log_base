@@ -6,7 +6,7 @@
 import os
 from flask import Flask, request, render_template
 
-app = Flask(__name__, static_folder="./static/")
+app = Flask(__name__, static_folder='./static/')
 app.config.from_object(os.environ.get('APP_SETTINGS'))
 
 
@@ -44,7 +44,7 @@ app.register_blueprint(user_bp)
 # No permission to access the server
 @app.errorhandler(403)
 def forbidden_page(e):
-    return render_template("management/errors/403.html"), 403
+    return render_template('management/errors/403.html'), 403
 
 # Invalid URL
 @app.errorhandler(404)
