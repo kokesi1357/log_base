@@ -32,12 +32,7 @@
                         <div class="hash-mark"><i class="fa-solid fa-hashtag"></i></div>
                         <p class="channel-name u-string-shortener">{{ c.name }}</p>
                     </div>
-
                     {% if server.owner_id == g.user.id %}
-                    <!-- <button class="p-index__channel-invite-btn col-tab-2">
-                        <i class="fa-solid fa-user-plus"></i>
-                    </button> -->
-
                     <button class="p-index__channel-setting-btn col-tab-2 modal-opener"
                     onclick="prefill_channel_update(this.parentNode); open_modal_with_closer_id('update-channel')">
                         <i class="fa-solid fa-gear"></i>
@@ -48,14 +43,14 @@
             </ul>
         </div>
 
-        <!-- ? 上のチャンネルリストのmaxwidthを 100%-下のheight にjsで操作する? -->
         <section class="p-index__side-user-section">
             <div class="p-index__phone-operator" id="phone-operator" data-status="off">
-                <div class="p-index__phone-book" id="phone-book">
+                <!-- 電話帳 -->
+                <div class="p-index__phone-book">
                     <p class="note-for-call">! 選択したユーザーに発信します !</p>
                     <ul class="p-index__callable-user-list">
                         {% if g.user.id != server.owner_id %}
-                        <li class="user-list u-pointer ">
+                        <li class="user-list u-pointer" data-user_id="{{ server.owner_id }}">
                             <div class="user-list-image">
                                 {% if server_mem_imgs['owner'] %}
                                     <img src="{{ server_mem_imgs['owner'] }}" alt="">
@@ -73,7 +68,7 @@
 
                         {% for u in server.users %}
                         {% if g.user.id != u.id %}
-                        <li class="user-list u-pointer ">
+                        <li class="user-list u-pointer" data-user_id="{{ u.id }}">
                             <div class="user-list-image">
                                 {% if server_mem_imgs['mem'][loop.index0] %}
                                     <img src="{{ server_mem_imgs['mem'][loop.index0] }}" alt="">
@@ -92,11 +87,10 @@
                     </ul>
                 </div>
 
-                <!-- 通話中画面の作成 -->
+                <!-- 通話中モニター -->
                 <div class="p-index__side-call-monitor u-dn">
                     <div class="side-user-display">
                         <video id="side-my-video" autoplay></video>
-                        <!-- <img src="{{ user_image }}" alt=""> -->
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
                             <i class="fa-solid fa-microphone-slash"></i>
@@ -104,7 +98,6 @@
                     </div>
                     <div class="side-user-display">
                         <video id="side-other-video" src=""></video>
-                        <!-- <img src="{{ user_image }}" alt=""> -->
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
                             <i class="fa-solid fa-microphone-slash"></i>
@@ -122,7 +115,23 @@
                         <button class="menu-btn mute-btn" data-=""
                         onclick="">
                             <i class="fa-solid fa-microphone-slash"></i>
-                            <!-- <i class="fa-solid fa-microphone"></i> -->
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 受信側の応答バー -->
+                <div class="p-index__call-response-bar u-dn">
+                    <div class="caller-img">
+                        <!-- <img src="{{ user_image }}" alt=""> -->
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <p class="caller-name">ken</p>
+                    <div class="response-btn-wrap">
+                        <button class="response-btn c-btn u-bg--outstanding " id="answer-call-btn">
+                            <i class="fa-solid fa-phone"></i>
+                        </button>
+                        <button class="response-btn c-btn u-bg--alert" id="reject-call-btn">
+                            <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
                 </div>

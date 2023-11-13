@@ -1,6 +1,6 @@
 <!-- user_settings.html -->
 
-<section id="user-settings" class="l-main__fixed-section fixed-section">
+<section id="user-settings" class="l-main__fixed-section fixed-section" data-user_id="{{ g.user.id }}">
     <button class="l-main__fixed-section-closer c-btn--quad c-btn--hover-bg-white-back fixed-section-closer toggler"
         id="fixed-section-closer--user-settings">
         <i class="fa-solid fa-xmark"></i>
@@ -9,7 +9,7 @@
         <h1 class="l-main__section-header">MY ACCOUNT</h1>
         <ul class="p-index-main__user-info-list">
             <li>
-                <button class="p-index-main__user-image"
+                <button class="p-index-main__user-image" id="user-info--image"
                 onclick="open_modal_with_closer_id('update-account-image')">
                     {% if user_image %}
                     <img src="{{ user_image }}" alt="" data-status="off">

@@ -20,13 +20,10 @@ def create_db():
 @manager_cli.command('drop_db')
 def drop_db():
     """Drops the db tables."""
-    # files = File.query.order_by(File.date_added)
     files = db.session.query(File).all()
     for f in files:
-        print('--------')
-        print(f.name)
-    #     s3_delete_obj(f.name)
-    # db.drop_all()
+        s3_delete_obj(f.name)
+    db.drop_all()
 
 
 @manager_cli.command('create_master')

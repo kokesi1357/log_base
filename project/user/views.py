@@ -12,7 +12,7 @@ from project.form import user_form, server_form, channel_form, message_form
 from project.file import standardize_filename, translate_into_s3_format, \
     allowed_file, lift_s3_format, optimize_size_unit
 from project.boto3 import s3_upload_file, s3_get_body, s3_get_obj_size, \
-    s3_delete_obj, s3_create_presigned_url
+    s3_create_presigned_url, s3_delete_obj, delete_linked_s3
 from project.email import send_email
 from project.tokens import signup_token, psw_reset_token, decode_token
 from project.base64 import translate_into_base64, decode_js_base64
@@ -74,6 +74,7 @@ def does_user_exist():
             return True
     except:
         return False
+
 
 # Set session for authenticated user
 def set_auth_session(limit=1800):
@@ -164,6 +165,7 @@ def is_user_server_member(view):
 
         return redirect(url_for('user.index')) if not result else view(*args, **kwargs)
     return censored_view
+
 
 # Verify if user is owner of a target messge
 def is_user_message_owner(view):
@@ -335,25 +337,25 @@ def reset_password(email):
 # Views for authorized users -------------------------------------------
 
 # 削除されるmodelクラスに応じて、紐づくs3上のファイルも削除します
-def delete_linked_s3(target):
-    if target.className == 'User':
-        if target.image:
-            s3_delete_obj(target.image.name)
-        for os in target.own_servers:
-            for c in os.channels:
-                for m in c.messages:
-                    result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == 'Server':
-        if target.image:
-            s3_delete_obj(target.image.name)
-        for c in target.channels:
-            for m in c.messages:
-                result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == 'Channel':
-        for m in target.messages:
-            result = [s3_delete_obj(f.name) for f in m.files]
-    elif target.className == 'Message':
-        result = [s3_delete_obj(f.name) for f in target.files]
+# def delete_linked_s3(target):
+#     if target.className == 'User':
+#         if target.image:
+#             s3_delete_obj(target.image.name)
+#         for os in target.own_servers:
+#             for c in os.channels:
+#                 for m in c.messages:
+#                     result = [s3_delete_obj(f.name) for f in m.files]
+#     elif target.className == 'Server':
+#         if target.image:
+#             s3_delete_obj(target.image.name)
+#         for c in target.channels:
+#             for m in c.messages:
+#                 result = [s3_delete_obj(f.name) for f in m.files]
+#     elif target.className == 'Channel':
+#         for m in target.messages:
+#             result = [s3_delete_obj(f.name) for f in m.files]
+#     elif target.className == 'Message':
+#         result = [s3_delete_obj(f.name) for f in target.files]
 
 
 

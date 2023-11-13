@@ -45,3 +45,4 @@ class TestingConfig(BaseConfig):
 
 class ProductionConfig(BaseConfig):
     """Production configuration."""
+    WTF_CSRF_ENABLED = False

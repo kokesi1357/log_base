@@ -103,3 +103,40 @@ def s3_delete_obj(filename):
         return True
     except:
         return False
+
+
+# 削除されるmodelクラスに応じて、紐づくs3上のファイルも削除します
+def delete_linked_s3(target):
+    try:
+        if target.className == 'User':
+            if target.image:
+                s3_delete_obj(target.image.name)
+            # 自身のサーバーに紐づくファイルを削除(サーバーのサムネ、メッセージの添付ファイル)
+            for os in target.own_servers:
+                if os.image:
+                    s3_delete_obj(os.image.name)
+                for c in os.channels:
+                    for m in c.messages:
+                        result = [s3_delete_obj(f.name) for f in m.files]
+            # 自身がこれまで送信したメッセージの添付ファイルを削除
+            for m in target.messages:
+                result = [s3_delete_obj(f.name) for f in m.files]
+
+        elif target.className == 'Server':
+            if target.image:
+                s3_delete_obj(target.image.name)
+            for c in target.channels:
+                for m in c.messages:
+                    result = [s3_delete_obj(f.name) for f in m.files]
+
+        elif target.className == 'Channel':
+            for m in target.messages:
+                result = [s3_delete_obj(f.name) for f in m.files]
+
+        elif target.className == 'Message':
+            result = [s3_delete_obj(f.name) for f in target.files]
+
+        return False if False in result else True
+
+    except:
+        return False

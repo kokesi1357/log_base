@@ -33,13 +33,18 @@
         {% endif %}
 
         <script>
-            // client id は user-settings に記させる自信の名前を用いる
-            const MY_ID = (get_element('#user-info--name')) ?
-                get_element('#user-info--name').textContent : null;
-            const PEER = new Peer(MY_ID);
+            const MY_ID = (get_element('#user-settings')) ?
+                get_element('#user-settings').dataset.user_id : null;
 
-            const PHONE_BOOK = get_element('#phone-book');
+            const PHONE_BOOK = get_element('.p-index__phone-book')[0];
             const SIDE_CALL_MONITOR = get_element('.p-index__side-call-monitor')[0];
+            const CALL_RESPONSE_BAR = get_element('.p-index__call-response-bar')[0];
+
+            const SIDE_CALLER_NAME = get_element('.p-index__call-response-bar .caller-name')[0];
+            const SIDE_CALLER_IMAGE = get_element('.p-index__call-response-bar .caller-img')[0];
+
+            const ANSWER_BTN = get_element('#answer-call-btn');
+            const REJECT_BTN = get_element('#reject-call-btn');
 
             const SIDE_MY_VIDEO = get_element('#side-my-video');
             const FULL_MY_VIDEO = get_element('#full-my-video');
@@ -51,23 +56,21 @@
             const USER_LIST = get_element('.p-index__callable-user-list li')
 
 
+
             // 「 Connecting 」 のテキストをサイドバー上に表示します
-            turn_on_connecting_txt = () => {
+            show_connecting_txt = () => {
                 CONNECTING_TXT.classList.remove('u-dn');
             }
 
-
-            // 「 Connected 」 のテキストをサイドバー上に表示します
-            //  Connecting 」のテキストを非表示にします
-            turn_on_connected_txt = () => {
+            // 「 Connected 」 のテキストをサイドバー上に表示、「 Connecting 」のテキストは非表示にします
+            show_connected_txt = () => {
                 if (!CONNECTING_TXT.classList.contains('u-dn'))
                     CONNECTING_TXT.classList += ' u-dn';
                 CONNECTED_TXT.classList.remove('u-dn');
             }
 
-
-            //  Connecting 」および「 Connected 」のテキストを非表示にします
-            turn_off_connect_txt = () => {
+            // 「 Connecting 」および「 Connected 」のテキストを非表示にします
+            hide_connect_txt = () => {
                 if (!CONNECTING_TXT.classList.contains('u-dn'))
                     CONNECTING_TXT.classList += ' u-dn';
                 if (!CONNECTED_TXT.classList.contains('u-dn'))
@@ -75,28 +78,71 @@
             }
 
 
-            // サイドバーにて、ビデオモニターを表示、電話帳を非表示にします
-            turn_on_video_monitor = () => {
-                PHONE_BOOK.classList += ' u-dn';
+
+            // サイドバー上の通話操作を、電話帳に切り替えます
+            switch_to_phone_book = () => {
+                PHONE_BOOK.classList.remove('u-dn');
+                if (!SIDE_CALL_MONITOR.classList.contains('u-dn')) SIDE_CALL_MONITOR.classList += ' u-dn';
+                if (!CALL_RESPONSE_BAR.classList.contains('u-dn')) CALL_RESPONSE_BAR.classList += ' u-dn';
+            }
+
+            // サイドバー上の通話操作を、ビデオモニターに切り替えます
+            switch_to_video_monitor = () => {
+                if (!PHONE_BOOK.classList.contains('u-dn')) PHONE_BOOK.classList += ' u-dn';
                 SIDE_CALL_MONITOR.classList.remove('u-dn');
+                if (!CALL_RESPONSE_BAR.classList.contains('u-dn')) CALL_RESPONSE_BAR.classList += ' u-dn';
+            }
+
+            // サイドバー上の通話操作を、受信応答バーに切り替えます
+            switch_to_response_bar = () => {
+                if (!PHONE_BOOK.classList.contains('u-dn')) PHONE_BOOK.classList += ' u-dn';
+                if (!SIDE_CALL_MONITOR.classList.contains('u-dn')) SIDE_CALL_MONITOR.classList += ' u-dn';
+                CALL_RESPONSE_BAR.classList.remove('u-dn');
             }
 
 
-            // サイドバーにて、電話帳の任意の相手を押下した際、相手に電話をかけます
-            USER_LIST.map(li => {
-                li.addEventListener('click', () => {
-                    turn_on_connecting_txt();
-                    // 相手のidを取得
-                    let other_id = get_element('p', li)[0].textContent;
 
-                    // 通信開始
+            // 応答ボタン押下でtrueを返す待機関数
+            wait_for_call_response = async () => {
+                return await new Promise((resolve, reject) => {
+                    ANSWER_BTN.addEventListener('click', resolve);
+                    REJECT_BTN.addEventListener('click', reject);
+                });
+            }
+
+
+
+            // p2p通信にて、自信の通信状態を保管するgl変数
+            CONN = false;
+            CALL = false;
+
+            // PeerJsライブラリを用いたp2p通信用クラス
+            const MyPeer = class extends Peer {
+                constructor() { super(MY_ID) }
+
+                // 指定したclient_idに接続を行う
+                async my_connect(other_id) {
+                    return await new Promise(resolve => {
+                        this.connection = this.connect(other_id)
+                        this.connection.on('open', () => resolve(this.connection))
+                        // 30秒以内に接続ができない場合、接続を閉じる
+                        setTimeout(() => {
+                            this.connection.close();
+                            resolve(null);
+                        }, 30000);
+                    })
+                }
+
+                // 指定したclient_idに通話を行う
+                my_call = (other_id) => {
+                    // 自身のデバイスからカメラ映像 + オーディオを取得
                     navigator.mediaDevices.getUserMedia({video : true, audio : true})
                     .then(function (stream) {
                         // 取得したカメラ映像を相手に送信
                         let call = PEER.call(other_id, stream);
                         if (call != null) {
-                            turn_on_connected_txt();
-                            turn_on_video_monitor();
+                            show_connected_txt();
+                            switch_to_video_monitor();
                             // 自信のモニターを表示
                             SIDE_MY_VIDEO.srcObject = stream;
                             SIDE_MY_VIDEO.play();
@@ -111,47 +157,148 @@
                                 FULL_OTHER_VIDEO.srcObject = stream;
                                 FULL_OTHER_VIDEO.play();
                             });
+
+                            // 通話が閉じた場合、
+                            call.on('close', () => {
+
+                            })
+
+                        // 通話が繋がらなかった場合
+                        //! connを引数にするか それともCONNにセットする案に戻すか
+                        } else {
+
                         }
-                    }).catch(function (error) {
-                        // カメラ映像、オーディオへのアクセスが失敗した場合
-                        // エラー内容をconsole.logで出力
-                        console.log(error);
-                        turn_off_connect_txt();
-                    });
-                });
-            })
-
-
-            // 応答
-            PEER.on('call', function(call){
-                navigator.mediaDevices.getUserMedia({video : true, audio : true})
-                .then(function (stream) {
-                    turn_on_connected_txt();
-                    turn_on_video_monitor();
-                    // 自信のモニターを表示
-                    SIDE_MY_VIDEO.srcObject = stream;
-                    SIDE_MY_VIDEO.play();
-                    FULL_MY_VIDEO.srcObject = stream;
-                    FULL_MY_VIDEO.play();
-
-                    // 取得したカメラ映像を相手に送信
-                    call.answer(stream);
-                    // 相手からのストリーミングデータ受信処理
-                    call.on('stream', function(stream) {
-                        // 相手から受信した映像を表示
-                        SIDE_OTHER_VIDEO.srcObject = stream;
-                        SIDE_OTHER_VIDEO.play();
-                        FULL_OTHER_VIDEO.srcObject = stream;
-                        FULL_OTHER_VIDEO.play();
-                    });
-
-                }).catch(function (error) {
                     // カメラ映像、オーディオへのアクセスが失敗した場合
-                    // エラー内容をconsole.logで出力
-                    console.log(error);
-                    turn_off_connect_txt();
+                    }).catch(function (error) {
+                        console.log(error);
+                        hide_connect_txt();
+                    });
+                }
+            }
+
+
+
+            // 電話帳がある(=任意のserver内にいる)場合、p2p通信をセットアップ
+            if (PHONE_BOOK) {
+                PEER = new MyPeer();
+
+                // 接続 / 通話を行う側の処理 ------------------------------------------------
+
+                // サイドバーにて、電話帳の任意の相手を押下した際、相手に電話をかけます
+                USER_LIST.map(li => {
+                    li.addEventListener('click', () => {
+                        show_connecting_txt();
+                        // 相手のidを取得
+                        let other_id = li.dataset.user_id;
+                        PEER.my_connect(other_id)
+                        .then((conn) => {
+                            if (conn != null) {
+                                CONN = true; // 接続状態を接続中(true)に変更
+                                conn.send({
+                                    name : get_element('#user-info--name').textContent,
+                                    b64 : (get_element('#user-info--image img')[0]) ? 
+                                        get_element('#user-info--image img')[0].src : null 
+                                })
+
+                                // 相手から通話への応答がきた場合の処理
+                                conn.on('data', (data) => {
+                                    console.log(`${data}`);
+                                    // 通話受入の応答だった場合、通話開始
+                                    if (data) {
+                                        PEER.my_call(other_id);
+                                        show_connected_txt();
+                                    }
+                                })
+
+                                // 接続が閉じた場合
+                                conn.on('close', () => {
+                                    CONN = false;
+                                    switch_to_phone_book();
+                                })
+
+                                // 30秒後通話が開始していない場合、接続を閉じる
+                                setTimeout(() => {
+                                    if (!CALL) {
+                                        conn.close();
+                                        hide_connect_txt();
+                                    }
+                                }, 30000);
+                            }
+                        })
+                    });
+                })
+
+
+
+                // 接続 / 通話を受ける側の処理 -----------------------------------------------
+
+                // 接続がきた際の処理
+                PEER.on('connection', (conn) => {
+                    // 既に接続がある場合
+                    if (CONN) {
+                        conn.close();
+
+                    // 接続が存在しない場合
+                    } else {
+                        CONN = true; // 接続状態を接続中(true)に変更
+                        show_connected_txt();
+
+                        // 通話相手の名前と画像を表示
+                        conn.on('data', (data) => {
+                            SIDE_CALLER_NAME.textContent = data.name;
+                            if (data.b64) {
+                                SIDE_CALLER_IMAGE.innerHTML = `<img src="${ data.b64 }" alt="">`;
+                            } else {
+                                SIDE_CALLER_IMAGE.innerHTML = `<i class="fa-solid fa-user"></i>`;
+                            }
+                        })
+                        switch_to_response_bar();
+
+                        conn.on('close', () => {
+                            CONN = false;
+                            switch_to_phone_book();
+                        })
+
+                        // 通話の応答(受入 / 拒否)を選択するまで待機
+                        wait_for_call_response()
+                        // 通話を受け入れた場合、受入の応答msgを送信
+                        .then(() => conn.send(true))
+                        // 通話を拒否した場合、接続を閉じ、接続状態をリセット
+                        .catch(() => conn.close())
+                    }
+                })
+
+                // 通話がきた際の処理
+                PEER.on('call', (call) => {
+                    navigator.mediaDevices.getUserMedia({video : true, audio : true})
+                    .then((stream) => {
+                        CALL = true;
+                        show_connected_txt();
+                        switch_to_video_monitor();
+                        // 自信のモニターを表示
+                        SIDE_MY_VIDEO.srcObject = stream;
+                        SIDE_MY_VIDEO.play();
+                        FULL_MY_VIDEO.srcObject = stream;
+                        FULL_MY_VIDEO.play();
+
+                        // 取得したカメラ映像を相手に送信
+                        call.answer(stream);
+                        // 相手からのストリーミングデータ受信処理
+                        call.on('stream', (stream) => {
+                            // 相手から受信した映像を表示
+                            SIDE_OTHER_VIDEO.srcObject = stream;
+                            SIDE_OTHER_VIDEO.play();
+                            FULL_OTHER_VIDEO.srcObject = stream;
+                            FULL_OTHER_VIDEO.play();
+                        });
+
+                    // カメラ映像、オーディオへのアクセスが失敗した場合
+                    }).catch((error) => {
+                        console.log(error);
+                        hide_connect_txt();
+                    });
                 });
-            });
+            }
         </script>
     </body>
 </html>

@@ -3,10 +3,13 @@
 
 from flask import Blueprint, g, session, request, flash, redirect, render_template, url_for
 import functools
+from time import time
+from project.env import is_production
 from project.app import db
 from project.models.models import User
 from project.form import user_form
-from time import time
+from project.boto3 import delete_linked_s3
+
 
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
@@ -115,6 +118,7 @@ def render_temp(path, title=None, form=None, **kwrgs):
         path,
         title=title,
         form=form,
+        is_production=is_production(),
         g=g,
         request=request,
         **kwrgs
@@ -246,6 +250,7 @@ def delete_user(id):
     try:
         if g.admin.master == True \
         or (user_to_delete.sample != True and user_to_delete.admin != True):
+            delete_linked_s3(user_to_delete)
             name = user_to_delete.name
             db.session.delete(user_to_delete)
             db.session.commit()
