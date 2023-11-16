@@ -12,7 +12,7 @@
                 <button class="p-index-main__user-image" id="user-info--image"
                 onclick="open_modal_with_closer_id('update-account-image')">
                     {% if user_image %}
-                    <img src="{{ user_image }}" alt="" data-status="off">
+                    <img src="{{ user_image }}" alt="">
                     {% else %}
                     <i class="fa-solid fa-user"></i>
                     {% endif %}
@@ -78,7 +78,7 @@
                 <div class="p-form__circle-preview-showcase">
                     <label class="p-form__profile-image-label c-btn image-wrap" for="update-account--image">
                         {% if user_image %}
-                        <img src="{{ user_image }}" alt="" data-status="off">
+                        <img src="{{ user_image }}" alt="">
                         {% else %}
                         <i class="fa-solid fa-user"></i>
                         {% endif %}

@@ -44,7 +44,7 @@
         </div>
 
         <section class="p-index__side-user-section">
-            <div class="p-index__phone-operator" id="phone-operator" data-status="off">
+            <div class="p-index__phone-operator" id="phone-operator">
                 <!-- 電話帳 -->
                 <div class="p-index__phone-book">
                     <p class="note-for-call">! 選択したユーザーに発信します !</p>
@@ -88,49 +88,68 @@
                 </div>
 
                 <!-- 通話中モニター -->
-                <div class="p-index__side-call-monitor u-dn">
-                    <div class="side-user-display">
+                <div class="p-index__call-monitor p-index__call-monitor--side u-dn">
+                    <div class="user-display">
                         <video id="side-my-video" autoplay></video>
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
-                            <i class="fa-solid fa-microphone-slash"></i>
+                            <i class="fa-solid fa-microphone-slash u-op-0" id="side-caller-mike-icon--off"></i>
                         </div>
+                        <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="side-caller-video-icon--off"></i>
                     </div>
-                    <div class="side-user-display">
-                        <video id="side-other-video" src=""></video>
+                    <div class="user-display">
+                        <video id="side-other-video" autoplay></video>
                         <div class="user-name">
                             <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
-                            <i class="fa-solid fa-microphone-slash"></i>
+                            <i class="fa-solid fa-microphone-slash u-op-0"  id="side-receiver-mike-icon--off"></i>
                         </div>
+                        <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="side-receiver-video-icon--off"></i>
                     </div>
-                    <div class="side-call-menu">
-                        <button class="menu-btn" data-=""
+                    <div class="p-index__call-menu p-index__call-menu--side">
+                        <button class="menu-btn" id="video-expand-btn"
                         onclick="open_fixed_section_by_section_id('full-screen-video')">
                             <i class="fa-solid fa-expand"></i>
                         </button>
-                        <button class="menu-btn u-bg--alert" id="video-go" data-=""
-                        onclick="">
+                        <button class="menu-btn u-bg--alert hung-up-btn" id="side-hung-up-btn">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
-                        <button class="menu-btn mute-btn" data-=""
-                        onclick="">
+
+                        <button class="menu-btn" id="side-video-disable-btn">
+                            <i class="fa-solid fa-video"></i>
+                        </button>
+                        <button class="menu-btn u-dn" id="side-video-enable-btn">
+                            <i class="fa-solid fa-video-slash"></i>
+                        </button>
+
+                        <button class="menu-btn" id="side-audio-mute-btn">
+                            <i class="fa-solid fa-microphone"></i>
+                        </button>
+                        <button class="menu-btn u-dn" id="side-audio-unmute-btn">
                             <i class="fa-solid fa-microphone-slash"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- 受信側の応答バー -->
-                <div class="p-index__call-response-bar u-dn">
-                    <div class="caller-img">
-                        <!-- <img src="{{ user_image }}" alt=""> -->
-                        <i class="fa-solid fa-user"></i>
+                <!-- 発信側の通信操作バー -->
+                <div class="p-index__call-control-bar u-dn" id="calling-bar">
+                    <div class="user-img"></div>
+                    <p class="user-name u-string-shortener"></p>
+                    <div class="control-btn-wrap">
+                        <button class="control-btn c-btn u-bg--alert hung-up-btn" id="cancel-call-btn">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
                     </div>
-                    <p class="caller-name">ken</p>
-                    <div class="response-btn-wrap">
-                        <button class="response-btn c-btn u-bg--outstanding " id="answer-call-btn">
+                </div>
+
+                <!-- 受信側の応答バー -->
+                <div class="p-index__call-control-bar u-dn" id="receiving-bar">
+                    <div class="user-img"></div>
+                    <p class="user-name u-string-shortener"></p>
+                    <div class="control-btn-wrap">
+                        <button class="control-btn c-btn u-bg--outstanding" id="answer-call-btn">
                             <i class="fa-solid fa-phone"></i>
                         </button>
-                        <button class="response-btn c-btn u-bg--alert" id="reject-call-btn">
+                        <button class="control-btn c-btn u-bg--alert hung-up-btn" id="reject-call-btn">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -434,38 +453,46 @@
 
 <!-- 固定 : ビデオ通話のフルスクリーン -->
 <section id="full-screen-video" class="l-main__fixed-section fixed-section">
-    <div class="p-index__full-call-menu">
+    <div class="p-index__call-menu p-index__call-menu--full">
         <button class="menu-btn fixed-section-closer toggler"
         id="fixed-section-closer--full-screen-video">
             <i class="fa-solid fa-compress"></i>
         </button>
-        <button class="menu-btn u-bg--alert" data-=""
-        onclick="">
+        <button class="menu-btn u-bg--alert hung-up-btn" id="full-hung-up-btn">
             <i class="fa-solid fa-xmark"></i>
         </button>
-        <button class="menu-btn" data-=""
-        onclick="">
-            <!-- <i class="fa-solid fa-microphone-slash"></i> -->
+
+        <button class="menu-btn" id="full-video-disable-btn">
+            <i class="fa-solid fa-video"></i>
+        </button>
+        <button class="menu-btn u-dn" id="full-video-enable-btn">
+            <i class="fa-solid fa-video-slash"></i>
+        </button>
+
+        <button class="menu-btn" id="full-audio-mute-btn">
             <i class="fa-solid fa-microphone"></i>
+        </button>
+        <button class="menu-btn u-dn" id="full-audio-unmute-btn">
+            <i class="fa-solid fa-microphone-slash"></i>
         </button>
     </div>
     <div class="wide-content">
-        <div class="p-index__full-call-monitor">
-            <div class="full-user-display">
+        <div class="p-index__call-monitor p-index__call-monitor--full">
+            <div class="user-display">
                 <video id="full-my-video" autoplay></video>
-                <!-- <img src="{{ user_image }}" alt=""> -->
                 <div class="user-name">
                     <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
-                    <i class="fa-solid fa-microphone-slash"></i>
+                    <i class="fa-solid fa-microphone-slash u-op-0" id="full-caller-mike-icon--off"></i>
                 </div>
+                <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="full-caller-video-icon--off"></i>
             </div>
-            <div class="full-user-display">
-                <video id="full-other-video" src=""></video>
-                <!-- <img src="{{ user_image }}" alt=""> -->
+            <div class="user-display">
+                <video id="full-other-video" autoplay></video>
                 <div class="user-name">
                     <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
-                    <i class="fa-solid fa-microphone-slash"></i>
+                    <i class="fa-solid fa-microphone-slash u-op-0" id="full-receiver-mike-icon--off"></i>
                 </div>
+                <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="full-receiver-video-icon--off"></i>
             </div>
         </div>
     </div>

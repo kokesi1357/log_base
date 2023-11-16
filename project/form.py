@@ -199,7 +199,7 @@ def server_form(type=None, id=None):
 
     ServerForm.image = FileField('IMAGE')
 
-    if type and type is 'update':
+    if type and type == 'update':
         ServerForm.delete_image = BooleanField('DELETE IMAGE')
 
     ServerForm.Meta.csrf = False
