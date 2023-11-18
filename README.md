@@ -1,26 +1,55 @@
-# Log Base
-Simple chat service serviece with HTML and CSS.<br>
-A user can create or join a CHANNEL where to communicate with other people.
+# Log Base - Simple Chat Application
 
-## Currently Implemented Designs
-#### Portal
-<img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src="https://user-images.githubusercontent.com/77530003/150395414-88489ba2-d782-4c72-bbcc-06518d518164.png">
+## トップページデザイン
 
-#### Log in
-<img width="500" alt="Screen Shot 2022-01-21 at 2 55 20" src="https://user-images.githubusercontent.com/77530003/150395516-cefd5731-2ee1-4a20-9779-57f5699baa7f.png">
 
-#### Sign up
-<img width="500" alt="Screen Shot 2022-01-21 at 2 55 31" src="https://user-images.githubusercontent.com/77530003/150395569-b86deb7d-3f13-4c74-94b8-1cb3d923b354.png">
+## サービスのURL
+登録なしでご使用いただくために、ゲストユーザーでのログイン機能を実装しました。<br>
+( ログアウト後、ゲストユーザーにより生成されたデータは全て削除されます。あらかじめご了承ください。)<br>
 
-#### Top (after log-in)
-<img width="500" alt="Screen Shot 2022-01-21 at 2 54 59" src="https://user-images.githubusercontent.com/77530003/150395674-5d02bfaf-d481-475d-bd3f-b1f20a8fef16.png">
+https://logbase1357.com/entry
 
-#### Add channel
-<img width="500" alt="Screen Shot 2022-01-21 at 2 55 46" src="https://user-images.githubusercontent.com/77530003/150395613-46c6bcfc-f604-43b9-9565-aafa93ac8a86.png">
+## 機能
+| トップ画面 | 機能紹介モーダル |
+| --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| 直感的でシンプルなトップ画面を実装しました。 | 表示したい画像への切替スライドを実装しました。 |
 
-#### Search channel
-<img width="500" alt="Screen Shot 2022-01-21 at 2 55 53" src="https://user-images.githubusercontent.com/77530003/150395625-49a72caf-6f59-489f-b3e3-9b9e9a486db8.png">
+| ログイン画面 | サインアップ画面 |
+| --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| 登録メールアドレスまたはゲストユーザーでのログイン機能・メール認証を介したアカウントのパスワードリセット機能を実装しました。 | メール認証を介したユーザー作成機能を実装しました。 |
 
-#### Profile
-<img width="500" alt="Screen Shot 2022-01-21 at 2 56 29" src="https://user-images.githubusercontent.com/77530003/150395631-7d5c76ec-e0eb-42c2-b5f2-30e5ca4e9303.png">
+| サーバー一覧画面 | サーバー作成・編集モーダル | サーバー検索モーダル |
+| --- | --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| アカウントに紐づくサーバー一覧表示機能を実装しました。 | アカウントに紐づくサーバー作成・編集機能を実装しました。 | 任意のキーワードでのサーバー検索機能を実装しました。 |
+
+| チャンネル一覧画面 | チャンネル作成・編集モーダル |
+| --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| サーバーに紐づくチャンネル一覧表示機能を実装しました。 | サーバーに紐づくチャンネル作成・編集機能を実装しました。|
+
+| メッセージ送信画面 | メッセージ編集 |
+| --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| 複数ファイルを添付できるメッセージ送信機能を実装しました。 | メッセージのテキスト編集・ファイル削除機能を実装しました。 |
+
+| ビデオチャット画面(サイドバー) | ビデオチャット画面(フル) |
+| --- | --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> | <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| ビデオチャット機能・マイクミュート切替機能・ビデオ表示切替機能を実装しました。(PCでのみ使用可能) | ビデオディスプレイ拡大機能を実装しました。 |
+
+| アカウント設定画面 |
+| --- |
+| <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> <img width="500" alt="Screen Shot 2022-01-21 at 2 55 12" src=""> |
+| アカウントの画像、名前、メールアドレス、パスワード設定機能を実装しました。 |
+
+## 使用技術
+
+## システム構成図
+
+## ER図
+
+## 今後の計画
 
