@@ -22,7 +22,7 @@
     </div>
 </section>
 <section id="p-entry-about" class="l-main__section">
-    <div class="content row">
+    <div id="p-entry-about-content" class="content row vertical-fadein">
         <h1 class="l-main__section-header">このサイトについて</h1>
         <div class="p-entry-about__brief-wrap col-sp-24 col-tab-12 u-mrgn-center--hrzn">
             <div class="l-main__section-brief">
@@ -30,24 +30,20 @@
                 <br>
                 基本用途はグループ内でのメッセージのやり取りですが、
                 <br>
-                デスクトップではビデオチャット機能もございます。
+                PCではビデオチャット機能もございます。
                 <br>
-                どうぞ手塩にかけ育てたプロダクトに触れていってください。
+                どうぞ手塩にかけたプロダクトに触れていってください。
             </div>
-            <div class="u-txt-center">
-                <a href="#" class="p-entry-about__github-entry">GitHub <i class="fa-brands fa-github"></i></a>
-            </div>
+            <a href="#" class="p-entry-about__git-entry">GitHub <i class="fa-brands fa-github"></i></a>
         </div>
     </div>
 </section>
 <section id="p-entry-func" class="l-main__section">
-    <div class="content row">
+    <div id="p-entry-func-content" class="content row">
         <h1 class="l-main__section-header">機能</h1>
-        <p class="l-main__section-brief">
-        WEBアプリ内にて利用できる機能達を紹介します。
-        </p>
+        <p class="l-main__section-brief">当アプリにてご利用できる主な機能を紹介します。</p>
         <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
-            <div class="p-entry-func__thumnail-wrap modal-opener toggler">
+            <div class="p-entry-func__thumnail-wrap scale-fadein scale-fadein modal-opener toggler">
                 <i class="fa-solid fa-people-roof"></i>
             </div>
             <p class="p-entry-func__img-txt">チャンネル</p>
@@ -61,7 +57,12 @@
                         <div class="p-modal-block col-sp-24 col-tab-8">
                             <p class="p-modal-header">チャンネル</p>
                             <p class="p-entry-func__modal-txt">
-
+                                ユーザーが所属するサーバー、サーバー内のチャットスペースとなるチャンネルを生成する機能を実装しました。（ 全デバイス対応 ）
+                                <br><br>
+                                サーバー追加は、ログイン後「Add Server」より、自身で作成するまたは既存サーバーを検索し参加する方法で実行できます。チャンネル追加は、サーバー管理者のみ、サーバー内サイドバーの「+」より実行できます。
+                                サーバー・チャンネルともに、「<i class="fa-solid fa-gear"></i>」より設定情報の変更が行えます。
+                                <br><br>
+                                今後はサーバー管理者の権限委託機能、ban機能、パスワード設定機能 etc.を追加し、セキュアなサーバー管理実現を考えています。
                             </p>
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
@@ -85,7 +86,7 @@
             </div>
         </div>
         <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
-            <div class="p-entry-func__thumnail-wrap modal-opener toggler">
+            <div class="p-entry-func__thumnail-wrap scale-fadein modal-opener toggler">
                 <i class="fa-solid fa-headset"></i>
             </div>
             <p class="p-entry-func__img-txt">ビデオチャット</p>
@@ -97,17 +98,39 @@
                 <div class="p-modal-wrap">
                     <div class="p-modal-content row">
                         <div class="p-modal-block col-sp-24 col-tab-8">
-                            <p class="p-modal-header">ミーティング</p>
-                            <p class="p-entry-func__modal-txt">hey hey hoo</p>
+                            <p class="p-modal-header">ビデオチャット</p>
+                            <p class="p-entry-func__modal-txt">
+                                P2Pを用いた、ビデオ・音声共有機能、ミュート機能、ディスプレイ表示切替機能を実装しました。（ PCのみ対応 ）
+                                <br><br>
+                                ビデオチャットは以下のフローで開始できます。
+                                <br>
+                                1. サイドバーの「<i class="fa-solid fa-phone"></i>」押下
+                                <br>
+                                （ サイドバーに電話帳が表示 ）
+                                <br>
+                                2. 電話帳の任意のユーザー押下
+                                <br>
+                                （ 通信が始まり、発信側のサイドバーに発信画面、受信側のサイドバーに受信画面が表示 ）
+                                <br>
+                                3. 受信側が受信画面の「<i class="fa-solid fa-phone"></i>」を押下
+                                <br><br>
+                                ビデオチャットは、顔検出してエフェクトをつける機能など、試してみたいことが多くあり、手を加えればもっとよくなりそうです。
+                            </p>
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
-                                <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/video2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video3_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video4_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video5_min.png')}}" alt="">
                             </div>
                             <div class="p-entry-func__modal-mainimage modal-mainimages">
-                                <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video1_min.png')}}" alt="" data-status="on">
+                                <img src="{{url_for('static', filename='/node/dist/img/video2_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video3_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video4_min.png')}}" alt="">
+                                <img src="{{url_for('static', filename='/node/dist/img/video5_min.png')}}" alt="">
                             </div>
                         </div>
                     </div>
@@ -115,7 +138,7 @@
             </div>
         </div>
         <div class="p-entry-func__modal-entry p-modal-block col col-sp-24 col-tab-8">
-            <div class="p-entry-func__thumnail-wrap modal-opener toggler">
+            <div class="p-entry-func__thumnail-wrap scale-fadein modal-opener toggler">
                 <i class="fa-regular fa-comments"></i>
             </div>
             <p class="p-entry-func__img-txt">メッセージ</p>
@@ -129,82 +152,31 @@
                     <div class="p-modal-block col-sp-24 col-tab-8">
                         <p class="p-modal-header">メッセージ</p>
                         <p class="p-entry-func__modal-txt">
-                        Ariel, listen to me
-                        The human world, it's a mess
-                        Life under the sea is better than anything they've got up there
-                        <br>
-                        <br>
-                        The seaweed is always greener
-                        In somebody else's lake
-                        You dream about going up there
-                        But that is a big mistake
-                        Just look at the world around you
-                        Right here on the ocean floor
-                        Such wonderful things surround you
-                        What more is you lookin' for?
-                        <br>
-                        <br>
-                        Under the sea, under the sea
-                        Darling, it's better down where it's wetter
-                        Take it from me
-                        Up on the shore, they work all day
-                        Out in the sun they slave away
-                        While we devotin', full time to floatin'
-                        Under the sea (Ah-ha-ha)
-                        <br>
-                        <br>
-                        Down here all the fish is happy
-                        As off through the waves they roll
-                        The fish on the land ain't happy
-                        They sad cause they in their bowl
-                        But fish in the bowl is lucky
-                        They in for a worser fate
-                        One day when the boss get hungry
-                        Guess who's gon' be on the plate?
-                        Uh-oh!
-                        <br>
-                        <br>
-                        Under the sea, under the sea
-                        Nobody beat us
-                        Fry us and eat us in fricassee
-                        We what the land folks loves to cook
-                        Under the sea we off the hook
-                        We got no troubles, life is the bubbles
-                        Under the sea (Under the sea)
-                        Under the sea (Under the sea)
-                        Since life is sweet here
-                        We got the beat here naturally (Naturally-y-y-y)
-                        Even the sturgeon an' the ray
-                        They get the urge 'n' start to play
-                        We got the spirit, you got to hear it
-                        Under the sea
-                        <br>
-                        <br>
-                        [Bridge: Sebastian, Fluke]
-                        The newt play the flute
-                        The carp play the harp
-                        The plaice play the bass
-                        And they soundin' sharp
-                        The bass play the brass
-                        The chub play the tub
-                        The fluke is the duke of soul (Yeah)
-                        The ray he can play
-                        The lings on the strings
-                        The trout rockin' out
-                        The blackfish she sings
-                        The smelt and the sprat, they know where it's at
-                        An' oh that blowfish blow
-                        (Wah, ah-ha, yeah)
+                            ファイル添付できるメッセージ送信機能、メッセージ編集機能、添付画像のスライド表示機能を実装しました。（ 全デバイス対応 ）
+                            <br><br>
+                            テキスト入力またはファイル添付後、「Enter」でメッセージが送信されます。
+                            「+」よりファイル添付、「<i class="fa-solid fa-minus"></i>」より添付取消が可能です。
+                            テキスト編集は「<i class="fa-regular fa-pen-to-square"></i>」より、ファイル削除は「<i class="fa-solid fa-trash-can"></i>」より行えます。
+                            画像押下で、対象に遷移した状態のスライドが表示されます。
+                            <br>
+                            （ ファイル形式は jpeg・jpg・png・gif・pdf・txt のみ対応しています。 ）
+                            <br><br>
+                            やり取りをスムーズに行えるよう、非同期でのメッセージ自動更新を仕込みました。
+                            より本格的なチャットアプリに近づけるため、メンション機能やスレッド機能等の追加を考えています。
                         </p>
                     </div>
                     <div class="p-modal-block col-sp-24 col-tab-16">
                         <div class="p-entry-func__modal-thumnails modal-thumnails">
                             <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
                             <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
+                            <img src="{{url_for('static', filename='/node/dist/img/message3_min.png')}}" alt="">
+                            <img src="{{url_for('static', filename='/node/dist/img/message4_min.gif')}}" alt="">
                         </div>
                         <div class="p-entry-func__modal-mainimage modal-mainimages">
                             <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
                             <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
+                            <img src="{{url_for('static', filename='/node/dist/img/message3_min.png')}}" alt="">
+                            <img src="{{url_for('static', filename='/node/dist/img/message4_min.gif')}}" alt="">
                         </div>
                     </div>
                     </div>

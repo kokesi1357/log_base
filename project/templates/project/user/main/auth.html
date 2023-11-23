@@ -28,55 +28,53 @@
             {{ form.hidden_tag() }}
 
             {% if title in ['SIGN UP'] %}
-                {{ form.name.label(class="p-form__input-label") }}
-                <p class="p-form__error-msg" id="error_name" data-error="{{ form.is_valid('name') }}">
-                    {{ form.name.errors[0] }}
-                </p>
-                {{ form.name(class="p-form__input", placeholder="Nickname") }}
+                {{ form.name.label(class="p-form__input-label", for="user-auth--name") }}
+                <p class="p-form__error-msg">{{ form.name.errors[0] }}</p>
+                {{ form.name(class="p-form__input", id="user-auth--name", placeholder="Nickname") }}
             {% endif %}
 
 
             {% if title in ['FORGET PASSWORD?'] %}
-            <p class="p-form__psw-forget-note">*** 入力したメールアドレスにパスワード変更用のリンクを送信します ***</p>
+            <p class="p-form__psw-forget-note">*** 登録済みメールアドレスにパスワード変更用のリンクを送信します ***</p>
             {% endif %}
 
 
             {% if title in ['SIGN UP', 'LOG IN', 'FORGET PASSWORD?'] %}
-                {{ form.email.label(class="p-form__input-label") }}
-                <p class="p-form__error-msg" id="error_email" data-error="{{ form.is_valid('email') }}">
-                    {{ form.email.errors[0] }}
-                </p>
-                {{ form.email(class="p-form__input", placeholder="email@address.com") }}
+                {{ form.email.label(class="p-form__input-label", for="user-auth--email") }}
+                <p class="p-form__error-msg">{{ form.email.errors[0] }}</p>
+                {{ form.email(class="p-form__input", id="user-auth--email", placeholder="email@address.com") }}
             {% endif %}
 
 
             {% if title in ['SIGN UP', 'LOG IN', 'RESET PASSWORD'] %}
                 <div>
-                    {{ form.psw.label(class="p-form__input-label") }}
+                    {{ form.psw.label(class="p-form__input-label", for="user-auth--psw") }}
                     <button id="p-form__password-visualizer" type="button">
                         <i class="fa-solid fa-eye-slash"></i>
                         <i class="fa-solid fa-eye"></i>
                     </button>
                 </div>
-                <p class="p-form__error-msg" id="error_psw" data-error="{{ form.is_valid('psw') }}">
-                    {{ form.psw.errors[0] }}
-                </p>
-                {{ form.psw(class="p-form__input", placeholder="Password") }}
+                <p class="p-form__error-msg">{{ form.psw.errors[0] }}</p>
+                {{ form.psw(class="p-form__input", id="user-auth--psw", placeholder="Password") }}
             {% endif %}
 
 
             {% if title in ['SIGN UP', 'RESET PASSWORD'] %}
-                {{ form.conf.label(class="p-form__input-label") }}
-                {{ form.conf(class="p-form__input", placeholder="Password") }}
+                {{ form.conf.label(class="p-form__input-label", for="user-auth--psw-conf") }}
+                {{ form.conf(class="p-form__input", id="user-auth--psw-conf", placeholder="Password") }}
             {% endif %}
 
 
             {% if title in ['LOG IN'] %}
                 <a href="{{ url_for('user.entry.forgot_password') }}">Forget password ?</a>
+                <div class="p-form__guest-login-label">
+                    {{ form.guest(class="p-form__checkbox p-form__disabled-trigger", id="user-auth--guest", onchange="checkbox_disable_input(this)") }}
+                    {{ form.guest.label(class="p-form__checkbox-label", for="user-auth--guest") }}
+                </div>
             {% endif %}
 
 
-            {{ form.submit(class='p-form__submit c-btn--submit') }}
+            {{ form.submit(class='p-form__submit c-btn--submit', id="user-auth--submit") }}
         </form>
     </div>
 </div>

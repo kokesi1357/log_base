@@ -100,7 +100,7 @@
                     <div class="user-display">
                         <video id="side-other-video" autoplay></video>
                         <div class="user-name">
-                            <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                            <p class="u-string-shortener u-f-w--bold other-name"></p>
                             <i class="fa-solid fa-microphone-slash u-op-0"  id="side-other-mike-icon--off"></i>
                         </div>
                         <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="side-other-video-icon--off"></i>
@@ -180,7 +180,7 @@
         </section>
     </div>
 
-    <!-- メッセージ一覧等 -->
+    <!-- メッセージ一覧 ・ メッセージフォーム -->
     {% set ns = namespace(prev_date = "") %}
     <main class="p-index-main">
         <div class="p-index-main__output">
@@ -343,115 +343,113 @@
     </main>
 </section>
 
-<div>
-    <!-- モーダル：メッセージに添付するファイル拡張子の使用不可を警告 -->
-    <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
-            id="modal-closer--unavailable-format">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
-        <div class="p-modal-wrap">
-            <div class="p-modal-content row">
-                <div class="p-modal-header">Unavailable file format found!</div>
-                <p class="u-txt-center">
-                    The following file formats are only available :
-                    <br><br>
-                    [ jpg, jpeg, png, gif, pdf, txt ]
-                </p>
-            </div>
+
+<!-- モーダル：メッセージに添付するファイル拡張子の使用不可を警告 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
+        id="modal-closer--unavailable-format">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Unavailable file format found!</div>
+            <p class="u-txt-center">
+                The following file formats are only available :
+                <br><br>
+                [ jpg, jpeg, png, gif, pdf, txt ]
+            </p>
         </div>
     </div>
+</div>
 
-    <!-- モーダル：メッセージに添付するファイル数の上限オーバーを警告 -->
-    <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
-            id="modal-closer--too-many-uploads">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
-        <div class="p-modal-wrap">
-            <div class="p-modal-content row">
-                <div class="p-modal-header">Too many uploads!</div>
-                <p class="u-txt-center">you can only upload 10 files at a time.</p>
-            </div>
+<!-- モーダル：メッセージに添付するファイル数の上限オーバーを警告 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
+        id="modal-closer--too-many-uploads">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Too many uploads!</div>
+            <p class="u-txt-center">you can only upload 10 files at a time.</p>
         </div>
     </div>
+</div>
 
-    <!-- モーダル：メッセージに添付するファイルの容量オーバーを警告 -->
-    <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
-            id="modal-closer--too-large-data">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
-        <div class="p-modal-wrap">
-            <div class="p-modal-content row">
-                <div class="p-modal-header">Data in your files is too large!</div>
-                <p class="u-txt-center">The max file size is 25MB.</p>
-            </div>
+<!-- モーダル：メッセージに添付するファイルの容量オーバーを警告 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
+        id="modal-closer--too-large-data">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">Data in your files is too large!</div>
+            <p class="u-txt-center">The max file size is 25MB.</p>
         </div>
     </div>
+</div>
 
-    <!-- スライド : メッセージの画像を表示 -->
-    <div class="p-slide-wrap u-dn-by-data">
-        <div class="splide" aria-label="Splideの基本的なHTML"></div>
-        <div class="p-slide-closer c-btn--quad c-btn--hover-bg-primary"
-            onclick="close_slide(this)">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
+<!-- スライド : メッセージの画像を表示 -->
+<div class="p-slide-wrap u-dn-by-data">
+    <div class="splide" aria-label="Splideの基本的なHTML"></div>
+    <div class="p-slide-closer c-btn--quad c-btn--hover-bg-primary"
+        onclick="close_slide(this)">
+        <i class="fa-solid fa-xmark"></i>
     </div>
-
-
-    {% if chnl_form %}
-    <!-- モーダル : チャンネル作成 -->
-    <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad modal-closer toggler"
-            id="modal-closer--add-channel">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
-        <div class="p-modal-wrap">
-            <div class="p-modal-content row">
-                <div class="p-modal-header">CREATE CHANNEL</div>
-                <form id="add-channel-form" class="p-form__wrap" data-server_id="{{ server.id }}"
-                novalidate onsubmit="return false">
-                    {{ chnl_form.name.label(class="p-form__input-label", for="add-channel--name") }}
-                    <p class="p-form__error-msg" id="error-msg--add-channel-name"></p>
-                    {{ chnl_form.name(class="p-form__input", id="add-channel--name") }}
-                    <div class="p-form__submit c-btn--submit u-pointer" id="add-channel--submit">SUBMIT</div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- モーダル : チャンネル編集 -->
-    <div class="p-modal u-preload modal">
-        <div class="p-modal-closer c-btn--xquad modal-closer toggler"
-            id="modal-closer--update-channel">
-            <i class="fa-solid fa-xmark"></i>
-        </div>
-        <div class="p-modal-wrap">
-            <div class="p-modal-content row">
-                <div class="p-modal-header">CHANNEL SETTINGS</div>
-                <form class="p-form__wrap" id="update-channel-form" novalidate onsubmit="return false">
-                    {{ chnl_form.name.label(class="p-form__input-label", for="update-channel--name") }}
-                    <p class="p-form__error-msg" id="error-msg--update-channel-name"></p>
-                    {{ chnl_form.name(class="p-form__input", id="update-channel--name") }}
-                    <div class="p-form__submit c-btn--submit u-pointer" id="update-channel--submit">SUBMIT</div>
-                </form>
-                <div class="c-partition--modal"></div>
-                <div class="p-modal-section">
-                    <button class="p-form__submit c-btn--submit confirm-ajax" id="update-channel--delete"
-                    data-ajax_func="delete-channel">
-                        DELETE CHANNEL
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    {% endif %}
 </div>
 
 
+{% if chnl_form %}
+<!-- モーダル : チャンネル作成 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad modal-closer toggler"
+        id="modal-closer--add-channel">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">CREATE CHANNEL</div>
+            <form id="add-channel-form" class="p-form__wrap" data-server_id="{{ server.id }}"
+            novalidate onsubmit="return false">
+                {{ chnl_form.name.label(class="p-form__input-label", for="add-channel--name") }}
+                <p class="p-form__error-msg" id="error-msg--add-channel-name"></p>
+                {{ chnl_form.name(class="p-form__input", id="add-channel--name") }}
+                <div class="p-form__submit c-btn--submit u-pointer" id="add-channel--submit">SUBMIT</div>
+            </form>
+        </div>
+    </div>
+</div>
 
-<!-- 固定 : ビデオ通話のフルスクリーン -->
+<!-- モーダル : チャンネル編集 -->
+<div class="p-modal u-preload modal">
+    <div class="p-modal-closer c-btn--xquad modal-closer toggler"
+        id="modal-closer--update-channel">
+        <i class="fa-solid fa-xmark"></i>
+    </div>
+    <div class="p-modal-wrap">
+        <div class="p-modal-content row">
+            <div class="p-modal-header">CHANNEL SETTINGS</div>
+            <form class="p-form__wrap" id="update-channel-form" novalidate onsubmit="return false">
+                {{ chnl_form.name.label(class="p-form__input-label", for="update-channel--name") }}
+                <p class="p-form__error-msg" id="error-msg--update-channel-name"></p>
+                {{ chnl_form.name(class="p-form__input", id="update-channel--name") }}
+                <div class="p-form__submit c-btn--submit u-pointer" id="update-channel--submit">SUBMIT</div>
+            </form>
+            <div class="c-partition--modal"></div>
+            <div class="p-modal-section">
+                <button class="p-form__submit c-btn--submit confirm-ajax" id="update-channel--delete"
+                data-ajax_func="delete-channel">
+                    DELETE CHANNEL
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+
+<!-- 固定セクション : ビデオ通話のフルスクリーン -->
 <section id="full-screen-video" class="l-main__fixed-section fixed-section">
     <div class="p-index__call-menu p-index__call-menu--full">
         <button class="menu-btn fixed-section-closer toggler"
@@ -489,7 +487,7 @@
             <div class="user-display">
                 <video id="full-other-video" autoplay></video>
                 <div class="user-name">
-                    <p class="u-string-shortener u-f-w--bold">{{ g.user.name }}</p>
+                    <p class="u-string-shortener u-f-w--bold other-name"></p>
                     <i class="fa-solid fa-microphone-slash u-op-0" id="full-other-mike-icon--off"></i>
                 </div>
                 <i class="fa-solid fa-video-slash video-icon--off u-op-0" id="full-other-video-icon--off"></i>

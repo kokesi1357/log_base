@@ -182,6 +182,9 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
     if 'sample' in prop:
         UserForm.sample = BooleanField('SAMPLE')
 
+    if 'guest' in prop:
+        UserForm.guest = BooleanField('LOGIN AS GUEST')
+
     return UserForm()
 
 

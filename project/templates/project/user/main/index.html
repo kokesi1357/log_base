@@ -16,6 +16,7 @@
             </div>
             <p class="p-index__server-title">Add Server</p>
         </div>
+
         {% if g.user.own_servers %}
             {% for os in g.user.own_servers %}
             {% if os.channels %}
@@ -44,7 +45,7 @@
 
         {% if g.user.servers %}
             {% for s in g.user.servers %}
-            <div class="p-index__server-board col-sp-12 col-tab-6" id="joined-server-board-{{ s.id }}" >
+            <div class="p-index__server-board col-sp-12 col-tab-6 other-server" id="joined-server-board-{{ s.id }}" >
                 <div class="p-index__server-thumnail-wrap">
                     <a href="{{ url_for('user.in_server', server_id=s.id) }}"
                     class="p-index__server-thumnail">

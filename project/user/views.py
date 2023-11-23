@@ -1,7 +1,6 @@
 # project > user > views.py
 
 from project.app import db
-import os
 from flask import Blueprint, g, request, session, flash, redirect, url_for, \
     render_template, jsonify
 from functools import wraps
@@ -44,12 +43,21 @@ def clear_user_session():
     g.user = None
 
 
+def delete_guest_user():
+    user = User.query.filter_by(id=session['user_id']).first()
+    if user.guest:
+        delete_linked_s3(user)
+        db.session.delete(user)
+        db.session.commit()
+
+
 # If user lifetime and manage user-related session status
 def check_user_lifetime():
     if is_user_in_session():
         if not is_user_expired():
             set_user_session()
         else:
+            delete_guest_user()
             clear_user_session()
 
 
@@ -259,14 +267,21 @@ def confirm_signup(token):
 @entry_bp.route('/login', methods=['GET', 'POST'])
 @is_logged_in
 def login():
-    form = user_form(['email', 'psw'], lgin_type='user')
+    form = user_form(['email', 'psw', 'guest'], lgin_type='user')
 
-    if form.validate_on_submit():
-        user_to_login = User.query.filter_by(email=form.email.data).first()
-
-        if user_to_login and user_to_login.verify_password(form.psw.data):
-            set_user_session(user_to_login)
+    if request.method == 'POST' and (form.validate_on_submit() or form.guest.data):
+        if form.guest.data:
+            guest_user = User()
+            guest_user.set_up_for_guest()
+            db.session.add(guest_user)
+            db.session.commit()
+            set_user_session(guest_user)
             return redirect(url_for('user.index'))
+        else:
+            user_to_login = User.query.filter_by(email=form.email.data).first()
+            if user_to_login and user_to_login.verify_password(form.psw.data):
+                set_user_session(user_to_login)
+                return redirect(url_for('user.index'))
 
     return render_temp('project/user/main/auth.html', 'LOG IN', form)
 
@@ -330,32 +345,6 @@ def reset_password(email):
     return render_temp(
         'project/user/main/auth.html',
         'RESET PASSWORD', form)
-
-
-
-
-# Views for authorized users -------------------------------------------
-
-# 削除されるmodelクラスに応じて、紐づくs3上のファイルも削除します
-# def delete_linked_s3(target):
-#     if target.className == 'User':
-#         if target.image:
-#             s3_delete_obj(target.image.name)
-#         for os in target.own_servers:
-#             for c in os.channels:
-#                 for m in c.messages:
-#                     result = [s3_delete_obj(f.name) for f in m.files]
-#     elif target.className == 'Server':
-#         if target.image:
-#             s3_delete_obj(target.image.name)
-#         for c in target.channels:
-#             for m in c.messages:
-#                 result = [s3_delete_obj(f.name) for f in m.files]
-#     elif target.className == 'Channel':
-#         for m in target.messages:
-#             result = [s3_delete_obj(f.name) for f in m.files]
-#     elif target.className == 'Message':
-#         result = [s3_delete_obj(f.name) for f in target.files]
 
 
 
@@ -1099,6 +1088,7 @@ def update_account_password():
 @user_bp.route('/logout', methods=['GET'])
 @login_required
 def logout():
+    delete_guest_user()
     clear_user_session()
     return redirect(url_for('user.entry.entry'))
 
@@ -1108,6 +1098,7 @@ def logout():
 @login_required
 def leave():
     if not g.user.sample:
+        delete_linked_s3(g.user)
         db.session.delete(g.user)
         db.session.commit()
         clear_user_session()

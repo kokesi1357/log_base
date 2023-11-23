@@ -6,6 +6,7 @@ from sqlalchemy.orm import *
 from datetime import datetime, timedelta, timezone
 from project.app import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from random import randrange
 
 
 
@@ -27,9 +28,10 @@ class User(db.Model):
     name = Column(String(100), unique=True)
     email = Column(String(120), unique=True, nullable=False)
     hashed_password = Column(String(128), nullable=False)
-    sample = Column(Boolean, nullable=False, default=False)
-    admin = Column(Boolean, nullable=False, default=False)
     master = Column(Boolean, nullable=False, default=False)
+    admin = Column(Boolean, nullable=False, default=False)
+    sample = Column(Boolean, nullable=False, default=False)
+    guest = Column(Boolean, nullable=False, default=False)
     date_added = Column(DateTime, default=datetime.now(timezone(timedelta(hours=9), 'JST')))
 
     # Users to Servers [many to many]
@@ -64,6 +66,13 @@ class User(db.Model):
 
     def verify_password(self, psw):
         return check_password_hash(self.hashed_password, psw)
+
+    def set_up_for_guest(self):
+        guest_id = randrange(10000000)
+        self.name = f'guest{guest_id}'
+        self.email = f'{guest_id}@guest.com'
+        self.password = str(randrange(10000000, 100000000))
+        self.guest = True
 
 
 
