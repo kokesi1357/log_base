@@ -3,7 +3,6 @@
 import os
 from flask.cli import AppGroup
 from project.app import app, db
-from project.env import is_production
 from project.boto3 import s3_delete_obj
 from project.models.models import User, Server, Channel, Message, File
 
