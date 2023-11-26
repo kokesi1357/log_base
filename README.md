@@ -1,7 +1,7 @@
 # Log Base - Simple Chat Application
 
 ## アプリケーションのイメージ
-<img style="max-width: unset;" alt="トップ画面" src="https://github.com/kokesi1357/log_base/assets/137332880/5a5333b7-f5d1-4936-b93e-29d67b9ff794">
+<img alt="トップ画面" src="https://github.com/kokesi1357/log_base/assets/137332880/5a5333b7-f5d1-4936-b93e-29d67b9ff794">
 
 ## サービスのURL
 登録なしでご使用いただくために、ゲストユーザーでのログイン機能を実装しました。<br>
@@ -51,9 +51,10 @@ https://logbase1357.com/entry
 |  |  |
 
 ## システム構成図
+<img alt="ER図" src="https://github.com/kokesi1357/log_base/assets/137332880/2bd1375d-61a9-4ec4-b342-565388d48d21">
 
 ## ER図
-<img width="" alt="ER図" src="https://github.com/kokesi1357/log_base/assets/137332880/53e94398-116d-407b-96e8-4bcc8048a52f">
+<img alt="ER図" src="https://github.com/kokesi1357/log_base/assets/137332880/53e94398-116d-407b-96e8-4bcc8048a52f">
 
 ## 今後の計画
 
