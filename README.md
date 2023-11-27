@@ -4,7 +4,7 @@ PCではビデオチャット機能がございます。</br>
 レスポンシブ対応していますので、スマホからもご覧いただけます。
 
 ### 目次
-- [サービスのURL](https://github.com/kokesi1357/log_base#%E6%A9%9F%E8%83%BD)
+- [サービスのURL](https://github.com/kokesi1357/log_base#%E3%82%B5%E3%83%BC%E3%83%93%E3%82%B9%E3%81%AEurl)
 - [機能](https://github.com/kokesi1357/log_base#%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E6%A7%8B%E6%88%90%E5%9B%B3)
 - [使用技術](https://github.com/kokesi1357/log_base#%E4%BD%BF%E7%94%A8%E6%8A%80%E8%A1%93)
 - [システム構成図](https://github.com/kokesi1357/log_base#%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E6%A7%8B%E6%88%90%E5%9B%B3)
