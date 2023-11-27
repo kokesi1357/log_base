@@ -85,12 +85,12 @@ https://logbase1357.com/entry
 
 <br>
 
-## システム構成図使用技術
+## システム構成図
 <img alt="システム構成図" src="https://github.com/kokesi1357/log_base/assets/137332880/9decdb79-15f9-49f9-97d2-be8e22d5b479">
 
 <br><br>
 
-## ER図システム構成図使用技術
+## ER図
 <img alt="ER図" src="https://github.com/kokesi1357/log_base/assets/137332880/2383dc07-81d9-456e-8d43-df0b088710fa">
 
 <br><br>
