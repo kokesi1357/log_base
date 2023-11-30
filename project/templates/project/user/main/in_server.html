@@ -3,12 +3,10 @@
 {% extends 'project/user/layout.html' %}
 
 {% block main %}
-
-<section class="p-index__in-server">
-    <!-- コメント / チャンネル作成 -->
-    <!-- サイドメニュー pcのみ表示-->
-    <div class="p-index__sidebar u-dn-tab-max">
-        <div class="p-index__channel-list-wrap">
+<section class="p-index__in-server-section">
+    <!-- サイドバー : チャンネル一覧 / ユーザーメニュー (pcのみ表示) -->
+    <div class="p-index__sidebar u-dn-no-pointer u-dn-sp">
+        <div class="p-index__channel-list-wrap adjusted-for-phone-book">
             <div class="p-index__channel-header">
                 <p>CHANNELS</p>
                 {% if chnl_form %}
@@ -44,13 +42,13 @@
         </div>
 
         <section class="p-index__side-user-section">
-            <div class="p-index__phone-operator" id="phone-operator">
+            <div class="p-index__phone-operator for-phone-book" id="phone-operator">
                 <!-- 電話帳 -->
                 <div class="p-index__phone-book">
                     <p class="note-for-call">! 選択したユーザーに発信します !</p>
                     <ul class="p-index__callable-user-list">
                         {% if g.user.id != server.owner_id %}
-                        <li class="user-list u-pointer" data-user_id="{{ server.owner_id }}">
+                        <li class="user-list u-pointer" data-peer_id="{{ server.owner.peer_id }}">
                             <div class="user-list-image">
                                 {% if server_mem_imgs['owner'] %}
                                     <img src="{{ server_mem_imgs['owner'] }}" alt="">
@@ -68,7 +66,7 @@
 
                         {% for u in server.users %}
                         {% if g.user.id != u.id %}
-                        <li class="user-list u-pointer" data-user_id="{{ u.id }}">
+                        <li class="user-list u-pointer" data-peer_id="{{ u.peer_id }}">
                             <div class="user-list-image">
                                 {% if server_mem_imgs['mem'][loop.index0] %}
                                     <img src="{{ server_mem_imgs['mem'][loop.index0] }}" alt="">
@@ -158,6 +156,8 @@
             </div>
             <div class="p-index__user-status-bar">
                 <span class="connecting u-dn">Connecting<span></span></span>
+                <span class="calling u-dn">Calling<span></span></span>
+                <span class="receiving u-dn">Receiving a call<span></span></span>
                 <span class="connected u-dn">Connected<span></span></span>
             </div>
             <div class="p-index__user-action-list row">
@@ -222,11 +222,9 @@
                             {% endif %}
                         </div>
 
-                        {% if m.content %}
                         <div class="p-index-main__msg-text-wrap">
                             <p>{{ m.content|replace("\n", "<br>")|safe }}</p>
                         </div>
-                        {% endif %}
 
                         <div class="p-index-main__msg-file-wrap row">
                             {% if msg_files["img"][loop.index0] %}
@@ -391,7 +389,7 @@
 </div>
 
 <!-- スライド : メッセージの画像を表示 -->
-<div class="p-slide-wrap u-dn-by-data">
+<div class="p-slide-wrap">
     <div class="splide" aria-label="Splideの基本的なHTML"></div>
     <div class="p-slide-closer c-btn--quad c-btn--hover-bg-primary"
         onclick="close_slide(this)">
@@ -450,7 +448,7 @@
 
 
 <!-- 固定セクション : ビデオ通話のフルスクリーン -->
-<section id="full-screen-video" class="l-main__fixed-section fixed-section">
+<section id="full-screen-video" class="l-main__section--fixed fixed-section">
     <div class="p-index__call-menu p-index__call-menu--full">
         <button class="menu-btn fixed-section-closer toggler"
         id="fixed-section-closer--full-screen-video">
@@ -474,7 +472,7 @@
             <i class="fa-solid fa-microphone-slash"></i>
         </button>
     </div>
-    <div class="wide-content">
+    <div class="content content--wide">
         <div class="p-index__call-monitor p-index__call-monitor--full">
             <div class="user-display">
                 <video id="full-my-video" autoplay></video>

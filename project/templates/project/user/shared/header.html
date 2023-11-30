@@ -33,13 +33,11 @@
                     <li class="p-index__channel-wrap row" id="header-channel--{{ c.id }}"
                     data-chnl_id="{{ c.id }}">
                     {% endif %}
-                        <div class="p-index__channel-name-wrap col-sp-20"
+                        <div class="p-index__channel-name-wrap col-sp-22"
                         onclick="execute_channel_switch(this.parentNode)">
                             <div class="hash-mark"><i class="fa-solid fa-hashtag"></i></div>
                             <p class="channel-name u-string-shortener">{{ c.name }}</p>
                         </div>
-                        <button class="p-index__channel-invite-btn col-sp-2">
-                            <i class="fa-solid fa-user-plus"></i>
                         </button>
                         {% if chnl_form %}
                         <button class="p-index__channel-setting-btn col-sp-2 modal-opener"
@@ -93,7 +91,7 @@
                     <div class="l-header__sub-layer-entry modal-opener toggler"
                         data-target_id="#modal-closer--func-channel">
                         <div class="l-header__submenu-pilar-icon"></div>
-                        <div><p class="l-header__submenu-item-title">チャンネル</p></div>
+                        <div><p class="l-header__submenu-item-title">サーバ・チャンネル</p></div>
                     </div>
                 </li>
                 <li>

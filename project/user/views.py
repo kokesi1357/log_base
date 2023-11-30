@@ -256,6 +256,7 @@ def confirm_signup(token):
         name = data['name'],
         email = data['email'],
         password = data['psw'])
+    user_to_add.set_peer_id()
     db.session.add(user_to_add)
     db.session.commit()
     set_user_session(user_to_add)
@@ -350,11 +351,11 @@ def reset_password(email):
 
 
 # -------------------------------------------
-#   サーバー一覧および、サーバーの作成、更新、削除   |
+#   サーバ一覧および、サーバの作成、更新、削除   |
 # -------------------------------------------
 
-# Serverのサムネ画像をbase64に変更後、自身が所有するサーバー、
-# ただ所属するのみのサーバーごとに格納したデータを返します
+# Serverのサムネ画像をbase64に変更後、自身が所有するサーバ、
+# ただ所属するのみのサーバごとに格納したデータを返します
 def get_server_img():
     own_server_img = []
     server_img = []
@@ -457,7 +458,7 @@ def update_server(server_id):
         else:
             filename_for_db = None
 
-        # サーバー画像に関与する場合、s3バケット内の画像を削除
+        # サーバ画像に関与する場合、s3バケット内の画像を削除
         if server.image and (delete_image or filename_for_db):
             s3_delete_obj(server.image.name)
 

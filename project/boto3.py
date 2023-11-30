@@ -111,7 +111,7 @@ def delete_linked_s3(target):
         if target.className == 'User':
             if target.image:
                 s3_delete_obj(target.image.name)
-            # 自身のサーバーに紐づくファイルを削除(サーバーのサムネ、メッセージの添付ファイル)
+            # 自身のサーバに紐づくファイルを削除(サーバのサムネ、メッセージの添付ファイル)
             for os in target.own_servers:
                 if os.image:
                     s3_delete_obj(os.image.name)

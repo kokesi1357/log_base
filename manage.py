@@ -25,6 +25,14 @@ def drop_db():
     db.drop_all()
 
 
+@manager_cli.command('delete_s3')
+def delete_s3():
+    """delete all the files in the s3 storage."""
+    files = db.session.query(File).all()
+    for f in files:
+        s3_delete_obj(f.name)
+
+
 @manager_cli.command('create_master')
 def create_master():
     """Creates a master user."""

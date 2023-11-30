@@ -25,6 +25,7 @@ class User(db.Model):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True)
+    peer_id = Column(String, unique=True)
     name = Column(String(100), unique=True)
     email = Column(String(120), unique=True, nullable=False)
     hashed_password = Column(String(128), nullable=False)
@@ -66,8 +67,17 @@ class User(db.Model):
 
     def verify_password(self, psw):
         return check_password_hash(self.hashed_password, psw)
+    
+    def set_peer_id(self):
+        while True:
+            num = str(randrange(100000000))
+            existing_user = User.query.filter(User.peer_id == num).first()
+            if not existing_user:
+                break
+        self.peer_id = num
 
     def set_up_for_guest(self):
+        self.set_peer_id()
         guest_id = randrange(10000000)
         self.name = f'guest{guest_id}'
         self.email = f'{guest_id}@guest.com'

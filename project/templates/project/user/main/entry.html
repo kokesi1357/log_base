@@ -4,7 +4,7 @@
 
 {% block main %}
 
-<section id="p-entry-top" class="l-main__section">
+<section id="p-entry-top" class="l-main__section--entry">
     <div class="content">
         <h1 class="l-main__section-header">WELCOME TO LOG BASE</h1>
         <div class="row">
@@ -21,7 +21,7 @@
         </div>
     </div>
 </section>
-<section id="p-entry-about" class="l-main__section">
+<section id="p-entry-about" class="l-main__section--entry">
     <div id="p-entry-about-content" class="content row vertical-fadein">
         <h1 class="l-main__section-header">このサイトについて</h1>
         <div class="p-entry-about__brief-wrap col-sp-24 col-tab-12 u-mrgn-center--hrzn">
@@ -34,11 +34,13 @@
                 <br>
                 どうぞ手塩にかけたプロダクトに触れていってください。
             </div>
-            <a href="#" class="p-entry-about__git-entry">GitHub <i class="fa-brands fa-github"></i></a>
+            <a href="https://github.com/kokesi1357/log_base" class="p-entry-about__git-entry" target="_blank">
+                GitHub <i class="fa-brands fa-github"></i>
+            </a>
         </div>
     </div>
 </section>
-<section id="p-entry-func" class="l-main__section">
+<section id="p-entry-func" class="l-main__section--entry">
     <div id="p-entry-func-content" class="content row">
         <h1 class="l-main__section-header">機能</h1>
         <p class="l-main__section-brief">当アプリにてご利用できる主な機能を紹介します。</p>
@@ -46,7 +48,7 @@
             <div class="p-entry-func__thumnail-wrap scale-fadein scale-fadein modal-opener toggler">
                 <i class="fa-solid fa-people-roof"></i>
             </div>
-            <p class="p-entry-func__img-txt">チャンネル</p>
+            <p class="p-entry-func__img-txt">サーバ・チャンネル</p>
             <div id="p-modal--func-channel" class="p-modal u-preload modal">
                 <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
                     id="modal-closer--func-channel">
@@ -55,14 +57,14 @@
                 <div class="p-modal-wrap">
                     <div class="p-modal-content row">
                         <div class="p-modal-block col-sp-24 col-tab-8">
-                            <p class="p-modal-header">チャンネル</p>
+                            <p class="p-modal-header">サーバ・チャンネル</p>
                             <p class="p-entry-func__modal-txt">
-                                ユーザーが所属するサーバー、サーバー内のチャットスペースとなるチャンネルを生成する機能を実装しました。（ 全デバイス対応 ）
+                                ユーザが所属するサーバ、サーバ内のチャットスペースとなるチャンネルを生成する機能を実装しました。（ 全デバイス対応 ）
                                 <br><br>
-                                サーバー追加は、ログイン後「Add Server」より、自身で作成するまたは既存サーバーを検索し参加する方法で実行できます。チャンネル追加は、サーバー管理者のみ、サーバー内サイドバーの「+」より実行できます。
-                                サーバー・チャンネルともに、「<i class="fa-solid fa-gear"></i>」より設定情報の変更が行えます。
+                                サーバ追加は、ログイン後「Add Server」より、自身で作成するまたは既存サーバを検索し参加する方法で実行できます。チャンネル追加は、サーバ管理者のみ、サーバ内サイドバーの「+」より実行できます。
+                                サーバ・チャンネルともに、「<i class="fa-solid fa-gear"></i>」より設定情報の変更が行えます。
                                 <br><br>
-                                今後はサーバー管理者の権限委託機能、ban機能、パスワード設定機能 etc.を追加し、セキュアなサーバー管理実現を考えています。
+                                今後はサーバ管理者の権限委託機能、ban機能、パスワード設定機能 etc.を追加し、セキュアなサーバ管理実現を考えています。
                             </p>
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
@@ -108,13 +110,13 @@
                                 <br>
                                 （ サイドバーに電話帳が表示 ）
                                 <br>
-                                2. 電話帳の任意のユーザー押下
+                                2. 電話帳の任意のユーザ押下
                                 <br>
                                 （ 通信が始まり、発信側のサイドバーに発信画面、受信側のサイドバーに受信画面が表示 ）
                                 <br>
                                 3. 受信側が受信画面の「<i class="fa-solid fa-phone"></i>」を押下
                                 <br><br>
-                                ビデオチャットは、顔検出してエフェクトをつける機能など、試してみたいことが多くあり、手を加えればもっとよくなりそうです。
+                                ビデオチャットは、複数人での通話機能・顔検出してエフェクトをつける機能など、試してみたいことが多くあり、手を加えればもっとおもしろくなりそうです。
                             </p>
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
@@ -185,5 +187,7 @@
         </div>
     </div>
 </section>
+
+{% include 'project/user/shared/footer.html' %}
 
 {% endblock %}

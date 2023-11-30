@@ -5,8 +5,8 @@
 {% block main %}
 
 <!-- Serverページ -->
-<div class="l-main__app-section">
-    <div class="app-content row" id="server-board-wrap">
+<div class="l-main__section--app">
+    <div class="content row" id="server-board-wrap">
         <div class="p-index__server-board col-sp-12 col-tab-6">
             <div class="p-index__server-thumnail-wrap modal-opener toggler"
             onclick="open_modal_with_closer_id('add-server')">
@@ -28,7 +28,7 @@
                 <div class="p-index__server-thumnail-wrap">
                     <a href="{{url_for('user.in_server', server_id=os.id)}}" class="p-index__server-thumnail">
                         {% if server_img_dict.os[loop.index0] %}
-                        <img src="{{server_img_dict.os[loop.index0]}}" alt="サーバーのサムネイル">
+                        <img src="{{server_img_dict.os[loop.index0]}}" alt="サーバのサムネイル">
                         {% else %}
                         <p>No Image</p>
                         {% endif %}
@@ -56,7 +56,7 @@
                         {% endif %}
                     </a>
                     <button class="p-index__server-edit-btn confirm-ajax" data-server_id="{{ s.id }}"
-                    data-confirm_txt="サーバー {{ s.name }} から退出しますか？" data-ajax_func="leave-server"> 
+                    data-confirm_txt="サーバ {{ s.name }} から退出しますか？" data-ajax_func="leave-server"> 
                         <i class="fa-solid fa-person-through-window"></i>
                     </button>
                 </div>
@@ -68,7 +68,7 @@
 </div>
 
 
-<!-- モーダル：#サーバー追加 -->
+<!-- モーダル：#サーバ追加 -->
 <div class="p-modal u-preload modal">
     <div class="p-modal-closer c-btn--xquad modal-closer toggler" id="modal-closer--add-server">
         <i class="fa-solid fa-xmark"></i>
@@ -146,7 +146,7 @@
 </div>
 
 
-<!-- モーダル：#サーバー編集 -->
+<!-- モーダル：#サーバ編集 -->
 <div class="p-index__server-update-modal p-modal u-preload modal">
     <div class="p-modal-closer c-btn--xquad toggler modal-closer" id="modal-closer--update-server">
         <i class="fa-solid fa-xmark"></i>

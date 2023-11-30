@@ -190,6 +190,8 @@ def add_user():
                 admin=form.admin.data,
                 sample=form.sample.data
             )
+            if not user_to_add.admin:
+                user_to_add.set_peer_id()
             db.session.add(user_to_add)
             db.session.commit()
             flash(f"User [ {user_to_add.name} ] was successfully added!")
