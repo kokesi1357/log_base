@@ -82,7 +82,6 @@ class Pass(object):
 
 # Field classes --------------------------------------------
 
-#? MyField みたいな継承元つくる？
 class MyStringField(StringField):
     def __init__(self, label, validators, **kwargs):
         super(MyStringField, self).__init__(label, validators, **kwargs)
@@ -174,7 +173,7 @@ def user_form(prop=None, rgstr=False, user_id=None, lgin_type=False):
 
     # Adminのユーザー編集でパスワード以外を変更したい場合に使用します
     if 'psw_disabled' in prop:
-        UserForm.psw_disabled = BooleanField('NO CHANGE OF PASSWORD')
+        UserForm.psw_disabled = BooleanField('NO CHANGE TO PASSWORD')
 
     if 'admin' in prop:
         UserForm.admin = BooleanField('ADMIN')

@@ -327,14 +327,21 @@
                 <div class="p-form__preview-showcase u-dn">
                     <ul class="p-form__preview-list"></ul>
                 </div>
-                <div class="p-form__msg-input-bar row">
-                    <label for="add-message--files" class="p-form__file-opener-wrap col-sp-3 col-tab-2">
+                <div class="p-form__msg-input-bar">
+
+                    <label for="add-message--files" class="p-form__file-opener-wrap">
                         <div id="p-form__file-opener" class="c-btn">
                             <i class="fa-solid fa-plus"></i>
                         </div>
                     </label>
-                    {{ msg_form.content(class="p-form__msg-txtarea col-sp-21 col-tab-22 optimized-text-input", id="add-message--content", rows=1, placeholder="Message", oninput="auto_resize(this)") }}
+
+                    {{ msg_form.content(class="p-form__msg-txtarea optimized-text-input", id="add-message--content", rows=1, placeholder="Message", oninput="auto_resize(this)") }}
                     {{ msg_form.files(class="u-dn", id="add-message--files") }}
+
+                    <div class="p-form__msg-send-btn-wrap">
+                        <i class="fa-solid fa-paper-plane p-form__msg-send-btn u-pointer"></i>
+                    </div>
+
                 </div>
             </form>
         </div>

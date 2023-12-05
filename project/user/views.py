@@ -807,7 +807,6 @@ def delete_channel(channel_id):
 # ---------------------------------------------
 
 # Post message [Ajax]
-
 @user_bp.route('/channel/<int:channel_id>/post_msg', methods=['POST'])
 @login_required
 @is_user_server_member

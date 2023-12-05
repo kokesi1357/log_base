@@ -12,11 +12,11 @@
                 </div>
 
                 {% if channel %}
-                <button class="l-header__channel-banner u-dn-pc col-sp-11 toggler">
+                <button class="l-header__channel-banner col-sp-11 toggler">
                     <i class="fa-solid fa-chevron-up"></i>
                     <p class="l-header__channel-name u-string-shortener"># {{ channel.name }}</p>
                 </button>
-                <ul class="l-header__channel-list u-dn-pc tgl-reactor" id="header-channel-list">
+                <ul class="l-header__channel-list tgl-reactor" id="header-channel-list">
                     {% if chnl_form %}
                     <button class="p-index__channel-header modal-opener"
                     onclick="open_modal_with_closer_id('add-channel')">

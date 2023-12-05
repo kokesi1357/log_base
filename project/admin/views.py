@@ -139,7 +139,7 @@ def login():
         admin = User.query.filter_by(email=form.email.data, admin=True).first()
         if admin and admin.verify_password(form.psw.data):
             set_admin_session(admin)
-            return redirect(url_for('admin.index'))
+            return redirect(url_for('admin.user_list'))
 
     return render_temp('project/admin/main/auth.html', 'Log In', form)
 
@@ -156,10 +156,9 @@ def logout():
 @admin_bp.route('/')
 @login_required
 def index():
-    return render_temp('project/admin/main/index.html')
+    return redirect(url_for('admin.user_list'))
 
 
-#? ページネーションつけよう! (user_list)
 #【User Management】User List
 @admin_bp.route('/user_list')
 @login_required
@@ -210,12 +209,13 @@ def add_user():
 @login_required
 def edit_user(id):
     user = User.query.filter_by(id=id).first()
-    form = user_form(['name', 'email', 'psw', 'psw_conf', 'psw_disabled', 'admin'], True, user.id)
+    form = user_form(['name', 'email', 'psw', 'psw_conf', 'psw_disabled', 'admin', 'sample'], True, user.id)
 
     if request.method == 'GET':
         form.name.data = user.name
         form.email.data = user.email
         form.admin.data = user.admin
+        form.sample.data = user.sample
 
     elif request.method == 'POST': 
         # ユーザーがAdminとして登録される場合、名前をNoneで統一し、名前のvalidationを無効化します
@@ -236,6 +236,7 @@ def edit_user(id):
             user.name = form.name.data
             user.email = form.email.data
             user.admin = form.admin.data
+            user.sample = form.sample.data
             db.session.commit()
             flash(f"User [ id:{user.id} ] was successfully updated!")
             return redirect(url_for('admin.edit_user', id=int(user.id)))
