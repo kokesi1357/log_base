@@ -48,7 +48,7 @@
             <div class="p-entry-func__thumnail-wrap scale-fadein scale-fadein modal-opener toggler">
                 <i class="fa-solid fa-people-roof"></i>
             </div>
-            <p class="p-entry-func__img-txt">サーバ・チャンネル</p>
+            <p class="u-txt-center">サーバ・チャンネル</p>
             <div id="p-modal--func-channel" class="p-modal u-preload modal">
                 <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
                     id="modal-closer--func-channel">
@@ -56,8 +56,8 @@
                 </div>
                 <div class="p-modal-wrap">
                     <div class="p-modal-content row">
-                        <div class="p-modal-block col-sp-24 col-tab-8">
-                            <p class="p-modal-header">サーバ・チャンネル</p>
+                        <p class="p-modal-header">サーバ・チャンネル</p>
+                        <div class="p-modal-block p-entry-func__modal-txt-block col-sp-24 col-pc-8">
                             <p class="p-entry-func__modal-txt">
                                 ユーザが所属するサーバ、サーバ内のチャットスペースとなるチャンネルを生成する機能を実装しました。（ 全デバイス対応 ）
                                 <br><br>
@@ -67,7 +67,7 @@
                                 今後はサーバ管理者の権限委託機能、ban機能、パスワード設定機能 etc.を追加し、セキュアなサーバ管理実現を考えています。
                             </p>
                         </div>
-                        <div class="p-modal-block col-sp-24 col-tab-16">
+                        <div class="p-modal-block p-entry-func__modal-img-block col-sp-24 col-pc-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
                                 <img src="{{ url_for('static', filename='/node/dist/img/channel1_min.png') }}" alt="" data-status="on">
                                 <img src="{{ url_for('static', filename='/node/dist/img/channel2_min.png') }}" alt="">
@@ -91,7 +91,7 @@
             <div class="p-entry-func__thumnail-wrap scale-fadein modal-opener toggler">
                 <i class="fa-solid fa-headset"></i>
             </div>
-            <p class="p-entry-func__img-txt">ビデオチャット</p>
+            <p class="u-txt-center">ビデオチャット</p>
             <div id="p-modal--func-video-chat" class="p-modal u-preload modal">
                 <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
                     id="modal-closer--func-video-chat">
@@ -99,8 +99,8 @@
                 </div>
                 <div class="p-modal-wrap">
                     <div class="p-modal-content row">
-                        <div class="p-modal-block col-sp-24 col-tab-8">
-                            <p class="p-modal-header">ビデオチャット</p>
+                        <p class="p-modal-header">ビデオチャット</p>
+                        <div class="p-modal-block p-entry-func__modal-txt-block col-sp-24 col-pc-8">
                             <p class="p-entry-func__modal-txt">
                                 P2Pを用いた、ビデオ・音声共有機能、ミュート機能、ディスプレイ表示切替機能を実装しました。（ PCのみ対応 ）
                                 <br><br>
@@ -119,7 +119,7 @@
                                 ビデオチャットは、複数人での通話機能・顔検出してエフェクトをつける機能など、試してみたいことが多くあり、手を加えればもっとおもしろくなりそうです。
                             </p>
                         </div>
-                        <div class="p-modal-block col-sp-24 col-tab-16">
+                        <div class="p-modal-block p-entry-func__modal-img-block col-sp-24 col-pc-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
                                 <img src="{{ url_for('static', filename='/node/dist/img/video1_min.png') }}" alt="" data-status="on">
                                 <img src="{{ url_for('static', filename='/node/dist/img/video2_min.png') }}" alt="">
@@ -143,7 +143,7 @@
             <div class="p-entry-func__thumnail-wrap scale-fadein modal-opener toggler">
                 <i class="fa-regular fa-comments"></i>
             </div>
-            <p class="p-entry-func__img-txt">メッセージ</p>
+            <p class="u-txt-center">メッセージ</p>
             <div id="p-modal--func-message" class="p-modal u-preload modal">
                 <div class="p-modal-closer c-btn--quad c-btn--hover-bg-white-back modal-closer toggler"
                     id="modal-closer--func-message">
@@ -151,36 +151,36 @@
                 </div>
                 <div class="p-modal-wrap">
                     <div class="p-modal-content row">
-                    <div class="p-modal-block col-sp-24 col-tab-8">
                         <p class="p-modal-header">メッセージ</p>
-                        <p class="p-entry-func__modal-txt">
-                            ファイル添付できるメッセージ送信機能、メッセージ編集機能、添付画像のスライド表示機能を実装しました。（ 全デバイス対応 ）
-                            <br><br>
-                            テキスト入力またはファイル添付後、「Enter」でメッセージが送信されます。
-                            「+」よりファイル添付、「<i class="fa-solid fa-minus"></i>」より添付取消が可能です。
-                            テキスト編集は「<i class="fa-regular fa-pen-to-square"></i>」より、ファイル削除は「<i class="fa-solid fa-trash-can"></i>」より行えます。
-                            画像押下で、対象に遷移した状態のスライドが表示されます。
-                            <br>
-                            （ ファイル形式は jpeg・jpg・png・gif・pdf・txt のみ対応しています。 ）
-                            <br><br>
-                            やり取りをスムーズに行えるよう、非同期でのメッセージ自動更新を仕込みました。
-                            より本格的なチャットアプリに近づけるため、メンション機能やスレッド機能等の追加を考えています。
-                        </p>
-                    </div>
-                    <div class="p-modal-block col-sp-24 col-tab-16">
-                        <div class="p-entry-func__modal-thumnails modal-thumnails">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
+                        <div class="p-modal-block p-entry-func__modal-txt-block col-sp-24 col-pc-8">
+                            <p class="p-entry-func__modal-txt">
+                                ファイル添付できるメッセージ送信機能、メッセージ編集機能、添付画像のスライド表示機能を実装しました。（ 全デバイス対応 ）
+                                <br><br>
+                                テキスト入力またはファイル添付後、「Enter」でメッセージが送信されます。
+                                「+」よりファイル添付、「<i class="fa-solid fa-minus"></i>」より添付取消が可能です。
+                                テキスト編集は「<i class="fa-regular fa-pen-to-square"></i>」より、ファイル削除は「<i class="fa-solid fa-trash-can"></i>」より行えます。
+                                画像押下で、対象に遷移した状態のスライドが表示されます。
+                                <br>
+                                （ ファイル形式は jpeg・jpg・png・gif・pdf・txt のみ対応しています。 ）
+                                <br><br>
+                                やり取りをスムーズに行えるよう、非同期でのメッセージ自動更新を仕込みました。
+                                より本格的なチャットアプリに近づけるため、メンション機能やスレッド機能等の追加を考えています。
+                            </p>
                         </div>
-                        <div class="p-entry-func__modal-mainimage modal-mainimages">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
-                            <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
+                        <div class="p-modal-block p-entry-func__modal-img-block col-sp-24 col-pc-16">
+                            <div class="p-entry-func__modal-thumnails modal-thumnails">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
+                            </div>
+                            <div class="p-entry-func__modal-mainimage modal-mainimages">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
+                            </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>

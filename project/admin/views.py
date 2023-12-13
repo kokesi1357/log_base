@@ -6,7 +6,7 @@ import functools
 from time import time
 from project.env import is_production
 from project.app import db
-from project.models.models import User
+from project.models.models import User, File
 from project.form import user_form
 from project.boto3 import delete_linked_s3
 
@@ -190,6 +190,7 @@ def add_user():
                 sample=form.sample.data
             )
             if not user_to_add.admin:
+                user_to_add.image = File(name=None)
                 user_to_add.set_peer_id()
             db.session.add(user_to_add)
             db.session.commit()
