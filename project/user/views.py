@@ -207,7 +207,7 @@ def before_request():
 # Views for unauthorized users  -----------------------------------------
 
 # ----------------------------------------------
-#   ユーザーのサインアップ、ログイン、パスワードの更新   |
+#   ユーザのサインアップ、ログイン、パスワードの更新   |
 # ----------------------------------------------
 
 # Initial page for unauthorized users
@@ -255,7 +255,9 @@ def confirm_signup(token):
     user_to_add = User(
         name = data['name'],
         email = data['email'],
-        password = data['psw'])
+        password = data['psw'],
+        image=File(name=None)
+    )
     user_to_add.set_peer_id()
     db.session.add(user_to_add)
     db.session.commit()
@@ -361,14 +363,14 @@ def get_server_img():
     server_img = []
     if g.user.own_servers:
         for os in g.user.own_servers:
-            if os.image:
+            if os.image.name:
                 img = get_base64_from_s3(os.image.name)
             else:
                 img = ''
             own_server_img.append(img)
     if g.user.servers:
         for s in g.user.servers:
-            if s.image:
+            if s.image.name:
                 img = get_base64_from_s3(s.image.name)
             else:
                 img = ''
@@ -393,9 +395,11 @@ def index():
 def add_server():
     form = server_form()
     form.name.data = request.form['name']
+    js_base64 = request.form['base64']
+    filename = request.form['filename']
 
     if form.validate_on_submit():
-        # Serverと付属の基本チャンネルを生成
+        # Serverと付随する基本チャンネルを生成
         new_server = Server(
             name=form.name.data,
             owner_id=g.user.id,
@@ -409,31 +413,24 @@ def add_server():
         )
         db.session.add(new_server)
         db.session.commit()
-
-        js_base64 = request.form['base64']
-        filename = request.form['filename']
-        # フォームに画像ファイルが存在し、拡張子が適正な場合、db用のファイル名を生成
+        # Serverに付随するファイルを生成
         if js_base64 and allowed_file(filename, 'image'):
             filename_for_db = translate_into_s3_format(
                 standardize_filename(filename), 's', new_server.id)
-            file = File(name=filename_for_db, server_id=new_server.id)
-            db.session.add(file)
-            db.session.commit()
             # 画像ファイルをs3用に改名してs3バケットへアップロード
             s3_upload_file(decode_js_base64(js_base64), filename_for_db)
-
-        data = {
-            'result' : True,
-            'new_srvr' : { 'id' : new_server.id }
-        }
-        return data
+        else:
+            filename_for_db = None;
+        file = File(name=filename_for_db, server_id=new_server.id)
+        db.session.add(file)
+        db.session.commit()
+        # json形式でajaxに送信
+        data = { 'result' : True, 'new_srvr' : { 'id' : new_server.id } }
+        return jsonify(data)
 
     # ajaxでエラーメッセージを表示してもらう
     else:
-        data = {
-            'result' : False,
-            'error_msg' : { 'name' : form.name.errors[0] }
-        }
+        data = { 'result' : False, 'error_msg' : { 'name' : form.name.errors[0] } }
         return jsonify(data)
 
 
@@ -449,38 +446,22 @@ def update_server(server_id):
     if update_form.validate_on_submit():
         js_base64 = request.form['base64']
         filename = request.form['filename']
-        delete_image = True if request.form['delete_image'] == 'true' else False
-
         # フィールドにfileが存在し、拡張子が適正の場合、db用のfilenameを生成
         if filename and allowed_file(filename):
             filename_for_db = translate_into_s3_format(
                 standardize_filename(filename), 's', server_id)
         else:
             filename_for_db = None
-
         # サーバ画像に関与する場合、s3バケット内の画像を削除
-        if server.image and (delete_image or filename_for_db):
-            s3_delete_obj(server.image.name)
-
-        # 単に画像を削除したい場合
-        if delete_image:
-            db.session.delete(server.image)
-        # 画像を更新したい場合
-        elif filename_for_db:
-            # 既存画像がある場合
-            if server.image:
-                server.image.name = filename_for_db
-            # 画像が存在しない場合
-            else:
-                file = File(name=filename_for_db, server_id=server.id)
-                db.session.add(file)
-            s3_upload_file(decode_js_base64(js_base64), filename_for_db)
-
+        s3_delete_obj(server.image.name)
+        # サーバ名・画像名を更新
         server.name = update_form.name.data
+        server.image.name = filename_for_db
         db.session.commit()
-
-        data = { 'result' : True }
-        return jsonify(data)
+        # 画像がある場合、s3にアップロード
+        if filename_for_db:
+            s3_upload_file(decode_js_base64(js_base64), filename_for_db)
+        return jsonify({ 'result' : True })
 
     else:
         data = {
@@ -825,9 +806,6 @@ def post_message(channel_id):
 
         # postされたファイルのdb用オブジェクトを生成 => s3にアップロード
         if json['file_list']:
-            print("--------")
-            print(len(json['file_list']))
-            print("--------")
             # postされたファイル数の数だけ空のfileデータを生成し、リストに格納 (後から肉付けしていく)
             file_obj_list = []
             for fl in json['file_list']:
@@ -835,23 +813,18 @@ def post_message(channel_id):
                 db.session.add(fl_obj)
                 file_obj_list.append(fl_obj)
             db.session.commit()
-
+            # 空fileデータにs3用ファイル名を肉付けし、バイナリデータをs3にアップロード
             for i, fl in enumerate(json['file_list']):
-                print("--------")
-                print(fl['name'])
-                print("--------")
                 filename_for_db =  \
                     translate_into_s3_format(
                         standardize_filename(fl['name']), 'f', file_obj_list[i].id)
-                # 空fileデータに、s3用に生成したfilenameを肉付けしていく
                 file_obj_list[i].name = filename_for_db
-                # s3にアップロード
                 s3_upload_file(
                     decode_js_base64(fl['base64']), 
                     filename_for_db
                 )
             db.session.commit()
-
+        # js用のメッセージデータを生成
         data = {
             'result' : True,
             'message' : get_msg_data_for_json(msg)
@@ -932,24 +905,6 @@ def auto_update(channel_id):
 
 
 
-# ------------------------
-#   ビデオ通話での情報操作   |
-# ------------------------
-
-@user_bp.route('/reciever/<int:user_id>/info', methods=['GET'])
-@login_required
-@is_user_server_member
-def get_reciever_info(user_id):
-    reciever = User.query.filter_by(id=user_id).first()
-    data = {
-        'name' : reciever.name,
-        'b64' : get_base64_from_s3(reciever.image.name) if reciever.image else ''
-    }
-    return jsonify(data)
-
-
-
-
 # ----------------------
 #   アカウント情報の更新   |
 # ----------------------
@@ -960,33 +915,23 @@ def get_reciever_info(user_id):
 def update_account_image():
     js_b64 = request.form['b64']
     filename = request.form['filename']
-    delete_image = True if request.form['image_delete'] == 'true' else False
-
-    if g.user.image:
-        s3_delete_obj(g.user.image.name)
-
-    # 画像削除の場合
-    if delete_image:
-        db.session.delete(g.user.image)
-        db.session.commit()
-    # 画像更新の場合
-    else:
-        # s3にアップロードかつdbでのファイル名称を変更
+    # s3内の画像を一旦削除
+    s3_delete_obj(g.user.image.name)
+    # フィールドにfileが存在し、拡張子が適正の場合、db用のfilenameを生成
+    if filename and allowed_file(filename):
         filename_for_db = translate_into_s3_format( 
-                standardize_filename(filename), 'u', g.user.id)
+            standardize_filename(filename), 'u', g.user.id)
+    else:
+        filename_for_db = None
+    # ユーザ画像名を更新
+    g.user.image.name = filename_for_db
+    db.session.commit()
+    # 画像があればs3にアップロード
+    if filename_for_db:
         s3_upload_file(
-            decode_js_base64(js_b64), 
+            decode_js_base64(js_b64),
             filename_for_db
         )
-        # 画像がある場合
-        if g.user.image:
-            g.user.image.name = filename_for_db
-        # 画像が存在しない場合
-        else:
-            file = File(name=filename_for_db, user_id=g.user.id)
-            db.session.add(file)
-        db.session.commit()
-
     return jsonify({ 'result' : True })
 
 

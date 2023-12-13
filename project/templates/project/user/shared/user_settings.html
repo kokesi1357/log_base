@@ -70,11 +70,10 @@
             <form id="update-account--image-form" class="p-form-wrap--min" enctype="multipart/form-data" 
             onsubmit="return false" novalidate>
                 <input type="hidden" id="update-account--image-delete" value="">
-
                 <div class="p-form__input-label u-dp-flx--center">
                     <p class="p-form__error-msg p-form__image-error-msg"></p>
                 </div>
-                <div class="p-form__circle-preview-showcase">
+                <div class="p-form__sole-preview-showcase--user">
                     <label class="p-form__profile-image-label c-btn image-wrap" for="update-account--image">
                         {% if user_image %}
                         <img src="{{ user_image }}" alt="">
@@ -82,7 +81,7 @@
                         <i class="fa-solid fa-user"></i>
                         {% endif %}
                     </label>
-                    <button class="p-form__clear-circle-preview"><i class="fa-solid fa-circle-minus"></i></button>
+                    <button class="p-form__sole-preview-clearer"><i class="fa-solid fa-minus"></i></button>
                 </div>
                 {{ user_form.image(class="p-form__input u-dn image-input", id='update-account--image') }}
 

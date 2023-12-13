@@ -96,18 +96,18 @@
                 {{ form.name.label(class="p-form__input-label", for="add-server--name") }}
                 <p class="p-form__error-msg" id="error-msg--add-server-name"></p>
                 {{ form.name(class="p-form__input", id="add-server--name") }}
-                <label for="add-server--image" class="p-form__image-label">
-                    <div class="p-form__input-label u-dp-flx">
-                        <span>IMAGE</span>
-                        <p class="p-form__error-msg p-form__image-error-msg"></p>
-                    </div>
-                    <div class="p-form__file-block">
-                        <div class="p-form__image-wrap image-wrap" id="add-server--image-wrap">
+                <label class="p-form__input-label u-dp-flx" for="add-server--image">
+                    <span>IMAGE</span>
+                    <p class="p-form__error-msg p-form__image-error-msg"></p>
+                </label>
+                <div class="p-form__sole-preview-showcase--server">
+                    <label class="p-form__file-block" for="add-server--image">
+                        <div class="p-form__image-wrap image-wrap">
                             <i class="fa-solid fa-image"></i>
                         </div>
-                        <div class="p-form__filename">No file chosen</div>
-                    </div>
-                </label>
+                    </label>
+                    <button class="p-form__sole-preview-clearer"><i class="fa-solid fa-minus"></i></button>
+                </div>
                 {{ form.image(class="p-form__server-image u-dn image-input", id="add-server--image") }}
                 <div class="p-form__submit c-btn--submit u-pointer" id="add-server--submit">SUBMIT</div>
             </form>
@@ -160,21 +160,19 @@
                 <p class="p-form__error-msg" id="error-msg--update-server-name">{{update_form.name.errors[0]}}</p>
                 {{ update_form.name(class="p-form__input", id="update-server--name") }}
 
-                <label for="update-server--image" class="p-form__image-label">
-                    <div class="p-form__input-label u-dp-flx">
-                        <span>Image</span>
-                        <p class="p-form__error-msg p-form__image-error-msg"></p>
-                    </div>
-                    <div class="p-form__file-block">
-                        <div class="p-form__image-wrap image-wrap" id="update-server--image-wrap">
+                <label class="p-form__input-label u-dp-flx" for="update-server--image">
+                    <span>IMAGE</span>
+                    <p class="p-form__error-msg p-form__image-error-msg"></p>
+                </label>
+                <div class="p-form__sole-preview-showcase--server">
+                    <label class="p-form__file-block" for="update-server--image">
+                        <div class="p-form__image-wrap image-wrap">
                             <i class="fa-solid fa-image"></i>
                         </div>
-                        <div class="p-form__filename">No file chosen</div>
-                    </div>
-                </label>
+                    </label>
+                    <button class="p-form__sole-preview-clearer"><i class="fa-solid fa-minus"></i></button>
+                </div>
                 {{ update_form.image(class="p-form__server-image u-dn image-input", id="update-server--image") }}
-
-                <div id="update-server--delete-image-wrap"></div>
 
                 <div class="p-form__submit c-btn--submit u-pointer" id="update-server--submit">SUBMIT</div>
             </form>

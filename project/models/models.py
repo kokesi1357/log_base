@@ -82,6 +82,7 @@ class User(db.Model):
         self.name = f'guest{guest_id}'
         self.email = f'{guest_id}@guest.com'
         self.password = str(randrange(10000000, 100000000))
+        self.image=File(name=None)
         self.guest = True
 
 

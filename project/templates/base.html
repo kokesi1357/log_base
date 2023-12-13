@@ -27,10 +27,49 @@
 
         <script src="/static/node/dist/ignored/js/variable.js"></script>
 
+        <img id="heicimg" style="display: none;" src="{{ url_for('static', filename='/node/dist/ignored/js/sample1.heic') }}" alt="">
+
         {% if is_production %}
         <script src="/static/node/dist/js/main.min.js"></script>
         {% else %}
         <script src="/static/node/dist/js/main.js"></script>
         {% endif %}
+
+        <script>
+            const setFillHeight = async (is_focus_related=false) => {
+                if (is_focus_related) {
+                    await new Promise((resolve) => {
+                        setTimeout(resolve, 400)
+                    });
+                }
+                const vh = visualViewport.height;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+                console.log(vh);
+            }
+
+            // (SP・TAB) 画面を横側に傾けリサイズした際
+            let vw = window.innerWidth;
+
+            window.addEventListener('resize', () => {
+                // 画面の横幅にサイズ変動がないので処理を終了
+                if (vw === window.innerWidth) return;
+                // 画面の横幅のサイズ変動があった時のみ高さを再計算
+                vw = window.innerWidth;
+                setFillHeight();
+            });
+
+            // メッセージテキストエリアのフォーカス時・フォーカス解除時
+            const MSG_TXTAREA = get_element('#add-message--content');
+
+            if (typeof MSG_TXTAREA != 'undefined') {
+                // フォーカス時、キーボードを除くデバイス高さを設定します
+                MSG_TXTAREA.addEventListener('focus', () => setFillHeight(true));
+                // フォーカス解除時、アドレスバーを除くデバイス高さを設定します
+                MSG_TXTAREA.onblur = () => setFillHeight(true);
+            }
+
+            // 初期化
+            setFillHeight();
+        </script>
     </body>
 </html>

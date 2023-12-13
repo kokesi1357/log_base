@@ -9,11 +9,11 @@
         <h1 class="l-main__section-header">WELCOME TO LOG BASE</h1>
         <div class="row">
             <div class="p-entry-top__entry-wrap col-sp-24 col-tab-10 u-mrgn-center--hrzn">
-                <a href="{{url_for('user.entry.login')}}" class="p-entry-top__entry p-entry-top__signin-entry">
+                <a href="{{ url_for('user.entry.login') }}" class="p-entry-top__entry p-entry-top__signin-entry">
                     サインイン
                     <i class="fa-solid fa-angles-right"></i>
                 </a>
-                <a href="{{url_for('user.entry.signup')}}" class="p-entry-top__entry p-entry-top__signup-entry">
+                <a href="{{ url_for('user.entry.signup') }}" class="p-entry-top__entry p-entry-top__signup-entry">
                     アカウントを作成
                     <i class="fa-solid fa-angles-right"></i>
                 </a>
@@ -69,18 +69,18 @@
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel2_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel3_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel4_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel5_min.png')}}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel4_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel5_min.png') }}" alt="">
                             </div>
                             <div class="p-entry-func__modal-mainimage modal-mainimages">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel2_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel3_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel4_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/channel5_min.png')}}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel4_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/channel5_min.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -121,18 +121,18 @@
                         </div>
                         <div class="p-modal-block col-sp-24 col-tab-16">
                             <div class="p-entry-func__modal-thumnails modal-thumnails">
-                                <img src="{{url_for('static', filename='/node/dist/img/video1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/video2_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video3_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video4_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video5_min.png')}}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video4_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video5_min.png') }}" alt="">
                             </div>
                             <div class="p-entry-func__modal-mainimage modal-mainimages">
-                                <img src="{{url_for('static', filename='/node/dist/img/video1_min.png')}}" alt="" data-status="on">
-                                <img src="{{url_for('static', filename='/node/dist/img/video2_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video3_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video4_min.png')}}" alt="">
-                                <img src="{{url_for('static', filename='/node/dist/img/video5_min.png')}}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video1_min.png') }}" alt="" data-status="on">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video2_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video3_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video4_min.png') }}" alt="">
+                                <img src="{{ url_for('static', filename='/node/dist/img/video5_min.png') }}" alt="">
                             </div>
                         </div>
                     </div>
@@ -169,16 +169,16 @@
                     </div>
                     <div class="p-modal-block col-sp-24 col-tab-16">
                         <div class="p-entry-func__modal-thumnails modal-thumnails">
-                            <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
-                            <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
-                            <img src="{{url_for('static', filename='/node/dist/img/message3_min.png')}}" alt="">
-                            <img src="{{url_for('static', filename='/node/dist/img/message4_min.gif')}}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
                         </div>
                         <div class="p-entry-func__modal-mainimage modal-mainimages">
-                            <img src="{{url_for('static', filename='/node/dist/img/message1_min.png')}}" alt="" data-status="on">
-                            <img src="{{url_for('static', filename='/node/dist/img/message2_min.png')}}" alt="">
-                            <img src="{{url_for('static', filename='/node/dist/img/message3_min.png')}}" alt="">
-                            <img src="{{url_for('static', filename='/node/dist/img/message4_min.gif')}}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message1_min.png') }}" alt="" data-status="on">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message2_min.png') }}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message3_min.png') }}" alt="">
+                            <img src="{{ url_for('static', filename='/node/dist/img/message4_min.gif') }}" alt="">
                         </div>
                     </div>
                     </div>

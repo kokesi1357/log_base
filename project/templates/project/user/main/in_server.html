@@ -5,7 +5,7 @@
 {% block main %}
 <section class="p-index__in-server-section">
     <!-- サイドバー : チャンネル一覧 / ユーザーメニュー (pcのみ表示) -->
-    <div class="p-index__sidebar u-dn-no-pointer u-dn-sp">
+    <div class="p-index__sidebar u-dn-touch-device u-dn-sp">
         <div class="p-index__channel-list-wrap adjusted-for-phone-book">
             <div class="p-index__channel-header">
                 <p>CHANNELS</p>
@@ -226,7 +226,7 @@
                             <p>{{ m.content|replace("\n", "<br>")|safe }}</p>
                         </div>
 
-                        <div class="p-index-main__msg-file-wrap row">
+                        <div class="p-index-main__msg-file-wrap">
                             {% if msg_files["img"][loop.index0] %}
                             <ul class="msg-img-flex-box msg-img-flex-box--{{ msg_files['img'][loop.index0]|length }}">
                                 {% if msg_files['img'][loop.index0]|length == 3 %}
@@ -281,14 +281,15 @@
                             {% if msg_files["dcmnt"][loop.index0] %}
                             <ul class="p-index-main__msg-dcmnt-list">
                                 {% for dcmnt in msg_files["dcmnt"][loop.index0] %}
-                                <li class="p-index-main__dcmnt-wrap c-menu-wrap">
+                                <li class="p-index-main__dcmnt-wrap c-menu-wrap row">
                                     {% if ".pdf" in dcmnt['name'] %}
-                                    <i class="fa-regular fa-file-pdf"></i>
+                                    <i class="fa-regular fa-file-pdf col-sp-4 col-tab-3"></i>
                                     {% else %}
-                                    <i class="fa-solid fa-file-signature"></i>
+                                    <i class="fa-solid fa-file-signature col-sp-4 col-tab-3"></i>
                                     {% endif %}
-                                    <div class="p-index-main__dcmnt-info u-string-shortener">
-                                        <a href="{{ dcmnt['url'] }}" download="{{ dcmnt['name'] }}" target="_blank" rel="noopener noreferrer">
+                                    <div class="p-index-main__dcmnt-info col-sp-20 col-tab-21">
+                                        <a href="{{ dcmnt['url'] }}" class="u-string-shortener"
+                                        download="{{ dcmnt['name'] }}" target="_blank" rel="noopener noreferrer">
                                             {{ dcmnt['name'] }}
                                         </a>
                                         <p>{{ dcmnt["size"] }}</p>
@@ -349,19 +350,19 @@
 </section>
 
 
-<!-- モーダル：メッセージに添付するファイル拡張子の使用不可を警告 -->
+<!-- モーダル：メッセージに添付するファイルの使用不可を警告 -->
 <div class="p-modal u-preload modal">
     <div class="p-modal-closer c-btn--xquad u-dn-sp modal-closer toggler"
-        id="modal-closer--unavailable-format">
+        id="modal-closer--unavailable-type">
         <i class="fa-solid fa-xmark"></i>
     </div>
     <div class="p-modal-wrap">
         <div class="p-modal-content row">
-            <div class="p-modal-header">Unavailable file format found!</div>
+            <div class="p-modal-header">Unavailable file type found!</div>
             <p class="u-txt-center">
-                The following file formats are only available :
+                The following file types are only available :
                 <br><br>
-                [ jpg, jpeg, png, gif, pdf, txt ]
+                [ jpeg, png, gif, pdf, txt ]
             </p>
         </div>
     </div>
