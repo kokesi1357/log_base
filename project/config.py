@@ -6,7 +6,7 @@ import os
 class BaseConfig(object):
     # Builds path named 'my_blog' that is through the same path with this module.
     SECRET_KEY = os.environ.get('SECRET_KEY')
-    SECURITY_PASSWORD_SALT = os.environ.get('SECRET_KEY2')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECRET_KEY_TWO')
     DEBUG = False
     WTF_CSRF_ENABLED = True
     DEBUG_TB_ENABLED = False
@@ -27,6 +27,10 @@ class BaseConfig(object):
 
     # mail accounts
     MAIL_DEFAULT_SENDER = 'from@example.com'
+
+    SESSION_COOKIE_NAME = 'logbase_cookie'
+    SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_SAMESITE = 'None'
 
 
 class DevelopmentConfig(BaseConfig):

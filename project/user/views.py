@@ -409,7 +409,8 @@ def add_server():
                     name='General',
                     date_added=request.form['date']
                 )
-            ]
+            ],
+            image=File(name=None)
         )
         db.session.add(new_server)
         db.session.commit()
@@ -419,11 +420,8 @@ def add_server():
                 standardize_filename(filename), 's', new_server.id)
             # 画像ファイルをs3用に改名してs3バケットへアップロード
             s3_upload_file(decode_js_base64(js_base64), filename_for_db)
-        else:
-            filename_for_db = None;
-        file = File(name=filename_for_db, server_id=new_server.id)
-        db.session.add(file)
-        db.session.commit()
+            new_server.image.name = filename_for_db
+            db.session.commit()
         # json形式でajaxに送信
         data = { 'result' : True, 'new_srvr' : { 'id' : new_server.id } }
         return jsonify(data)

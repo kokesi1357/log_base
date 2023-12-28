@@ -19,9 +19,6 @@ def create_db():
 @manager_cli.command('drop_db')
 def drop_db():
     """Drops the db tables."""
-    files = db.session.query(File).all()
-    for f in files:
-        s3_delete_obj(f.name)
     db.drop_all()
 
 
