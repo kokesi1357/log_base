@@ -888,7 +888,8 @@ def delete_file(file_name):
 def auto_update(channel_id):
     new_msgs = Message.query.filter(
         Message.channel_id == channel_id,
-        Message.id > int(request.form['latest_id']) 
+        Message.user_id != g.user.id,
+        Message.id > int(request.form['latest_id']),
     ).all()
     if new_msgs:
         data = {

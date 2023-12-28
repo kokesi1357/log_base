@@ -283,9 +283,9 @@
                                 {% for dcmnt in msg_files["dcmnt"][loop.index0] %}
                                 <li class="p-index-main__dcmnt-wrap c-menu-wrap row">
                                     {% if ".pdf" in dcmnt['name'] %}
-                                    <i class="fa-regular fa-file-pdf col-sp-4 col-tab-3"></i>
+                                    <i class="fa-regular fa-file-pdf dcmnt-icon col-sp-4 col-tab-3"></i>
                                     {% else %}
-                                    <i class="fa-solid fa-file-signature col-sp-4 col-tab-3"></i>
+                                    <i class="fa-solid fa-file-signature dcmnt-icon col-sp-4 col-tab-3"></i>
                                     {% endif %}
                                     <div class="p-index-main__dcmnt-info col-sp-20 col-tab-21">
                                         <a href="{{ dcmnt['url'] }}" class="u-string-shortener"
