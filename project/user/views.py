@@ -18,7 +18,6 @@ from project.base64 import translate_into_base64, decode_js_base64
 
 
 
-
 # Blueprints ----------------------------------------------
 
 user_bp = Blueprint('user', __name__,)
@@ -384,6 +383,7 @@ def get_server_img():
 def index():
     form = server_form()
     update_form = server_form('update')
+
     return render_temp(
         'project/user/main/index.html', 'LOG BASE',
         form=form, server_img_dict=get_server_img(), update_form=update_form)
@@ -538,10 +538,14 @@ def leave_server(server_id):
 
 
 
-# -----------------------------------------------
-#   チャンネル一覧および、チャンネルの作成、更新、削除   |
-#   メッセージ一覧および、メッセージの作成、更新、削除   |
-# -----------------------------------------------
+# ------------------------------------------
+#   チャンネル一覧、チャンネルの作成・更新・削除   |
+#   メッセージ一覧、メッセージの作成・更新・削除   |
+# ------------------------------------------
+
+# msg自動更新で使用する最新msgのid保管
+current_msg_id = 0
+
 
 # [Helper]
 def store_files(files, msg_id):
@@ -676,7 +680,6 @@ def get_server_member_imgs(server):
     return member_images
 
 
-
 # In Server
 @user_bp.route('/server/<int:server_id>', methods=['GET'])
 @login_required
@@ -693,6 +696,14 @@ def in_server(server_id):
     msg_files = get_msg_files(channel.messages) if channel else None
     msg_form = message_form()
 
+    # msg自動更新用に最新msgのidを記録
+    last_msg = Message.query.filter(
+        Message.channel_id == channel.id,
+        Message.user_id != g.user.id
+    ).order_by(Message.id.desc()).first()
+    global current_msg_id
+    current_msg_id = last_msg.id if last_msg else 0
+
     return render_temp(
         'project/user/main/in_server.html', server.name,
         server=server, server_img=server_img, server_mem_imgs=server_mem_imgs,
@@ -707,6 +718,14 @@ def in_server(server_id):
 def switch_channel(channel_id):
     channel = Channel.query.filter_by(id=channel_id).first()
     if channel:
+        # msg自動更新用の末尾idを変更
+        last_msg = Message.query.filter(
+            Message.channel_id == channel.id,
+            Message.user_id != g.user.id
+        ).order_by(Message.id.desc()).first()
+        global current_msg_id
+        current_msg_id = last_msg.id if last_msg else 0
+
         msg_data = get_msg_data_for_json(channel.messages)
         data = {
             'result' : True,
@@ -734,6 +753,11 @@ def add_channel(server_id):
         server = Server.query.filter_by(id=server_id).first()
         server.channels.append(channel)
         db.session.commit()
+
+        # msg自動更新用の末尾idを変更
+        global current_msg_id
+        current_msg_id = 0
+
         return jsonify({
             'result' : True ,
             'chnl_id' : channel.id
@@ -882,15 +906,19 @@ def delete_file(file_name):
 
 
 # Auto update message list [Ajax]
-@user_bp.route('/channel/<int:channel_id>/auto_update', methods=['POST'])
+@user_bp.route('/channel/<int:channel_id>/auto_update')
 @login_required
 @is_user_server_member
 def auto_update(channel_id):
+    # 最新msgID(current_msg_id)より後のmsg情報を取得
+    global current_msg_id
     new_msgs = Message.query.filter(
         Message.channel_id == channel_id,
         Message.user_id != g.user.id,
-        Message.id > int(request.form['latest_id']),
+        Message.id > current_msg_id,
     ).all()
+    current_msg_id = new_msgs[-1].id if new_msgs else current_msg_id
+
     if new_msgs:
         data = {
             'result' : True,

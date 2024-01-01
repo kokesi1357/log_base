@@ -28,6 +28,7 @@ class BaseConfig(object):
     # mail accounts
     MAIL_DEFAULT_SENDER = 'from@example.com'
 
+    # cookie settings
     SESSION_COOKIE_NAME = 'logbase_cookie'
     SESSION_COOKIE_SECURE = True
     SESSION_COOKIE_SAMESITE = 'None'

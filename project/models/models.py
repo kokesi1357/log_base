@@ -173,7 +173,7 @@ class File(db.Model):
     __tablename__ = 'file'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String(100))
+    name = Column(String(100), default=None)
 
     # File to User [one to one]
     user_id = Column(Integer, ForeignKey('user.id'))

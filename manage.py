@@ -43,6 +43,33 @@ def create_master():
     db.session.commit()
 
 
+@manager_cli.command('post_msg')
+def post_msg():
+    """Creates a master user."""
+    owner = User.query.filter_by(id=2).first()
+    server = owner.own_servers[0]
+    chnl = server.channels[0]
+    sender = User.query.filter_by(id=7).first()
+
+    db.session.add(
+        Message(
+            content='helloworld!',
+            channel_id = chnl.id,
+            date_added='2023-12-30 15:38:37',
+            user_id = owner.id
+        )
+    )
+    db.session.add(
+        Message(
+            content='helloworld!!!!!',
+            channel_id = chnl.id,
+            date_added='2023-12-30 15:38:37',
+            user_id = owner.id
+        )
+    )
+    db.session.commit()
+
+
 app.cli.add_command(manager_cli)
 
 if __name__ == '__main__':
