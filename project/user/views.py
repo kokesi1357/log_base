@@ -15,6 +15,7 @@ from project.boto3 import s3_upload_file, s3_get_body, s3_get_obj_size, \
 from project.email import send_email
 from project.tokens import signup_token, psw_reset_token, decode_token
 from project.base64 import translate_into_base64, decode_js_base64
+from sqlalchemy import desc
 
 
 
@@ -700,7 +701,7 @@ def in_server(server_id):
     last_msg = Message.query.filter(
         Message.channel_id == channel.id,
         Message.user_id != g.user.id
-    ).order_by(Message.id.desc()).first()
+    ).order_by(desc(Message.id)).first()
     global current_msg_id
     current_msg_id = last_msg.id if last_msg else 0
 
@@ -918,6 +919,10 @@ def auto_update(channel_id):
         Message.id > current_msg_id,
     ).all()
     current_msg_id = new_msgs[-1].id if new_msgs else current_msg_id
+
+    print('------------------')
+    print(current_msg_id)
+    print('------------------')
 
     if new_msgs:
         data = {

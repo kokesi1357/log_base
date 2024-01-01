@@ -56,7 +56,7 @@ def post_msg():
             content='helloworld!',
             channel_id = chnl.id,
             date_added='2023-12-30 15:38:37',
-            user_id = owner.id
+            user_id = sender.id
         )
     )
     db.session.add(
@@ -64,7 +64,7 @@ def post_msg():
             content='helloworld!!!!!',
             channel_id = chnl.id,
             date_added='2023-12-30 15:38:37',
-            user_id = owner.id
+            user_id = sender.id
         )
     )
     db.session.commit()
