@@ -3,6 +3,7 @@
 from project.app import db
 from flask import Blueprint, g, request, session, flash, redirect, url_for, \
     render_template, jsonify
+from sqlalchemy import desc
 from functools import wraps
 from time import time
 from project.models.models import User, Server, Channel, Message, File
@@ -15,7 +16,7 @@ from project.boto3 import s3_upload_file, s3_get_body, s3_get_obj_size, \
 from project.email import send_email
 from project.tokens import signup_token, psw_reset_token, decode_token
 from project.base64 import translate_into_base64, decode_js_base64
-from sqlalchemy import desc
+
 
 
 
@@ -27,10 +28,12 @@ user_bp.register_blueprint(entry_bp)
 
 
 
+
 # Functions for Handling Resources within This Module -------------------
 
 # Set session for logged-in user
 def set_user_session(user=None, limit=7200):
+    session.permanent = True
     session['user_id'] = user.id if user is not None else session['user_id']
     session['user_lifetime'] = time() + limit
     g.user = User.query.filter_by(id=session['user_id']).first()
@@ -544,10 +547,6 @@ def leave_server(server_id):
 #   メッセージ一覧、メッセージの作成・更新・削除   |
 # ------------------------------------------
 
-# msg自動更新で使用する最新msgのid保管
-current_msg_id = 0
-
-
 # [Helper]
 def store_files(files, msg_id):
     file_obj_list = []
@@ -702,8 +701,7 @@ def in_server(server_id):
         Message.channel_id == channel.id,
         Message.user_id != g.user.id
     ).order_by(desc(Message.id)).first()
-    global current_msg_id
-    current_msg_id = last_msg.id if last_msg else 0
+    session['current_msg_id'] = last_msg.id if last_msg else 0
 
     return render_temp(
         'project/user/main/in_server.html', server.name,
@@ -724,8 +722,7 @@ def switch_channel(channel_id):
             Message.channel_id == channel.id,
             Message.user_id != g.user.id
         ).order_by(Message.id.desc()).first()
-        global current_msg_id
-        current_msg_id = last_msg.id if last_msg else 0
+        session['current_msg_id'] = last_msg.id if last_msg else 0
 
         msg_data = get_msg_data_for_json(channel.messages)
         data = {
@@ -755,9 +752,8 @@ def add_channel(server_id):
         server.channels.append(channel)
         db.session.commit()
 
-        # msg自動更新用の末尾idを変更
-        global current_msg_id
-        current_msg_id = 0
+        # msg自動更新用の末尾idをリセット
+        session['current_msg_id'] = 0
 
         return jsonify({
             'result' : True ,
@@ -912,17 +908,12 @@ def delete_file(file_name):
 @is_user_server_member
 def auto_update(channel_id):
     # 最新msgID(current_msg_id)より後のmsg情報を取得
-    global current_msg_id
     new_msgs = Message.query.filter(
         Message.channel_id == channel_id,
         Message.user_id != g.user.id,
-        Message.id > current_msg_id,
+        Message.id > session['current_msg_id']
     ).all()
-    current_msg_id = new_msgs[-1].id if new_msgs else current_msg_id
-
-    print('------------------')
-    print(current_msg_id)
-    print('------------------')
+    session['current_msg_id'] = new_msgs[-1].id if new_msgs else session['current_msg_id']
 
     if new_msgs:
         data = {
