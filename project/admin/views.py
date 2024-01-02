@@ -25,6 +25,7 @@ def clear_admin_session():
 
 # Set session for user entry
 def set_admin_session(admin, limit=3600):
+    session.permanent = True
     session['admin_id'] = admin.id
     session['admin_lifetime'] = time() + limit
 

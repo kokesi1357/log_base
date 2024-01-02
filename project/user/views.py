@@ -89,6 +89,7 @@ def does_user_exist():
 
 # Set session for authenticated user
 def set_auth_session(limit=1800):
+    session.permanent = True
     session['auth'] = True
     session['auth_lifetime'] = time() + limit
 
